@@ -5,10 +5,14 @@ project(ViewPort3D
 
 
 set(SOURCES
-	"MainWindows.cpp")
+	"MainWindows.cpp"
+	"ViewportWidget.cpp"
+	"VulkanWindow.cpp")
 
 set(HEADERS
-	"MainWindows.hpp")
+	"MainWindows.hpp"
+	"ViewportWidget.hpp"
+	"VulkanWindow.hpp")
 
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})

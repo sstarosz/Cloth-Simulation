@@ -18,7 +18,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 #Qt Utility
-set(CMAKE_PREFIX_PATH "C:/Qt/6.1.1/msvc2019_64")
+set(CMAKE_PREFIX_PATH "C:/Qt/6.1.2/msvc2019_64")
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -44,9 +44,3 @@ if(Build_Unit_Test)
     add_subdirectory(Unittest)
 endif()
 
-
-get_cmake_property(_variableNames VARIABLES)
-list (SORT _variableNames)
-foreach (_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
-endforeach()
