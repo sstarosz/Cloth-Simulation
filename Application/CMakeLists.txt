@@ -1,4 +1,4 @@
-
+#Core Aplication
 project(Cloth_Simulation_App 
         VERSION 0.0.1
         LANGUAGES CXX)
@@ -10,18 +10,17 @@ set(SOURCES
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 target_compile_options(${PROJECT_NAME} PRIVATE "/permissive-")
 
 
-set_target_properties(${PROJECT_NAME} PROPERTIES VS_CA_EXCLUDE_PATH "C:/Qt/6.1.1/msvc2019_64")
+#set_target_properties(${PROJECT_NAME} PROPERTIES VS_CA_EXCLUDE_PATH "C:/Qt/6.1.1/msvc2019_64")
 
 target_link_libraries(${PROJECT_NAME}
         Qt6::Core
         Qt6::Gui
         Qt6::Widgets
-        ViewPort3D
+        MainWindow
         )
 
 

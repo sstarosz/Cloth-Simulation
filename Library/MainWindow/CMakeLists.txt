@@ -1,16 +1,14 @@
-project(ViewPort3D
+project(MainWindow
 		VERSION 0.0.1
-		DESCRIPTION "3D Viewport of aplication"
+		DESCRIPTION "Main Window of Aplication"
 		LANGUAGES CXX)
 
 
 set(SOURCES
-	"ViewportWidget.cpp"
-	"VulkanWindow.cpp")
+	"MainWindows.cpp" "NavigationBar.cpp")
 
 set(HEADERS
-	"ViewportWidget.hpp"
-	"VulkanWindow.hpp")
+	"MainWindows.hpp" "NavigationBar.hpp")
 
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
