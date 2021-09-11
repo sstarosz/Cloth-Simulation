@@ -11,8 +11,10 @@ set(SOURCES
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
-target_compile_options(${PROJECT_NAME} PRIVATE "/permissive-")
-
+#Compiler flags
+if(MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE "/permissive-")
+endIF()
 
 #set_target_properties(${PROJECT_NAME} PROPERTIES VS_CA_EXCLUDE_PATH "C:/Qt/6.1.1/msvc2019_64")
 
