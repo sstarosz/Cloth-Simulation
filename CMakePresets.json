@@ -1,0 +1,123 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "description": "Sets generator, build and install directory",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}"
+    },
+    {
+      "name": "Windowx-x64-Debug-MSVC",
+      "displayName": "Windows x64 Debug MSVC",
+      "description": "Sets Ninja generator, build and install directory",
+      "inherits": [
+        "base"
+      ],
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [
+            "Windows"
+          ],
+          "intelliSenseMode": "windows-msvc-x64",
+          "enableMicrosoftCodeAnalysis": true,
+          "enableClangTidyCodeAnalysis": true
+        }
+      }
+    },
+    {
+      "name": "Linux-x64-Debug",
+      "displayName": "Linux x64 Debug",
+      "description": "Linux Gcc Makefiles",
+      "inherits": [
+        "base"
+      ],
+      "generator": "Unix Makefiles",
+      "cacheVariables": {
+        "REMOTE_DEVELOPMENT": true,
+        "BUILD_UNITTESTS": true,
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": "Linux",
+          "intelliSenseMode": "linux-gcc-x64"
+        },
+        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+          "copyAdditionalIncludeDirectoriesList": [
+            "$env{HOME}/.conan/data",
+            "$env{HOME}/.generatedProto/ptcontrol"
+          ],
+          "copySourcesOptions": { "exclusionList": [ ".vs", ".git", "out", ".svn", ".vscode", "build" ] },
+          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+        }
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Core-Build",
+      "description": "Inherits environment from base confiugre Preset",
+      "configurePreset": "base",
+      "inheritConfigureEnvironment": true
+    },
+    {
+      "name": "Windows-Verbose-Debug-Build",
+      "description": "Windows x64 Debug Build with Msys2 Makefile generator",
+      "configurePreset": "Windowx-x64-Debug-MSVC",
+      "inherits": "Core-Build",
+      "jobs": 8,
+      "verbose": true
+    },
+    {
+      "name": "Linux-Verbose-Debug-Build",
+      "displayName": "Linux x64 Verbose Debug Build ",
+      "description": "Linux x64 Debug Build with Unix Makefile generator",
+      "configurePreset": "Linux-x64-Debug",
+      "inherits": "Core-Build",
+      "jobs": 8,
+      "verbose": true
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "Core-Test",
+      "description": "Enable output on failure",
+      "configurePreset": "base",
+      "hidden": true,
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "Windows-Unittest",
+      "displayName": "Windows Unittests",
+      "configurePreset": "Windowx-x64-Debug-MSVC",
+      "inherits": "Core-Test"
+    },
+    {
+      "name": "Linux-Unittest",
+      "displayName": "Linux Unittest",
+      "configurePreset": "Linux-x64-Debug",
+      "inherits": "Core-Test"
+    }
+  ]
+}
