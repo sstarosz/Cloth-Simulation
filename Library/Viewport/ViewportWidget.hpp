@@ -1,19 +1,28 @@
-#ifndef VIEWPORTWIDGET_H
-#define VIEWPORTWIDGET_H
+#ifndef VIEWPORTWIDGET_HPP
+#define VIEWPORTWIDGET_HPP
 
 #include <QWidget>
-#include <QWindow>
 
-class ViewportWidget : public QWidget
+#include "VulkanWindow.hpp"
+
+
+namespace st::viewport
 {
-public:
-	ViewportWidget();
-	~ViewportWidget();
+	class ViewportWidget : public QWidget
+	{
+		Q_OBJECT
 
-private:
+	public:
+		ViewportWidget();
+
+		void init();
+
+	private:
+
+		VulkanWindow* vulkan_window;
+
+	};
 
 };
 
-
-
-#endif // VIEWPORTWIDGET_H
+#endif // VIEWPORTWIDGET_HPP

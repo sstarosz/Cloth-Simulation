@@ -1,48 +1,83 @@
 #include "MainWindows.hpp"
+
+#include "NavigationBar.hpp"
+
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QStatusBar>
+
+#include <QtWidgets/QMenu>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QToolBox>
+#include <QVBoxLayout>
 #include <QAction>
 
-#include "NavigationBar.hpp"
+#include <Viewport/ViewportWidget.hpp>
+
+
+namespace st
+{
 
 MainWindow::MainWindow()
 {
+    //Setup GUI
+    //Setup ToolBar
+    //Setup StatusBar
+    //Setup Main Widget/Viewport 3D
+    //Dock Widget
 	this->setFixedSize(800, 600);
     
-    setupToolBar();
-
-}
-
-MainWindow::~MainWindow()
-{
+    createMenuBar();
+    createStatusBar();
+    createMainWindow();
 }
 
 void MainWindow::setupToolBar()
 {
-
-    toolBar = new QToolBar(this);
-    toolBar->setMovable(false);
-    toolBar->setAllowedAreas(Qt::LeftToolBarArea);
-    toolBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    toolBar->setIconSize(QSize(50, 50));
-
-    toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    toolBar->setOrientation(Qt::Orientation::Vertical);
-    toolBar->setStyleSheet("background-color: darkgray");
+    /*fileMenu = menuBar()->addMenu("&File");
+    auto* quit = new QAction("&Quit", this);
+    fileMenu->addAction(quit);*/
 
 
-    navigationBar = new NavigationBar(this);
-    
-
-    toolBar->addWidget(navigationBar);
-    toolBar->addAction("Bookmark 1");
-    toolBar->addAction("Bookmark 2");
-    //toolBar->addWidget(separator);
-    toolBar->addAction("More Bookmarks");
+    //QVBoxLayout* mainlayout = new QVBoxLayout(this);
+    //navigationBar = new NavigationBar(this);
+    //navigationBar->setLayout(mainlayout);
 
 
-    addToolBar(Qt::LeftToolBarArea, toolBar);
+
+}
+void MainWindow::createMenuBar()
+{
+
+    m_fileMenu = menuBar()->addMenu("&File");
+    auto* newScene = new QAction("&New Scene", this);
+    auto* quit = new QAction("&Quit", this);
+
+    m_fileMenu->addAction(newScene);
+    m_fileMenu->addSeparator();
+    m_fileMenu->addAction(quit);
+
+    m_fileMenu->setTearOffEnabled(true);
+
+
+    m_helpMenu = menuBar()->addMenu("&Help");
+    auto* about = new QAction("&About", this);
+
+}
+
+void MainWindow::createStatusBar()
+{
+    statusBar()->showMessage(tr("Text"));
+}
+
+void MainWindow::createMainWindow()
+{
+    //QWidget* centralWidget = new QWidget();
+
+    viewportWidget = new viewport::ViewportWidget();
+    setCentralWidget(viewportWidget);
+}
+
 }

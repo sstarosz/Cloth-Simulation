@@ -2,3 +2,8 @@
 out/
 CMakeSettings.json
 /CMakeLists.txt.user
+.vscode/
+.idea/
+cmake-build-debug/
+#conan
+Conan/

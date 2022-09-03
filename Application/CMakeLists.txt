@@ -3,20 +3,16 @@ project(Cloth_Simulation_App
         VERSION 0.0.1
         LANGUAGES CXX)
 
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
-set(SOURCES 
-    main.cpp
-)
+set(SOURCES main.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
-#Compiler flags
-if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE "/permissive-")
-endIF()
 
-#set_target_properties(${PROJECT_NAME} PROPERTIES VS_CA_EXCLUDE_PATH "C:/Qt/6.1.1/msvc2019_64")
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
 target_link_libraries(${PROJECT_NAME}
         Qt6::Core
@@ -25,7 +21,6 @@ target_link_libraries(${PROJECT_NAME}
         MainWindow
         )
 
-
 #Ship Qt dynamic library
 if(WIN32)
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -33,6 +28,9 @@ if(WIN32)
                             COMMAND ${WINDEPLOYQT_EXECUTABLE} 
                             --debug 
                             --no-translations
+                            --no-virtualkeyboard
+                            --no-system-d3d-compiler
+                            --no-opengl-sw 
                             $<TARGET_FILE:${PROJECT_NAME}>
                             DEPENDS ${PROJECT_NAME}
                             COMMENT "Running windeployqt... on $<TARGET_FILE:${PROJECT_NAME}"
