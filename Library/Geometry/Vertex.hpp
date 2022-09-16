@@ -28,6 +28,11 @@ namespace st::geometry
         float w;
     };
 
+    struct mat4
+    {
+        float m_data[16] = {0};
+    };
+
 
     struct Vertex
     {

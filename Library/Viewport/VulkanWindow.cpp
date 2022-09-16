@@ -53,11 +53,11 @@ namespace st::viewport
         createCommandPool();
         createVertexBuffer();
         createIndexBuffer();
-        /*createUniformBuffers();
+        createUniformBuffers();
         createDescriptorPool();
         createDescriptorSets();
         createCommandBuffers();
-        createSyncObjects();*/
+        createSyncObjects();
 	}
 
 	void VulkanWindow::releaseResources()
@@ -758,4 +758,276 @@ namespace st::viewport
         m_device.freeMemory(stagingBufferMemory);
     }
 
+
+    void VulkanWindow::createUniformBuffers()
+    {
+        VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+
+        m_uniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+        m_uniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
+
+        for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+            createBuffer(bufferSize,
+                vk::BufferUsageFlagBits::eUniformBuffer,
+                vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+                m_uniformBuffers[i],
+                m_uniformBuffersMemory[i]);
+        }
+    }
+
+    void VulkanWindow::createDescriptorPool()
+    {
+        vk::DescriptorPoolSize poolSize
+        {
+            vk::DescriptorType::eUniformBuffer,
+            static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT)
+        };
+
+        vk::DescriptorPoolCreateInfo poolInfo
+        {
+            {},
+            static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT),
+            poolSize
+        };
+
+        m_descriptorPool = m_device.createDescriptorPool(poolInfo);
+    }
+
+    void VulkanWindow::createDescriptorSets()
+    {
+        std::vector<vk::DescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, m_descriptorSetLayout);
+        vk::DescriptorSetAllocateInfo allocInfo
+        {
+            m_descriptorPool,
+            layouts
+        };
+
+        m_descriptorSets = m_device.allocateDescriptorSets(allocInfo);
+
+        for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+        {
+            vk::DescriptorBufferInfo bufferInfo{
+                m_uniformBuffers.at(i),
+                0,
+                sizeof(UniformBufferObject)
+            };
+
+            vk::WriteDescriptorSet descriptorWrite{
+                m_descriptorSets.at(i),
+                0,
+                0,
+                vk::DescriptorType::eUniformBuffer,
+                {},
+                bufferInfo,
+                {}
+            };
+
+            m_device.updateDescriptorSets(descriptorWrite, {});
+
+        }
+
+    }
+
+    void VulkanWindow::createCommandBuffers() {
+        vk::CommandBufferAllocateInfo allocInfo(
+            m_commandPool,
+            vk::CommandBufferLevel::ePrimary,
+            static_cast<uint32_t>(m_swapChainFramebuffers.size())
+        );
+
+        m_commandBuffers = m_device.allocateCommandBuffers(allocInfo);
+
+    }
+
+    void VulkanWindow::createSyncObjects() {
+        m_imageAvailableSemaphores.reserve(MAX_FRAMES_IN_FLIGHT);
+        m_renderFinishedSemaphores.reserve(MAX_FRAMES_IN_FLIGHT);
+        m_inFlightFences.reserve(MAX_FRAMES_IN_FLIGHT);
+
+        for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+            m_imageAvailableSemaphores.emplace_back(m_device.createSemaphore(vk::SemaphoreCreateInfo{}));
+            m_renderFinishedSemaphores.emplace_back(m_device.createSemaphore(vk::SemaphoreCreateInfo{}));
+            m_inFlightFences.emplace_back(m_device.createFence(vk::FenceCreateInfo{ vk::FenceCreateFlagBits::eSignaled }));
+        }
+    }
+
+
+
+    void VulkanWindow::updateUniformBuffer(uint32_t currentImage)
+    {
+        static auto startTime = std::chrono::high_resolution_clock::now();
+
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+        UniformBufferObject ubo{};
+        ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        ubo.proj = glm::perspective(glm::radians(45.0f), m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1f, 10.0f);
+        ubo.proj[1][1] *= -1;
+
+
+        void* data = m_device.mapMemory(m_uniformBuffersMemory[currentImage], 0, sizeof(ubo));
+        memcpy(data, &ubo, sizeof(ubo));
+        m_device.unmapMemory(m_uniformBuffersMemory[currentImage]);
+
+    }
+
+    void VulkanWindow::recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_t imageIndex)
+    {
+
+        commandBuffer.begin(vk::CommandBufferBeginInfo{});
+
+        vk::ClearValue clearValues;
+        clearValues.color = vk::ClearColorValue(std::array<float, 4>({ { 0.0f, 0.0f, 0.0f, 1.0f } }));
+
+        vk::RenderPassBeginInfo renderPassInfo(
+            m_renderPass,
+            m_swapChainFramebuffers[imageIndex],
+            vk::Rect2D((0, 0), m_swapChainExtent),
+            clearValues
+        );
+
+
+        commandBuffer.beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
+
+        commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_graphicsPipeline);
+
+        vk::Buffer vertexBuffers[] = { m_vertexBuffer };
+        vk::DeviceSize offsets[] = { 0 };
+        commandBuffer.bindVertexBuffers(0, 1, vertexBuffers, offsets);
+        commandBuffer.bindIndexBuffer(m_indexBuffer, 0, vk::IndexType::eUint16);
+
+        commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, m_pipelineLayout, 0, m_descriptorSets[currentFrame], {});
+
+        commandBuffer.drawIndexed(static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+
+        commandBuffer.endRenderPass();
+
+        commandBuffer.end();
+
+    }
+
+    void VulkanWindow::drawFrame() {
+        auto resultFence = m_device.waitForFences(m_inFlightFences.at(currentFrame), VK_TRUE, UINT64_MAX);
+        if (resultFence != vk::Result::eSuccess)
+        {
+            std::cout << "syf" << std::endl;
+        }
+
+        auto [result, imageIndex] = m_device.acquireNextImageKHR(m_swapChain, UINT64_MAX, m_imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE);
+
+
+        updateUniformBuffer(currentFrame);
+
+        m_device.resetFences(m_inFlightFences.at(currentFrame));
+
+        m_commandBuffers[currentFrame].reset(vk::CommandBufferResetFlags{});
+        recordCommandBuffer(m_commandBuffers[currentFrame], imageIndex);
+
+        vk::PipelineStageFlags waitDestinationStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput);
+
+        vk::SubmitInfo submitInfo(
+            m_imageAvailableSemaphores[currentFrame],
+            waitDestinationStageMask,
+            m_commandBuffers[currentFrame],
+            m_renderFinishedSemaphores[currentFrame]
+        );
+
+
+        m_graphicsQueue.submit(submitInfo, m_inFlightFences[currentFrame]);
+
+        vk::PresentInfoKHR presentInfo(
+            m_renderFinishedSemaphores[currentFrame],
+            m_swapChain,
+            imageIndex
+        );
+
+        try
+        {
+            result = m_presentQueue.presentKHR(presentInfo);
+        }
+        catch (std::exception const& exc)
+        {
+            std::cerr << exc.what();
+            recreateSwapChain();
+        }
+
+        if (/*result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR ||*/ m_framebufferResized) {
+            m_framebufferResized = false;
+            recreateSwapChain();
+        }
+        else if (result != vk::Result::eSuccess) {
+            throw std::runtime_error("failed to present swap chain image!");
+        }
+
+        currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+        requestUpdate();
+    }
+
+    void VulkanWindow::resizeEvent(QResizeEvent*) {
+        //QWindow::resizeEvent( < unnamed >);
+    }
+
+    bool VulkanWindow::event(QEvent* ev) {
+        switch (ev->type()) {
+        case QEvent::UpdateRequest:
+            update();
+            break;
+
+        case QEvent::PlatformSurface:
+            break;
+
+        default:
+            break;
+        }
+
+        return QWindow::event(ev);
+    }
+
+    void VulkanWindow::exposeEvent(QExposeEvent*) {
+        requestUpdate();
+    }
+
+    void VulkanWindow::cleanupSwapChain() {
+        for (auto framebuffer : m_swapChainFramebuffers) {
+            m_device.destroy(framebuffer);
+        }
+
+        m_swapChainFramebuffers.clear();
+
+        m_device.destroy(m_pipelineCache);
+        m_device.destroy(m_graphicsPipeline);
+        m_device.destroy(m_pipelineLayout);
+        m_device.destroy(m_renderPass);
+
+
+        for (auto imageView : m_swapChainImageViews) {
+            m_device.destroy(imageView);
+        }
+        m_swapChainImageViews.clear();
+
+        m_device.destroy(m_swapChain);
+    }
+
+
+    void VulkanWindow::recreateSwapChain()
+    {
+        m_device.waitIdle();
+
+        cleanupSwapChain();
+
+        createSwapChain();
+        createImageViews();
+        createRenderPass();
+        createGraphicsPipeline();
+        createFramebuffers();
+        createCommandBuffers();
+    }
+
+
+    void VulkanWindow::update()
+    {
+        drawFrame();
+    }
 } //!namespace st::viewport

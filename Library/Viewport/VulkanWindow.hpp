@@ -11,6 +11,11 @@
 #include <string_view>
 #include <Geometry/Vertex.hpp>
 
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+
 namespace st::viewport 
 {
 	class VulkanWindow : public QWindow
@@ -23,6 +28,14 @@ namespace st::viewport
 
 		void initialize();
 		void releaseResources();
+
+	protected:
+		void exposeEvent(QExposeEvent*) override;
+		void resizeEvent(QResizeEvent*) override;
+		bool event(QEvent* ev) override;
+
+	private slots:
+		void update();
 
 	private:
 		QVulkanInstance inst;
@@ -58,6 +71,21 @@ namespace st::viewport
 		vk::Buffer m_indexBuffer;
 		vk::DeviceMemory m_indexBufferMemory;
 
+		std::vector<vk::Buffer> m_uniformBuffers;
+		std::vector<vk::DeviceMemory> m_uniformBuffersMemory;
+
+		vk::DescriptorPool m_descriptorPool;
+		std::vector<vk::DescriptorSet> m_descriptorSets;
+
+		std::vector<vk::CommandBuffer> m_commandBuffers;
+
+		std::vector<vk::Semaphore> m_imageAvailableSemaphores;
+		std::vector<vk::Semaphore> m_renderFinishedSemaphores;
+		std::vector<vk::Fence> m_inFlightFences;
+
+
+		const static uint32_t MAX_FRAMES_IN_FLIGHT = 2;
+
 		constexpr static std::array validationLayers = {
 			"VK_LAYER_KHRONOS_validation"
 		};
@@ -84,6 +112,23 @@ namespace st::viewport
 		0, 1, 2, 2, 3, 0
 		};
 
+
+		//struct UniformBufferObject {
+		//	geometry::mat4 model;
+		//	geometry::mat4 view;
+		//	geometry::mat4 proj;
+		//};
+
+		struct UniformBufferObject {
+			glm::mat4 model;
+			glm::mat4 view;
+			glm::mat4 proj;
+		};
+
+
+		uint32_t currentFrame = 0;
+		bool m_framebufferResized = false;
+
 		#ifdef NDEBUG
 				const bool enableValidationLayers = false;
 		#else
@@ -106,7 +151,6 @@ namespace st::viewport
 		void createGraphicsPipeline();
 		void createFramebuffers();
 		void createCommandPool();
-
 		void createVertexBuffer();
 		void createIndexBuffer();
 		void createUniformBuffers();
@@ -114,6 +158,15 @@ namespace st::viewport
 		void createDescriptorSets();
 		void createCommandBuffers();
 		void createSyncObjects();
+
+
+		void updateUniformBuffer(uint32_t currentImage);
+		void recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_t imageIndex);
+		void drawFrame();
+
+		/*Clean up*/
+		void cleanupSwapChain();
+		void recreateSwapChain();
 
 		/*Hellper function*/
 		bool isDeviceSuitable(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface);
