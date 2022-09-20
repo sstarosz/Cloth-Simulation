@@ -7,9 +7,13 @@ project(Cloth_Simulation
         LANGUAGES  CXX)
 
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake)
 
 #Project option
 option(Build_Unit_Test "Determine if build unit tests" ON)
+
+
+set(Compiler_Flags "/permissive-")
 
 
 
@@ -32,6 +36,9 @@ endif()
 add_subdirectory(Library)
 add_subdirectory(Application)
 add_subdirectory(Assets)
+#add_subdirectory(Docs)
+
+add_subdirectory(Benchmarks)
 if(Build_Unit_Test)
     add_subdirectory(Unittest)
 endif()

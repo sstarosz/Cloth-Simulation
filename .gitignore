@@ -7,3 +7,5 @@ CMakeSettings.json
 cmake-build-debug/
 #conan
 Conan/
+Docs/Doxygen/
+Docs/Sphinx/build/

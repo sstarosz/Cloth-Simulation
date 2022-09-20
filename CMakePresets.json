@@ -36,7 +36,8 @@
           "hostOS": [
             "Windows"
           ],
-          "intelliSenseMode": "windows-msvc-x64"
+          "intelliSenseMode": "windows-msvc-x64",
+          "enableMicrosoftCodeAnalysis": true
         }
       }
     },
