@@ -6,8 +6,10 @@
 trigger:
 - master
 
-pool:
-  vmImage: ubuntu-latest
+pool: 
+  name: Lapek
+  demands:
+  - Agent.Name -equals seba-HP-ZBook-15-G3
 
 steps:
 - script: echo Hello, world!
