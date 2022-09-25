@@ -37,7 +37,10 @@
             "Windows"
           ],
           "intelliSenseMode": "windows-msvc-x64",
-          "enableMicrosoftCodeAnalysis": true
+          "disableExternalAnalysis": true,
+          "enableMicrosoftCodeAnalysis": true,
+          "enableClangTidyCodeAnalysis": true,
+          "clangTidyChecks": "-header-filer=.* -checks=-*,clang-analyzer-*,-clang-analyzer-cplusplus*"
         }
       }
     },

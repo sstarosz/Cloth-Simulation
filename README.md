@@ -9,5 +9,8 @@ conan install .. -s build_type=Debug --build=missing
 
 
 
-# Assets folder
-Add download assets scirpt
+# To-Do
+- [ ] Add download assets script
+- [ ] Separate Gui from application (application should, could run without gui for testing purpose)
+- [ ] Add python script for generating library documentation
+

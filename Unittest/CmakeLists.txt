@@ -1,9 +1,0 @@
-include(CTest)
-enable_testing()
-
-find_package(GTest CONFIG REQUIRED)
-
-add_executable(MainTest TestMain.cpp)
-target_link_libraries(MainTest GTest::gtest GTest::gtest_main GTest::gmock)
-
-add_test(AllTestsApplication MainTest)

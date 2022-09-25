@@ -40,6 +40,6 @@ add_subdirectory(Assets)
 
 add_subdirectory(Benchmarks)
 if(Build_Unit_Test)
-    add_subdirectory(Unittest)
+    add_subdirectory(Unittests)
 endif()
 

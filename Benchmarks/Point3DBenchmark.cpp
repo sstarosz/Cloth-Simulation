@@ -1,8 +1,11 @@
 #include <benchmark/benchmark.h>
 #include <Geometry/Point3D.hpp>
+#include <iostream>
 
 static void ST_Point3DAdd(benchmark::State& state)
 {
+
+    std::cout << sizeof(st::geometry::Point3D) << std::endl;
 
     for (auto _ : state)
     {

@@ -20,3 +20,4 @@
                              ${CMAKE_BINARY_DIR}/Assets/Shaders/vert.spv
                      COMMENT "Copy vertex shader"
                      )
+

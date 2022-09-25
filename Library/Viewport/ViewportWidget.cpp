@@ -3,32 +3,28 @@
 #include <QTimer>
 #include <QVBoxLayout>
 
-
-namespace st::viewport
+namespace st::viewport {
+ViewportWidget::ViewportWidget()
 {
-	ViewportWidget::ViewportWidget()
-	{
 
-        auto* viewportLayout = new QVBoxLayout();
+    auto* viewportLayout = new QVBoxLayout();
 
-        
-        /* Viewport Layout*/
-        vulkan_window = new VulkanWindow;
-        auto* vulkanContainer = QWidget::createWindowContainer(vulkan_window);
-        vulkanContainer->setMinimumSize(800, 500);
-        vulkanContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    /* Viewport Layout*/
+    vulkan_window = new VulkanWindow;
+    auto* vulkanContainer = QWidget::createWindowContainer(vulkan_window);
+    vulkanContainer->setMinimumSize(800, 500);
+    vulkanContainer->setSizePolicy(QSizePolicy::Expanding,
+        QSizePolicy::Expanding);
 
-        viewportLayout->addWidget(vulkanContainer);
+    viewportLayout->addWidget(vulkanContainer);
 
-        setLayout(viewportLayout);
+    setLayout(viewportLayout);
 
-        QTimer::singleShot(2, this, &ViewportWidget::init);
-	}
-
-	void ViewportWidget::init()
-	{
-		vulkan_window->initialize();
-	}
+    QTimer::singleShot(2, this, &ViewportWidget::init);
 }
 
-
+void ViewportWidget::init()
+{
+    vulkan_window->initialize();
+}
+} // namespace st::viewport
