@@ -7,11 +7,14 @@ project(Geometry
 
 set(SOURCES
 	"Vertex.cpp"
-	"Point3D.cpp")
+	"Point3D.cpp"
+	"Object3D.cpp")
 
 set(HEADERS
 	"Vertex.hpp"
-	"Point3D.hpp")
+	"Point3D.hpp"
+	"Object3D.hpp"
+)
 
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})

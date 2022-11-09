@@ -10,6 +10,7 @@
 #include <array>
 #include <string_view>
 #include <Geometry/Vertex.hpp>
+#include <Geometry/Object3D.hpp>
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
@@ -83,6 +84,14 @@ namespace st::viewport
 		std::vector<vk::Semaphore> m_renderFinishedSemaphores;
 		std::vector<vk::Fence> m_inFlightFences;
 
+		vk::Image m_textureImage;
+        vk::DeviceMemory m_textureImageMemory;
+        vk::ImageView m_textureImageView;
+        vk::Sampler m_textureSampler;
+
+		vk::Image m_depthImage;
+        vk::DeviceMemory m_depthImageMemory;
+        vk::ImageView m_depthImageView;
 
 		const static uint32_t MAX_FRAMES_IN_FLIGHT = 2;
 
@@ -101,17 +110,25 @@ namespace st::viewport
 
 
 		/*To Delete*/
+		//TODO read this from file
 		const std::vector<geometry::Vertex> vertices = {
-		{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-		{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-		{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-		{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+			{ { -0.5f, -0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } },
+			{ { 0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } },
+			{ { 0.5f, 0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f } },
+			{ { -0.5f, 0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },
+
+			{ { -0.5f, -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } },
+			{ { 0.5f, -0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } },
+			{ { 0.5f, 0.5f, -0.5f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f } },
+			{ { -0.5f, 0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } }
 		};
 
-		const std::vector<uint16_t> indices = {
-		0, 1, 2, 2, 3, 0
+		const std::vector<uint16_t> m_indices = {
+            0, 1, 2, 2, 3, 0,
+            4, 5, 6, 6, 7, 4
 		};
 
+		geometry::Object3D m_object;
 
 		//struct UniformBufferObject {
 		//	geometry::mat4 model;
@@ -139,25 +156,31 @@ namespace st::viewport
 		/*Init*/
 		void createInstance();
 		bool checkValidationLayerSupport();
-		std::vector<const char*> getRequiredExtensions();
-		void setupDebugMessenger();
-		void createSurface();
-		void pickPhysicalDevice();
-		void createLogicalDevice();
-		void createSwapChain();
-		void createImageViews();
-		void createRenderPass();
-		void createDescriptorSetLayout();
-		void createGraphicsPipeline();
-		void createFramebuffers();
-		void createCommandPool();
-		void createVertexBuffer();
-		void createIndexBuffer();
-		void createUniformBuffers();
-		void createDescriptorPool();
-		void createDescriptorSets();
-		void createCommandBuffers();
-		void createSyncObjects();
+		std::vector<const char*> getRequiredExtensions() const;
+        void setupDebugMessenger();
+        void createSurface();
+        void pickPhysicalDevice();
+        void createLogicalDevice();
+        void createSwapChain();
+        void createImageViews();
+        void createRenderPass();
+        void createDescriptorSetLayout();
+        void createGraphicsPipeline();
+        void createCommandPool();
+        void createDepthResources();
+        void createFramebuffers();
+        void createTextureImage();
+        void createTextureImageView();
+        void createTextureSampler();
+        void loadModel();
+        void createVertexBuffer();
+        void createIndexBuffer();
+        void createUniformBuffers();
+        void createDescriptorPool();
+        void createDescriptorSets();
+        void createCommandBuffers();
+        void createSyncObjects();
+
 
 
 		void updateUniformBuffer(uint32_t currentImage);
@@ -177,8 +200,22 @@ namespace st::viewport
 		uint32_t findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties);
 		void createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& buffer, vk::DeviceMemory& bufferMemory);
 		void copyBuffer(vk::Buffer srcBuffer, vk::Buffer dstBuffer, vk::DeviceSize size);
+        void createImage(uint32_t width, uint32_t height, vk::Format format,
+						vk::ImageTiling tiling, vk::ImageUsageFlags usage,
+						vk::MemoryPropertyFlags properties,
+						vk::Image& image, vk::DeviceMemory& imageMemory);
+		void transitionImageLayout(vk::Image image, vk::Format format, vk::ImageLayout oldLayout, vk::ImageLayout newLayout);
+        void copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height);
+        vk::ImageView createImageView(vk::Image image, vk::Format format, vk::ImageAspectFlags aspectFlags);
+        vk::Format findDepthFormat();
+		vk::Format findSupportedFormat(const std::vector<vk::Format>& candidates,
+										vk::ImageTiling tiling,
+										vk::FormatFeatureFlags features);
+	
+		vk::CommandBuffer beginSingleTimeCommands();
+        void endSingleTimeCommands(vk::CommandBuffer commandBuffer);
 
-	};
+};
 
 } //!namespace st::viewport
 #endif // !VULKANWINDOW_HPP

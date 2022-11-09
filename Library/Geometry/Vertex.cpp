@@ -17,20 +17,26 @@ namespace st::geometry
     }
 
 
-    std::array<vk::VertexInputAttributeDescription, 2> Vertex::getAttributeDescriptions()
+    std::array<vk::VertexInputAttributeDescription, 3> Vertex::getAttributeDescriptions()
     {
-        std::array<vk::VertexInputAttributeDescription, 2> attributeDescriptions{
+        std::array<vk::VertexInputAttributeDescription, 3> attributeDescriptions{
             vk::VertexInputAttributeDescription{
                 0,
                 0,
-                vk::Format::eR32G32Sfloat,
-                static_cast<uint32_t>(offsetof(Vertex, pos))
+                vk::Format::eR32G32B32Sfloat,
+                static_cast<uint32_t>(offsetof(Vertex, m_pos))
             },
             vk::VertexInputAttributeDescription{
-                    1,
-                    0,
-                    vk::Format::eR32G32B32Sfloat,
-                    static_cast<uint32_t>(offsetof(Vertex, color))
+                1,
+                0,
+                vk::Format::eR32G32B32Sfloat,
+                static_cast<uint32_t>(offsetof(Vertex, m_color))
+            },
+            vk::VertexInputAttributeDescription{
+                2,
+                0,
+                vk::Format::eR32G32Sfloat,
+                static_cast<uint32_t>(offsetof(Vertex, m_texCoord))
             }
         };
 

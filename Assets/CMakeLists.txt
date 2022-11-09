@@ -21,3 +21,9 @@
                      COMMENT "Copy vertex shader"
                      )
 
+ add_custom_command(TARGET Copy_Assets_File POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy
+                             ${CMAKE_SOURCE_DIR}/Assets/Textures/texture.jpg
+                             ${CMAKE_BINARY_DIR}/Assets/Textures/texture.jpg
+                     COMMENT "Copy textire shader"
+                     )
