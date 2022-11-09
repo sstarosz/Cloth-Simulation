@@ -1,6 +1,6 @@
-project(MainWindow
+project(GUI
 		VERSION 0.0.1
-		DESCRIPTION "Main Window of Aplication"
+		DESCRIPTION "Graphical User Interface of the application"
 		LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
@@ -8,12 +8,23 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 set(SOURCES
-	"MainWindows.cpp"
-	"NavigationBar.cpp")
+	"SettingsView.cpp"
+	"GuiElements/Slider.cpp"
+	"GuiElements/WidgetBox.cpp"
+	"GuiElements/Slider.cpp")
 
 set(HEADERS
-	"MainWindows.hpp"
-	"NavigationBar.hpp")
+	"SettingsView.hpp"
+	"GuiElements/Slider.hpp"
+	"GuiElements/WidgetBox.hpp"
+	"GuiElements/Slider.hpp")
+
+
+#TODO
+#GUI Elements
+# [o]- slider (improve)
+# [ ]- conteiner for other widgets (tree like)
+# [ ]- vertical and horizontal line
 
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
@@ -28,6 +39,4 @@ target_link_libraries(${PROJECT_NAME}
 						PRIVATE Qt6::Core
 								Qt6::Gui
 								Qt6::Widgets
-								ViewPort3D
-								GUI
-					)
+)

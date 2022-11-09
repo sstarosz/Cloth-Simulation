@@ -15,7 +15,7 @@
 #include <QAction>
 
 #include <Viewport/ViewportWidget.hpp>
-
+#include <GUI/SettingsView.hpp>
 
 namespace st
 {
@@ -23,6 +23,7 @@ namespace st
 MainWindow::MainWindow()
 {
     //Setup GUI
+    p_mSettingsView = new ui::gui::SettingsView();
     //Setup ToolBar
     //Setup StatusBar
     //Setup Main Widget/Viewport 3D
@@ -53,9 +54,18 @@ void MainWindow::createMenuBar()
 
     m_fileMenu = menuBar()->addMenu("&File");
     auto* newScene = new QAction("&New Scene", this);
+
+
+    /*Settings*/
+    auto* settings = new QAction("&Settings", this);
+    settings->setStatusTip("Open Settings Menu");
+    connect(settings, &QAction::triggered, this, &MainWindow::openSettingsView);
+
+
     auto* quit = new QAction("&Quit", this);
 
     m_fileMenu->addAction(newScene);
+    m_fileMenu->addAction(settings);
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(quit);
 
@@ -78,6 +88,12 @@ void MainWindow::createMainWindow()
 
     viewportWidget = new viewport::ViewportWidget();
     setCentralWidget(viewportWidget);
+}
+
+
+void MainWindow::openSettingsView()
+{
+    p_mSettingsView->show();
 }
 
 }

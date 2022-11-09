@@ -17,6 +17,10 @@ namespace viewport
 	class ViewportWidget;
 }
 
+namespace ui::gui {
+	class SettingsView;
+}
+
 
 class MainWindow : public QMainWindow
 {
@@ -27,6 +31,7 @@ private:
 	QToolBar* toolBar;
 	NavigationBar* navigationBar;
 	viewport::ViewportWidget* viewportWidget;
+	ui::gui::SettingsView* p_mSettingsView;
 
 	QMenu* m_fileMenu;
 	QMenu* m_helpMenu;
@@ -36,6 +41,11 @@ private:
 	void createMenuBar();
 	void createStatusBar();
 	void createMainWindow();
+
+
+private slots:
+	void openSettingsView();
+
 };
 
 }

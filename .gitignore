@@ -9,3 +9,5 @@ cmake-build-debug/
 Conan/
 Docs/Doxygen/
 Docs/Sphinx/build/
+/Assets/Models/HighPolyMesh.mtl
+/Assets/Models/HighPolyMesh.obj
