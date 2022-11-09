@@ -14,7 +14,7 @@ option(Build_Unit_Test "Determine if build unit tests" ON)
 
 
 set(Compiler_Flags "/permissive-")
-
+set(USE_FOLDERS 1)
 
 
 #Project Dependicies

@@ -1,19 +1,15 @@
-project(MainWindow
+project(Core
 		VERSION 0.0.1
-		DESCRIPTION "Main Window of Aplication"
+		DESCRIPTION "Core part of the application"
 		LANGUAGES CXX)
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+
 
 set(SOURCES
-	"MainWindows.cpp"
-	"NavigationBar.cpp")
+	"SceneStatus.cpp")
 
 set(HEADERS
-	"MainWindows.hpp"
-	"NavigationBar.hpp")
+	"SceneStatus.hpp")
 
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
@@ -24,10 +20,8 @@ target_include_directories(${PROJECT_NAME} INTERFACE ${PARENT_DIR})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 target_compile_options(${PROJECT_NAME} PRIVATE ${Compiler_Flags})
 
-target_link_libraries(${PROJECT_NAME} 
-						PRIVATE Qt6::Core
-								Qt6::Gui
-								Qt6::Widgets
-								ViewPort3D
-								GUI
-					)
+
+target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan)
+
+
+#generate_documentation(TargetName)
