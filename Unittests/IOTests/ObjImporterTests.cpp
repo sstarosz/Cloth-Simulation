@@ -25,11 +25,6 @@ TEST_F(ObjImporterTests, ReadObjFile)
     objImporter.printData();
 
 
-
-
-
-
-
     auto end = std::chrono::steady_clock::now();
     std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us"<< "\n";
     std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms" << "\n";

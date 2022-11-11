@@ -9,43 +9,40 @@ class NavigationBar;
 class QMenu;
 
 
-namespace st
-{
+namespace st {
 
-namespace viewport
-{
-	class ViewportWidget;
+namespace viewport {
+class ViewportWidget;
 }
 
 namespace ui::gui {
-	class SettingsView;
+class SettingsView;
 }
 
 
 class MainWindow : public QMainWindow
 {
-public:
-	MainWindow();
+	public:
+		MainWindow();
 
-private:
-	QToolBar* toolBar;
-	NavigationBar* navigationBar;
-	viewport::ViewportWidget* viewportWidget;
-	ui::gui::SettingsView* p_mSettingsView;
+	private:
+		QToolBar* toolBar;
+		NavigationBar* navigationBar;
+		viewport::ViewportWidget* viewportWidget;
+		ui::gui::SettingsView* p_mSettingsView;
 
-	QMenu* m_fileMenu;
-	QMenu* m_helpMenu;
+		QMenu* m_fileMenu;
+		QMenu* m_helpMenu;
 
-	void setupToolBar();
+		void setupToolBar();
 
-	void createMenuBar();
-	void createStatusBar();
-	void createMainWindow();
+		void createMenuBar();
+		void createStatusBar();
+		void createMainWindow();
 
 
-private slots:
-	void openSettingsView();
-
+	private slots:
+		void openSettingsView();
 };
 
 }

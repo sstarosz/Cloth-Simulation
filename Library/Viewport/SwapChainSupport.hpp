@@ -1,5 +1,5 @@
-#ifndef SWAPCHAINSUPPORT_HPP
-#define SWAPCHAINSUPPORT_HPP
+#ifndef VIEWPORT_SWAPCHAINSUPPORT_HPP
+#define VIEWPORT_SWAPCHAINSUPPORT_HPP
 
 
 #include <vector>
@@ -19,4 +19,4 @@ namespace st::viewport
 
 };
 
-#endif // SWAPCHAINSUPPORT_HPP
+#endif // VIEWPORT_SWAPCHAINSUPPORT_HPP

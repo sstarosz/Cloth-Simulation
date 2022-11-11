@@ -3,12 +3,12 @@
 #include <QPainter>
 
 NavigationBar::NavigationBar():
- QListView()
+QListView()
 {
 }
 
 NavigationBar::NavigationBar(QWidget* parent):
- QListView(parent)
+QListView(parent)
 {
 	delegate = new NavigationBarItemDelegate(this);
 
@@ -16,20 +16,21 @@ NavigationBar::NavigationBar(QWidget* parent):
 	//setItemDelegate(delegate);
 }
 
-NavigationBarItemDelegate::NavigationBarItemDelegate(QObject* parent)
-: QStyledItemDelegate(parent)
+NavigationBarItemDelegate::NavigationBarItemDelegate(QObject* parent):
+QStyledItemDelegate(parent)
 {
-
 }
 
-void NavigationBarItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+void NavigationBarItemDelegate::paint(QPainter* painter,
+										const QStyleOptionViewItem& option,
+										const QModelIndex& index) const
 {
 	QStyleOptionViewItem opt(option);
 	initStyleOption(&opt, index);
 
 	const QPalette& palette(opt.palette);
 	const QRect& rect(opt.rect);
-	const QRect& contentRect(rect.adjusted(100,50,100,50));
+	const QRect& contentRect(rect.adjusted(100, 50, 100, 50));
 	const bool lastIndex = (index.model()->rowCount() - 1) == index.row();
 	const bool hasIcon = !opt.icon.isNull();
 	const int bottomEdge = rect.bottom();
@@ -43,15 +44,14 @@ void NavigationBarItemDelegate::paint(QPainter* painter, const QStyleOptionViewI
 	painter->setFont(opt.font);
 
 	// Draw background
-	painter->fillRect(rect, opt.state & QStyle::State_Selected ?
-		palette.highlight().color() :
-		palette.light().color());
+	painter->fillRect(
+		rect,
+		opt.state & QStyle::State_Selected ? palette.highlight().color()
+										   : palette.light().color());
 
 	// Draw bottom line
-	painter->setPen(lastIndex ? palette.dark().color()
-		: palette.mid().color());
-	painter->drawLine(lastIndex ? rect.left() : 10,
-		bottomEdge, rect.right(), bottomEdge);
+	painter->setPen(lastIndex ? palette.dark().color() : palette.mid().color());
+	painter->drawLine(lastIndex ? rect.left() : 10, bottomEdge, rect.right(), bottomEdge);
 
 	painter->setFont(f);
 	painter->setPen(palette.text().color());
@@ -62,7 +62,8 @@ void NavigationBarItemDelegate::paint(QPainter* painter, const QStyleOptionViewI
 	painter->restore();
 }
 
-QSize NavigationBarItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+QSize NavigationBarItemDelegate::sizeHint(const QStyleOptionViewItem& option,
+										  const QModelIndex& index) const
 {
-	return QSize(100,100);
+	return QSize(100, 100);
 }

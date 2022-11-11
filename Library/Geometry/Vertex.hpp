@@ -1,5 +1,5 @@
-#ifndef VERTEX_HPP
-#define VERTEX_HPP
+#ifndef GEOMETRY_VERTEX_HPP
+#define GEOMETRY_VERTEX_HPP
 
 #include "vulkan/vulkan.hpp"
 #include <array>
@@ -50,4 +50,4 @@ namespace st::geometry
 
 
 
-#endif // !NAVIGATIONBAR_HPP
+#endif // !GEOMETRY_VERTEX_HPP

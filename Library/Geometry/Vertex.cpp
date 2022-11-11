@@ -1,7 +1,6 @@
 #include "Vertex.hpp"
 
 
-
 namespace st::geometry
 {
 
