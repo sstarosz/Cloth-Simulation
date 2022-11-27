@@ -12,6 +12,7 @@ namespace st::io
 class ImporterProxy
 {
 
+public:
   void readFile(const std::filesystem::path& pathToObjFile);
 
 
@@ -19,6 +20,7 @@ class ImporterProxy
   std::vector<geometry::Vertex> getVertices();
   std::vector<geometry::Indices> getIndices();
 
+private:
 
   //TODO
   //Get Shape

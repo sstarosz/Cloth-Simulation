@@ -10,6 +10,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#include "IO/ImporterProxy.hpp"
 
 PFN_vkCreateDebugUtilsMessengerEXT pfnVkCreateDebugUtilsMessengerEXT;
 PFN_vkDestroyDebugUtilsMessengerEXT pfnVkDestroyDebugUtilsMessengerEXT;
@@ -53,6 +54,7 @@ void VulkanWindow::initialize()
     createTextureImage();
     createTextureImageView();
     createTextureSampler();
+	loadModel();
     createVertexBuffer();
     createIndexBuffer();
     createUniformBuffers();
@@ -70,7 +72,7 @@ VkBool32 VulkanWindow::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT mess
                                     VkDebugUtilsMessageTypeFlagsEXT messageType,
                                     const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
 {
-    std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+	std::cerr << "validation layer: " << pCallbackData->pMessage << "\n\n";
 
     return VK_FALSE;
 }
@@ -373,16 +375,49 @@ void VulkanWindow::createRenderPass()
         vk::ImageLayout::eUndefined,
         vk::ImageLayout::ePresentSrcKHR);
 
+    vk::AttachmentDescription depthAttachment {
+		vk::AttachmentDescriptionFlags(),
+		findDepthFormat(),
+		vk::SampleCountFlagBits::e1,
+		vk::AttachmentLoadOp::eClear,
+		vk::AttachmentStoreOp::eDontCare,
+		vk::AttachmentLoadOp::eDontCare,
+		vk::AttachmentStoreOp::eDontCare,
+		vk::ImageLayout::eUndefined,
+		vk::ImageLayout::eDepthStencilAttachmentOptimal
+	};
+
+
     vk::AttachmentReference colorAttachmentRef(0, vk::ImageLayout::eColorAttachmentOptimal);
+	vk::AttachmentReference depthAttachmentRef(1, vk::ImageLayout::eDepthStencilAttachmentOptimal);
 
-    vk::SubpassDescription subpass(vk::SubpassDescriptionFlags(), vk::PipelineBindPoint::eGraphics, {},
-        colorAttachmentRef, {});
 
-    vk::SubpassDependency dependency(VK_SUBPASS_EXTERNAL, 0, vk::PipelineStageFlagBits::eColorAttachmentOutput,
-        vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::AccessFlagBits::eNoneKHR,
-        vk::AccessFlagBits::eColorAttachmentWrite);
+    vk::SubpassDescription subpass(
+        vk::SubpassDescriptionFlags(),
+        vk::PipelineBindPoint::eGraphics,
+        {},
+		colorAttachmentRef,
+        {},
+        &depthAttachmentRef
+	);
 
-    vk::RenderPassCreateInfo renderPassInfo(vk::RenderPassCreateFlags(), colorAttachment, subpass, dependency);
+    vk::SubpassDependency dependency(
+        VK_SUBPASS_EXTERNAL,
+        0,
+		vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+		vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+        vk::AccessFlagBits::eNoneKHR,
+        vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
+
+
+
+    std::array<vk::AttachmentDescription, 2> attachments = {colorAttachment, depthAttachment};
+
+    vk::RenderPassCreateInfo renderPassInfo(
+        vk::RenderPassCreateFlags(),
+        attachments,
+        subpass,
+        dependency);
 
     m_renderPass = m_device.createRenderPass(renderPassInfo);
 }
@@ -436,7 +471,8 @@ void VulkanWindow::createGraphicsPipeline()
     vk::PipelineVertexInputStateCreateInfo vertexInputInfo(
         {},
         bindingDescription,
-        attributeDescriptions);
+        attributeDescriptions
+    );
 
     vk::PipelineInputAssemblyStateCreateInfo inputAssembly(
         vk::PipelineInputAssemblyStateCreateFlags {},
@@ -568,7 +604,9 @@ void VulkanWindow::createCommandPool()
 
 void VulkanWindow::loadModel()
 {
-
+	io::ImporterProxy importerProxy;
+	vertices = importerProxy.getVertices();
+    m_indices = importerProxy.getIndices();
     //TODO load to vertices
     // and load to m_indices
 
@@ -743,9 +781,9 @@ void VulkanWindow::updateUniformBuffer(uint32_t currentImage)
     auto currentTime = std::chrono::high_resolution_clock::now();
     float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
-    UniformBufferObject ubo {};
+    UniformBufferObject ubo{};
     ubo.model = glm::rotate(glm::mat4(1.0F), time * glm::radians(90.0F), glm::vec3(0.0F, 0.0F, 1.0F));
-    ubo.view = glm::lookAt(glm::vec3(2.0F, 2.0F, 2.0F), glm::vec3(0.0F, 0.0F, 0.0F), glm::vec3(0.0F, 0.0F, 1.0F));
+    ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     ubo.proj = glm::perspective(glm::radians(45.0F), m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1F, 10.0F);
     ubo.proj[1][1] *= -1;
 
@@ -759,8 +797,13 @@ void VulkanWindow::recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_
 
     commandBuffer.begin(vk::CommandBufferBeginInfo {});
 
-    vk::ClearValue clearValues;
-    clearValues.color = vk::ClearColorValue(std::array<float, 4>({ { 0.0F, 0.0F, 0.0F, 1.0F } }));
+    vk::ClearColorValue colorClean{ std::array<float, 4>{0.0F, 0.0F, 0.0F, 1.0F} };
+    vk::ClearDepthStencilValue depthClean{ 1.0F, 0 };
+
+    std::array<vk::ClearValue, 2> clearValues;
+	clearValues[0].setColor(colorClean);
+    clearValues[1].setDepthStencil(depthClean);
+
 
     vk::RenderPassBeginInfo renderPassInfo(m_renderPass, m_swapChainFramebuffers[imageIndex],
         vk::Rect2D((0, 0), m_swapChainExtent), clearValues);
@@ -772,7 +815,7 @@ void VulkanWindow::recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_
     vk::Buffer vertexBuffers[] = { m_vertexBuffer };
     vk::DeviceSize offsets[] = { 0 };
     commandBuffer.bindVertexBuffers(0, 1, vertexBuffers, offsets);
-    commandBuffer.bindIndexBuffer(m_indexBuffer, 0, vk::IndexType::eUint16);
+    commandBuffer.bindIndexBuffer(m_indexBuffer, 0, vk::IndexType::eUint32);
 
     commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, m_pipelineLayout, 0,
         m_descriptorSets[currentFrame], {});
@@ -883,10 +926,8 @@ void VulkanWindow::recreateSwapChain()
 
     createSwapChain();
     createImageViews();
-    createRenderPass();
-    createGraphicsPipeline();
+    createDepthResources();
     createFramebuffers();
-    createCommandBuffers();
 }
 
 void VulkanWindow::update()
@@ -946,7 +987,7 @@ void VulkanWindow::createTextureImage()
     int texHeight = 0;
     int texChannels = 0;
 
-    stbi_uc* pixels = stbi_load("../Assets/Textures/texture.jpg", &texWidth,
+    stbi_uc* pixels = stbi_load("../Assets/Textures/texture2.jpg", &texWidth,
         &texHeight, &texChannels, STBI_rgb_alpha);
 
     vk::DeviceSize imageSize = texWidth * texHeight * 4;
@@ -1208,7 +1249,7 @@ void VulkanWindow::createDepthResources()
 
     m_depthImageView = createImageView(m_depthImage, depthFormat, vk::ImageAspectFlagBits::eDepth);
 
-    transitionImageLayout(m_depthImage, depthFormat, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal);
+    //transitionImageLayout(m_depthImage, depthFormat, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal);
 }
 
 vk::Format VulkanWindow::findSupportedFormat(const std::vector<vk::Format>& candidates, vk::ImageTiling tiling,

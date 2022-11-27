@@ -7,6 +7,8 @@
 #include <string_view>
 #include <unordered_map>
 #include <unordered_set>
+#include <charconv>
+#include <cassert>
 
 namespace st::io {
 
@@ -90,7 +92,7 @@ void ObjImporter::readFromFile(const std::filesystem::path& pathToObjFile)
     }
     else if (operatior == "f") // Face definition
     {
-      {
+
         // TODO add option for skiping texture cord or normal
 
         std::string face;
@@ -98,18 +100,19 @@ void ObjImporter::readFromFile(const std::filesystem::path& pathToObjFile)
         uint32_t geoId { 0 };
         uint32_t texId { 0 };
         uint32_t norId { 0 };
-        char separator { ' ' };
+        char separator { '/' };
         faceID faceIndexes;
         for (const auto& eleOfFace : std::views::split(face, ' '))
         {
           std::string vertex(eleOfFace.begin(), eleOfFace.end());
           std::stringstream localStream(vertex);
           localStream >> std::ws >> geoId >> separator >> texId >> separator >> norId;
-          faceIndexes.emplace_back(geoId, texId, norId);
+
+          //Obj file format index from 1 so we need to substrat 1 to indexing from 0
+          faceIndexes.emplace_back(geoId - 1, texId - 1, norId - 1);
         }
         m_faces.push_back(faceIndexes);
         // std::cout << face << "\n";
-      }
     }
 
     objFile.close();
@@ -154,45 +157,61 @@ void ObjImporter::printData() const
   }
 }
 
-std::vector<Vertex> ObjImporter::getGeometry() const
+std::vector<Vertex> ObjImporter::getGeometry()
 {
+    std::vector<Vertex> m_geometry;
 
-  //std::unordered_set<Vertex> test;
-  //std::vector<uint32_t> m_indices;
-  //// m_indices
 
-  //// if face size >= 4 -> triangulate
-  //// else just create vertex
-  //for (const auto& face : m_faces) {
-  //    if (face.size() == 4) {
-  //        for (const auto& faceId : face) {
-  //            test.insert(
-  //                { { m_geoVertices[faceId.m_geoId].x, m_geoVertices[faceId.m_geoId].y, m_geoVertices[faceId.m_geoId].z },
-  //                    { 1.0F, 1.0F, 1.0F },
-  //                    { m_textCord[faceId.m_texId].u, m_textCord[faceId.m_texId].v },
-  //                    { m_normalVertices[faceId.m_norId].x, m_normalVertices[faceId.m_norId].y, m_normalVertices[faceId.m_norId].z } });
-  //        }
+    // for all faces
+    for (uint64_t currentIndices = 0; const auto& face : m_faces)
+    {
+        for (const auto& vertex: face)
+        {
+            m_geometry.emplace_back(
+                Vertex(
+                m_geoVertices.at(vertex.m_geoId),
+                m_textCord.at(vertex.m_texId),
+                { 1.0f, 0.0f, 0.0f },
+                m_normalVertices.at(vertex.m_norId))
+            );
+        }
+        
 
-  //        m_indices.emplace_back(face.at(0));
-  //        m_indices.emplace_back(face.at(1));
-  //        m_indices.emplace_back(face.at(3));
-  //        m_indices.emplace_back(face.at(1));
-  //        m_indices.emplace_back(face.at(2));
-  //        m_indices.emplace_back(face.at(3));
+        if (face.size() == 4) //When face containe 4 vertices 
+        {
+            //Triangle orientation
+            //For ccw = 0  cc = 1
+            uint64_t offset = 0;
 
-  //    } else {
-  //        m_indices.emplace_back(face.at(0));
-  //        m_indices.emplace_back(face.at(1));
-  //        m_indices.emplace_back(face.at(3));
-  //    }
-  //}
+            //First triangle
+            m_indices.emplace_back(currentIndices);
+            m_indices.emplace_back(currentIndices + 1 + offset);
+            m_indices.emplace_back(currentIndices + 2 - offset);
 
-  return {};
+            //Second triangle
+            m_indices.emplace_back(currentIndices);
+            m_indices.emplace_back(currentIndices + 2 + offset);
+            m_indices.emplace_back(currentIndices + 3 - offset);
+
+            currentIndices += 4;
+        }
+
+    }
+
+  return m_geometry;
 }
 
 std::vector<uint32_t> st::io::ObjImporter::getIndicesVector() const
 {
   return m_indices;
+}
+
+constexpr void ObjImporter::parseVertexLine(const std::string_view& vertexLine)
+{
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
+
 }
 
 }

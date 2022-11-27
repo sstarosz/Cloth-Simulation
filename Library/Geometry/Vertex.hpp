@@ -37,12 +37,14 @@ namespace st::geometry
     struct Vertex
     {
         vec3 m_pos;
+		vec2 m_texCoord;
         vec3 m_color;
-        vec2 m_texCoord;
+		vec3 m_normal;
+
 
         static vk::VertexInputBindingDescription getBindingDescription();
 
-        static std::array<vk::VertexInputAttributeDescription, 3> getAttributeDescriptions();
+        static std::array<vk::VertexInputAttributeDescription, 4> getAttributeDescriptions();
     };
 
     using Indices = uint32_t;

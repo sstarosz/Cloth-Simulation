@@ -2,6 +2,7 @@
 #define IO_OBJIMPORTER_HPP
 
 #include <filesystem>
+#include <string_view>
 
 namespace st::io {
 
@@ -10,12 +11,16 @@ struct Vec3
   float x;
   float y;
   float z;
+
+  auto operator<=>(const Vec3&) const = default;
 };
 
 struct Vec2
 {
   float u;
   float v;
+
+  auto operator<=>(const Vec2&) const = default;
 };
 
 struct Vertex
@@ -24,7 +29,11 @@ struct Vertex
   Vec2 textureCord;
   Vec3 color;
   Vec3 normal;
+
+  auto operator<=>(const Vertex&) const = default;
 };
+
+
 
 class ObjImporter
 {
@@ -40,7 +49,7 @@ class ObjImporter
 
   void printData() const;
 
-  std::vector<Vertex> getGeometry() const;
+  std::vector<Vertex> getGeometry();
 
   std::vector<uint32_t> getIndicesVector() const;
 
@@ -48,6 +57,12 @@ class ObjImporter
   std::vector<Vec3> m_geoVertices;
   std::vector<Vec2> m_textCord;
   std::vector<Vec3> m_normalVertices;
+
+
+  constexpr void parseVertexLine(const std::string_view& vertexLine);
+  constexpr void parseTextureCordinateLine();
+  constexpr void parseVertexNormalLine();
+
 
 
   struct vertexId
