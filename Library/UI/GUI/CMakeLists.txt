@@ -9,12 +9,14 @@ set(CMAKE_AUTOUIC ON)
 
 set(SOURCES
 	"SettingsView.cpp"
+	"OutlinerView.cpp"
 	"GuiElements/Slider.cpp"
 	"GuiElements/WidgetBox.cpp"
 	"GuiElements/Slider.cpp")
 
 set(HEADERS
 	"SettingsView.hpp"
+	"OutlinerView.hpp"
 	"GuiElements/Slider.hpp"
 	"GuiElements/WidgetBox.hpp"
 	"GuiElements/Slider.hpp")

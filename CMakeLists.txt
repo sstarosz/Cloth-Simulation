@@ -14,7 +14,7 @@ option(Build_Unit_Test "Determine if build unit tests" ON)
 
 
 set(Compiler_Flags "/permissive-")
-set(USE_FOLDERS 1)
+set(USE_FOLDERS True)
 
 
 #Project Dependicies
@@ -27,10 +27,12 @@ find_package(Qt6 CONFIG REQUIRED
         )
 
 
+
 #Windeployqt for coping qt dll liblary on windows
 if(MSVC)
     find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS ${QT6_INSTALL_PREFIX})
 endif()
+
 
 #Include project structures
 add_subdirectory(Library)

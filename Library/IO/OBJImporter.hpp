@@ -49,7 +49,7 @@ class ObjImporter
 
   void printData() const;
 
-  std::vector<Vertex> getGeometry();
+  std::vector<Vertex> getGeometry() const;
 
   std::vector<uint32_t> getIndicesVector() const;
 
@@ -58,6 +58,8 @@ class ObjImporter
   std::vector<Vec2> m_textCord;
   std::vector<Vec3> m_normalVertices;
 
+
+  void parseObjFile();
 
   constexpr void parseVertexLine(const std::string_view& vertexLine);
   constexpr void parseTextureCordinateLine();
@@ -77,6 +79,8 @@ class ObjImporter
 
   std::vector<faceID> m_faces; //-> object
   std::vector<uint32_t> m_indices;
+  std::vector<Vertex> m_geometry;
+
 };
 
 }

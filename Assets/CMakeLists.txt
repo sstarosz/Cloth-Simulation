@@ -10,6 +10,13 @@
 
  add_custom_command(TARGET Copy_Assets_File POST_BUILD
                      COMMAND ${CMAKE_COMMAND} -E copy
+                             ${CMAKE_SOURCE_DIR}/Assets/Models/Cube.obj
+                             ${CMAKE_BINARY_DIR}/Assets/Models/Cube.obj
+                     COMMENT "Copy Models"
+                     )
+
+ add_custom_command(TARGET Copy_Assets_File POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy
                              ${CMAKE_SOURCE_DIR}/Assets/Shaders/frag.spv
                              ${CMAKE_BINARY_DIR}/Assets/Shaders/frag.spv
                      COMMENT "Copy fragment shader"
@@ -26,5 +33,5 @@
                      COMMAND ${CMAKE_COMMAND} -E copy
                              ${CMAKE_SOURCE_DIR}/Assets/Textures/texture2.jpg
                              ${CMAKE_BINARY_DIR}/Assets/Textures/texture2.jpg
-                     COMMENT "Copy textire shader"
+                     COMMENT "Copy texture"
                      )

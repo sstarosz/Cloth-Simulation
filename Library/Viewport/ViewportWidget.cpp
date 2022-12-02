@@ -27,4 +27,9 @@ void ViewportWidget::init()
 {
     vulkan_window->initialize();
 }
+void ViewportWidget::closeEvent(QCloseEvent* event)
+{
+    vulkan_window->releaseResources();
+}
+
 } // namespace st::viewport

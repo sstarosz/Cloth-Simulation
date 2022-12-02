@@ -23,7 +23,9 @@ free form geometr not supported yet
 // TODO Grouping
 // TODO Display/render attributes(materials)
 
-ObjImporter::ObjImporter(): m_geoVertices() { }
+ObjImporter::ObjImporter(): m_geoVertices()
+{ 
+}
 
 void ObjImporter::readFromFile(const std::filesystem::path& pathToObjFile)
 {
@@ -106,6 +108,7 @@ void ObjImporter::readFromFile(const std::filesystem::path& pathToObjFile)
         {
           std::string vertex(eleOfFace.begin(), eleOfFace.end());
           std::stringstream localStream(vertex);
+          //localStream.ignore(vertex.length(), ',');
           localStream >> std::ws >> geoId >> separator >> texId >> separator >> norId;
 
           //Obj file format index from 1 so we need to substrat 1 to indexing from 0
@@ -122,6 +125,8 @@ void ObjImporter::readFromFile(const std::filesystem::path& pathToObjFile)
     // Normal
     // Materials
   }
+
+  parseObjFile();
 }
 
 void ObjImporter::printData() const
@@ -157,27 +162,45 @@ void ObjImporter::printData() const
   }
 }
 
-std::vector<Vertex> ObjImporter::getGeometry()
+std::vector<Vertex> ObjImporter::getGeometry() const
 {
-    std::vector<Vertex> m_geometry;
+  return m_geometry;
+}
 
+std::vector<uint32_t> ObjImporter::getIndicesVector() const
+{
+  return m_indices;
+}
 
+void ObjImporter::parseObjFile()
+{
     // for all faces
-    for (uint64_t currentIndices = 0; const auto& face : m_faces)
+    for (uint64_t currentIndices = 0; const auto & face : m_faces)
     {
-        for (const auto& vertex: face)
+        //Add all required geometry
+        for (const auto& vertex : face)
         {
             m_geometry.emplace_back(
-                Vertex(
-                m_geoVertices.at(vertex.m_geoId),
-                m_textCord.at(vertex.m_texId),
-                { 1.0f, 0.0f, 0.0f },
-                m_normalVertices.at(vertex.m_norId))
-            );
+                Vertex(m_geoVertices.at(vertex.m_geoId),
+                            m_textCord.at(vertex.m_texId),
+                            { 1.0f, 0.0f, 0.0f },
+                            m_normalVertices.at(vertex.m_norId)));
         }
-        
 
-        if (face.size() == 4) //When face containe 4 vertices 
+
+
+        //Add face indices
+        if (face.size() == 3)
+        {
+            //TODO
+            m_indices.emplace_back(currentIndices);
+            m_indices.emplace_back(currentIndices + 1);
+            m_indices.emplace_back(currentIndices + 2);
+
+            currentIndices += 3;
+
+        }
+        else if (face.size() == 4) //When face containe 4 vertices 
         {
             //Triangle orientation
             //For ccw = 0  cc = 1
@@ -195,15 +218,13 @@ std::vector<Vertex> ObjImporter::getGeometry()
 
             currentIndices += 4;
         }
+        else
+        {
+            //When face have ngons >= 5
+            //TODO
+        }
 
     }
-
-  return m_geometry;
-}
-
-std::vector<uint32_t> st::io::ObjImporter::getIndicesVector() const
-{
-  return m_indices;
 }
 
 constexpr void ObjImporter::parseVertexLine(const std::string_view& vertexLine)
@@ -211,7 +232,6 @@ constexpr void ObjImporter::parseVertexLine(const std::string_view& vertexLine)
     float x = 0.0f;
     float y = 0.0f;
     float z = 0.0f;
-
 }
 
 }

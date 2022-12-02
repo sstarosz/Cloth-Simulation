@@ -7,13 +7,43 @@ Cloth Simulation
 conan install .. -s build_type=Debug --build=missing
 
 
+# Progress (Current Status)
+* ObjImporter 0.1 (Can import cube and sphere "Primitive Shapes")
+
+
+# Current Progress
+**Add word cordination**
+
+- **What is needed**
+    Seprate Graphics Pipeline for line primitives?
+    What is need to Graphics Pipeline to create
+    Cache for Graphics Pipline
+
+- **What to do**
+
+- **Result**
+
+
+
 
 
 # To-Do
+- [ ] Understanding Vertex buffer to add objects in runtime
+- [ ] Understand buffers and memory
+- [ ] Adding Outliner
+- [ ] Change exception handling to result handling
+- [ ] Move api to RAII
+
+
 - [ ] Add download assets script
 - [ ] Separate Gui from application (application should, could run without gui for testing purpose)
 - [ ] Add python script for generating library documentation
 
+
+
+
+# Compilation To-Do
+* Add /LTCG	/GL /Gy /GF
 
 
 

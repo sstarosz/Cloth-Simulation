@@ -5,6 +5,7 @@
 #include <Geometry/Vertex.hpp>
 #include <vector>
 #include <filesystem>
+#include "OBJImporter.hpp"
 
 
 namespace st::io
@@ -25,6 +26,10 @@ private:
   //TODO
   //Get Shape
   //Get Object
+
+//Change it to more generic importer?
+    ObjImporter m_objImporter;
+
 };
 
 }

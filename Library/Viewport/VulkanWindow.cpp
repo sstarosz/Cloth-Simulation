@@ -1,6 +1,7 @@
 #include "VulkanWindow.hpp"
 
 #include "Geometry/Vertex.hpp"
+#include "Line.hpp"
 #include "QueueFamily.hpp"
 #include "Shader.hpp"
 #include "SwapChainSupport.hpp"
@@ -66,6 +67,53 @@ void VulkanWindow::initialize()
 
 void VulkanWindow::releaseResources()
 {
+    cleanupSwapChain();
+
+    m_device.destroyPipelineCache(m_pipelineCache);
+    m_device.destroyPipeline(m_graphicsPipeline);
+    m_device.destroyPipelineLayout(m_pipelineLayout);
+    m_device.destroyRenderPass(m_renderPass);
+
+    for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+        m_device.destroyBuffer(m_uniformBuffers[i]);
+        m_device.freeMemory(m_uniformBuffersMemory[i]);
+    }
+
+    m_device.destroyDescriptorPool(m_descriptorPool);
+
+    m_device.destroySampler(m_textureSampler);
+    m_device.destroyImageView(m_textureImageView);
+
+    m_device.destroyImage(m_textureImage);
+    m_device.freeMemory(m_textureImageMemory);
+
+    m_device.destroyDescriptorSetLayout(m_descriptorSetLayout);
+
+    m_device.destroyBuffer(m_indexBuffer);
+    m_device.freeMemory(m_indexBufferMemory);
+
+    m_device.destroyBuffer(m_vertexBuffer);
+    m_device.freeMemory(m_vertexBufferMemory);
+
+    for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+        m_device.destroySemaphore(m_renderFinishedSemaphores[i]);
+        m_device.destroySemaphore(m_imageAvailableSemaphores[i]);
+        m_device.destroyFence(m_inFlightFences[i]);
+    }
+
+    m_device.destroyCommandPool(m_commandPool);
+
+    m_device.destroy();
+
+    if (enableValidationLayers) {
+        m_instance.destroyDebugUtilsMessengerEXT(m_debugMessenger);
+    }
+
+
+    //TODO
+    //vkDestroySurfaceKHR(instance, surface, nullptr);
+    //vkDestroyInstance(instance, nullptr);
+
 }
 
 VkBool32 VulkanWindow::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -564,6 +612,9 @@ void VulkanWindow::createGraphicsPipeline()
     m_pipelineCache = m_device.createPipelineCache(vk::PipelineCacheCreateInfo());
     m_graphicsPipeline = m_device.createGraphicsPipeline(m_pipelineCache, pipelineInfo).value;
 
+
+    //Note VkShaderModule is passed into pipline and are not longer available trought object they are used to create
+    //If ther are used later, then they must not be destroyed
     m_device.destroy(fragShaderModule);
     m_device.destroy(vertShaderModule);
 }
@@ -594,8 +645,9 @@ void VulkanWindow::createCommandPool()
 {
     QueueFamilyIndices queueFamilyIndices = QueueFamilyIndices::findQueueFamilies(m_physicalDevice, m_surface);
 
+    //TODO This is a graphic commandPoll
     vk::CommandPoolCreateInfo poolInfo(
-        vk::CommandPoolCreateFlags { vk::CommandPoolCreateFlagBits::eResetCommandBuffer },
+        vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
         queueFamilyIndices.graphicsFamily.value()
     );
 
@@ -604,13 +656,13 @@ void VulkanWindow::createCommandPool()
 
 void VulkanWindow::loadModel()
 {
+
+    //TODO Change from load vertices and indices
+    //to models and objects
 	io::ImporterProxy importerProxy;
+    importerProxy.readFile("../Assets/Models/Sphere.obj");
 	vertices = importerProxy.getVertices();
     m_indices = importerProxy.getIndices();
-    //TODO load to vertices
-    // and load to m_indices
-
-    //m_object;
 
 }
 
@@ -629,7 +681,7 @@ void VulkanWindow::createVertexBuffer()
     );
 
     void* data = m_device.mapMemory(stagingBufferMemory, 0, bufferSize);
-    memcpy(data, vertices.data(), (size_t)bufferSize);
+    memcpy(data, vertices.data(), (size_t)bufferSize); //vertices should fullfil trival object specyfication?
     m_device.unmapMemory(stagingBufferMemory);
 
     createBuffer(bufferSize,
@@ -642,7 +694,6 @@ void VulkanWindow::createVertexBuffer()
     m_device.destroyBuffer(stagingBuffer);
     m_device.freeMemory(stagingBufferMemory);
 }
-
 
 uint32_t VulkanWindow::findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties)
 {
@@ -694,7 +745,7 @@ void VulkanWindow::copyBuffer(vk::Buffer srcBuffer, vk::Buffer dstBuffer, vk::De
 
     vk::SubmitInfo submitInfo { {}, {}, commandBuffer };
 
-    m_graphicsQueue.submit(1, &submitInfo, {});
+    m_graphicsQueue.submit(1, &submitInfo, {}); //TODO GraphicQueue should copy buffers?
     m_graphicsQueue.waitIdle();
 
     m_device.freeCommandBuffers(m_commandPool, commandBuffer);
@@ -805,8 +856,12 @@ void VulkanWindow::recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_
     clearValues[1].setDepthStencil(depthClean);
 
 
-    vk::RenderPassBeginInfo renderPassInfo(m_renderPass, m_swapChainFramebuffers[imageIndex],
-        vk::Rect2D((0, 0), m_swapChainExtent), clearValues);
+    //Draw primitive
+    vk::RenderPassBeginInfo renderPassInfo(m_renderPass,
+        m_swapChainFramebuffers[imageIndex],
+        vk::Rect2D((0, 0),
+        m_swapChainExtent),
+        clearValues);
 
     commandBuffer.beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
 
@@ -822,9 +877,29 @@ void VulkanWindow::recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_
 
     commandBuffer.drawIndexed(static_cast<uint32_t>(m_indices.size()), 1, 0, 0, 0);
 
+
+    //Line
+    
+    //Bind Line pipeline
+    commandBuffer.beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
+    // 
+    //Bind Vertex Buffer from line
+    //Bind IndexBuffer form Line
+    //Bind Descriptiors?
+    //Draw Indexed
+    
+
+
+
+
+
     commandBuffer.endRenderPass();
+    // End Draw primitive
+
 
     commandBuffer.end();
+
+
 }
 
 void VulkanWindow::drawFrame()
@@ -845,8 +920,10 @@ void VulkanWindow::drawFrame()
 
     vk::PipelineStageFlags waitDestinationStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput);
 
-    vk::SubmitInfo submitInfo(m_imageAvailableSemaphores[currentFrame], waitDestinationStageMask,
-        m_commandBuffers[currentFrame], m_renderFinishedSemaphores[currentFrame]);
+    vk::SubmitInfo submitInfo(m_imageAvailableSemaphores[currentFrame],
+                              waitDestinationStageMask,
+                              m_commandBuffers[currentFrame],
+                              m_renderFinishedSemaphores[currentFrame]);
 
     m_graphicsQueue.submit(submitInfo, m_inFlightFences[currentFrame]);
 
@@ -899,23 +976,23 @@ void VulkanWindow::exposeEvent(QExposeEvent* /*unused*/)
 
 void VulkanWindow::cleanupSwapChain()
 {
+
+    m_device.destroyImageView(m_depthImageView);
+    m_device.destroyImage(m_depthImage);
+    m_device.freeMemory(m_depthImageMemory);
+
     for (auto framebuffer : m_swapChainFramebuffers) {
         m_device.destroy(framebuffer);
     }
-
     m_swapChainFramebuffers.clear();
 
-    m_device.destroy(m_pipelineCache);
-    m_device.destroy(m_graphicsPipeline);
-    m_device.destroy(m_pipelineLayout);
-    m_device.destroy(m_renderPass);
 
     for (auto imageView : m_swapChainImageViews) {
         m_device.destroy(imageView);
     }
     m_swapChainImageViews.clear();
 
-    m_device.destroy(m_swapChain);
+    m_device.destroySwapchainKHR(m_swapChain);
 }
 
 void VulkanWindow::recreateSwapChain()
@@ -1221,7 +1298,7 @@ void VulkanWindow::createTextureSampler()
         vk::SamplerAddressMode::eRepeat,
         vk::SamplerAddressMode::eRepeat,
         0.0f,
-        true,
+        false,
         properties.limits.maxSamplerAnisotropy,
         false,
         vk::CompareOp::eAlways,

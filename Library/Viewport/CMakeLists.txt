@@ -17,7 +17,7 @@ set(SOURCES
 	"QueueFamily.cpp"
 	"SwapChainSupport.cpp" 
 	"Shader.cpp"
-)
+	"Line.cpp")
 
 set(HEADERS
 	"ViewportWidget.hpp"
@@ -26,7 +26,7 @@ set(HEADERS
 	"QueueFamily.hpp"
 	"SwapChainSupport.hpp"
 	"Shader.hpp"
-	)
+	"Line.hpp")
 
 
 find_package(glm REQUIRED CONFIG)

@@ -7,12 +7,9 @@ namespace st::io
 void ImporterProxy::readFile(const std::filesystem::path& pathToObjFile)
 {
 
-  if (pathToObjFile.extension() == ".obj") {
-    ObjImporter objImporter;
-    objImporter.readFromFile(pathToObjFile);
-
-
-    //ObjImporter::readFromFile(pathToObjFile);
+  if (pathToObjFile.extension() == ".obj") 
+  {
+    m_objImporter.readFromFile(pathToObjFile);
   }
 }
 
@@ -85,11 +82,30 @@ std::vector<geometry::Vertex> ImporterProxy::getVertices()
 
 
 
-  return cube_mock2;
+  const auto readedGeometry = m_objImporter.getGeometry();
+
+  std::vector<geometry::Vertex> output;
+
+  for (const auto& vertex : readedGeometry)
+  {
+      geometry::Vertex outputVertex {
+                                    { vertex.pos.x, vertex.pos.y, vertex.pos.z },
+                                    { vertex.textureCord.u, 1.0F - vertex.textureCord.v },
+                                    { vertex.color.x, vertex.color.y, vertex.color.z },
+                                    { vertex.normal.x, vertex.normal.y, vertex.normal.z }};
+
+      output.emplace_back(outputVertex);
+
+  }
+
+
+  return output;
 }
 
 std::vector<geometry::Indices> ImporterProxy::getIndices()
 {
+    const auto indices = m_objImporter.getIndicesVector();
+
     const std::vector<uint32_t> cube_mock =
     {
         0, 1, 2, 0, 2, 3,
@@ -110,7 +126,9 @@ std::vector<geometry::Indices> ImporterProxy::getIndices()
         20, 21, 22, 20, 22, 23
     };
 
-    return cube_mock2;
+    //Convert Indices to internal format
+
+    return indices;
 }
 
 

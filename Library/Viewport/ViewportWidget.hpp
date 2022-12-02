@@ -2,7 +2,7 @@
 #define VIEWPORT_VIEWPORTWIDGET_HPP
 
 #include <QWidget>
-
+#include <QCloseEvent>
 #include "VulkanWindow.hpp"
 
 
@@ -15,6 +15,10 @@ class ViewportWidget : public QWidget
 		ViewportWidget();
 
 		void init();
+
+protected:
+	void closeEvent(QCloseEvent* event) override;
+
 
 	private:
 		VulkanWindow* vulkan_window;
