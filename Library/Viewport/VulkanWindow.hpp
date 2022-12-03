@@ -11,6 +11,7 @@
 #include <string_view>
 #include <Geometry/Vertex.hpp>
 #include <Geometry/Object3D.hpp>
+#include "Line.hpp"
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
@@ -144,7 +145,7 @@ namespace st::viewport
 			glm::mat4 proj;
 		};
 
-
+		Line m_line;
 		uint32_t currentFrame = 0;
 		bool m_framebufferResized = false;
 

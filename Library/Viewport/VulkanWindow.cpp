@@ -881,9 +881,12 @@ void VulkanWindow::recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_
     //Line
     
     //Bind Line pipeline
-    commandBuffer.beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
+    commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_line.getPipeline());
     // 
     //Bind Vertex Buffer from line
+    commandBuffer.bindVertexBuffers(0, 1, m_line.getVertexBuffer(), m_line.getVertexBufferOffsets());
+
+
     //Bind IndexBuffer form Line
     //Bind Descriptiors?
     //Draw Indexed

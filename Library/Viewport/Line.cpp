@@ -6,18 +6,9 @@ namespace st::viewport
 
 
 
-    vk::RenderPassBeginInfo Line::getRenderPass(vk::Framebuffer frameBuffer, vk::Extent2D swapChainExtent) const
+    vk::Pipeline Line::getPipeline() const
     {
-        const vk::ClearColorValue colorClean{ std::array<float, 4>{0.0F, 0.0F, 0.0F, 1.0F} };
-        const vk::ClearDepthStencilValue depthClean{ 1.0F, 0 };
-
-        std::array<vk::ClearValue, 2> clearValues;
-        clearValues[0].setColor(colorClean);
-        clearValues[1].setDepthStencil(depthClean);
-
-        return vk::RenderPassBeginInfo(
-            m_primitivesPipeline, 
-            );
+        return m_primitivesPipeline;
     }
 
     //Change it to global Descirptor Set

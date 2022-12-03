@@ -28,7 +28,12 @@ namespace st::viewport
 
     public:
       
-        vk::RenderPassBeginInfo getRenderPass(vk::Framebuffer frameBuffer, vk::Extent2D swapChainExtent) const;
+        vk::Pipeline getPipeline() const;
+        vk::Buffer getVertexBuffer() const;
+        vk::DeviceSize getVertexBufferOffsets() const;
+
+        vk::Buffer getIndexBuffer() const;
+
 
         void createDescriptorSetLayout(const vk::Device& device);
 
