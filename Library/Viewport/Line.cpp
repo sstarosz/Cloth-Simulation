@@ -11,6 +11,21 @@ namespace st::viewport
         return m_primitivesPipeline;
     }
 
+    vk::Buffer Line::getVertexBuffer() const
+    {
+        return vk::Buffer();
+    }
+
+    vk::DeviceSize Line::getVertexBufferOffsets() const
+    {
+        return vk::DeviceSize();
+    }
+
+    vk::Buffer Line::getIndexBuffer() const
+    {
+        return vk::Buffer();
+    }
+
     //Change it to global Descirptor Set
     void Line::createDescriptorSetLayout(const vk::Device& device)
     {
@@ -154,26 +169,7 @@ namespace st::viewport
         renderPass);
 
 
-        vk::PipelineColorBlendAttachmentState colorBlendAttachment(
-        VK_FALSE,
-        vk::BlendFactor::eZero,
-        vk::BlendFactor::eZero,
-        vk::BlendOp::eAdd,
-        vk::BlendFactor::eZero,
-        vk::BlendFactor::eZero,
-        vk::BlendOp::eAdd,
-        vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA);
 
-    vk::PipelineColorBlendStateCreateInfo colorBlending(
-        vk::PipelineColorBlendStateCreateFlags {},
-        VK_FALSE,
-        vk::LogicOp::eCopy,
-        colorBlendAttachment,
-        { 0.0f, 0.0f, 0.0f, 0.0f });
-
-    vk::PipelineLayoutCreateInfo pipelineLayoutInfo(
-        vk::PipelineLayoutCreateFlags {},
-        m_lineDescriptorSetLayout);
 
 	m_primitivePipelineCache = device.createPipelineCache(vk::PipelineCacheCreateInfo());
 	auto result = device.createGraphicsPipeline(m_primitivePipelineCache, pipelineInfo);

@@ -8,4 +8,3 @@ namespace st::ui::gui {
 	};
 
 }
-#endif // !GUI_OUTLINER_VIEW_HPP

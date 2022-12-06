@@ -336,7 +336,9 @@ void VulkanWindow::createSwapChain()
         imageSharingMode = vk::SharingMode::eExclusive;
     }
 
-    vk::SwapchainCreateInfoKHR createInfo(vk::SwapchainCreateFlagsKHR(), m_surface, imageCount, surfaceFormat.format,
+    vk::SwapchainCreateInfoKHR createInfo(vk::SwapchainCreateFlagsKHR(), m_surface,
+                                            imageCount,
+                                            surfaceFormat.format,
                                             surfaceFormat.colorSpace,
                                             extent,
                                             1,
@@ -660,7 +662,7 @@ void VulkanWindow::loadModel()
     //TODO Change from load vertices and indices
     //to models and objects
 	io::ImporterProxy importerProxy;
-    importerProxy.readFile("../Assets/Models/Sphere.obj");
+    importerProxy.readFile("../Assets/Models/Cube.obj");
 	vertices = importerProxy.getVertices();
     m_indices = importerProxy.getIndices();
 
@@ -881,10 +883,10 @@ void VulkanWindow::recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_
     //Line
     
     //Bind Line pipeline
-    commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_line.getPipeline());
+    //commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_line.getPipeline());
     // 
     //Bind Vertex Buffer from line
-    commandBuffer.bindVertexBuffers(0, 1, m_line.getVertexBuffer(), m_line.getVertexBufferOffsets());
+    //commandBuffer.bindVertexBuffers(0, 1, m_line.getVertexBuffer(), m_line.getVertexBufferOffsets());
 
 
     //Bind IndexBuffer form Line
@@ -930,7 +932,9 @@ void VulkanWindow::drawFrame()
 
     m_graphicsQueue.submit(submitInfo, m_inFlightFences[currentFrame]);
 
-    vk::PresentInfoKHR presentInfo(m_renderFinishedSemaphores[currentFrame], m_swapChain, imageIndex);
+    vk::PresentInfoKHR presentInfo(m_renderFinishedSemaphores[currentFrame],
+                                   m_swapChain,
+                                   imageIndex);
 
     try {
         result = m_presentQueue.presentKHR(presentInfo);
@@ -963,6 +967,9 @@ bool VulkanWindow::event(QEvent* event)
         break;
 
     case QEvent::PlatformSurface:
+        // When windows is created or deleted
+        // d->releaseSwapChain();
+        //d->reset();
         break;
 
     default:
