@@ -55,10 +55,10 @@ void VulkanWindow::initialize()
     createTextureImage();
     createTextureImageView();
     createTextureSampler();
+    createUniformBuffers();
 	loadModel();
     createVertexBuffer();
     createIndexBuffer();
-    createUniformBuffers();
     createDescriptorPool();
     createDescriptorSets();
     createCommandBuffers();
@@ -666,6 +666,10 @@ void VulkanWindow::loadModel()
 	vertices = importerProxy.getVertices();
     m_indices = importerProxy.getIndices();
 
+    m_line.createDescriptorSets(m_device, m_uniformBuffers);
+    m_line.createPrimitivePipline(m_device, m_swapChainExtent, m_renderPass);
+    m_line.createLineVertexBuffer(m_physicalDevice, m_device, m_commandPool, m_graphicsQueue);
+    m_line.createLineIndexBuffer(m_physicalDevice, m_device, m_commandPool, m_graphicsQueue);
 }
 
 void VulkanWindow::createVertexBuffer()
@@ -860,10 +864,10 @@ void VulkanWindow::recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_
 
     //Draw primitive
     vk::RenderPassBeginInfo renderPassInfo(m_renderPass,
-        m_swapChainFramebuffers[imageIndex],
-        vk::Rect2D((0, 0),
-        m_swapChainExtent),
-        clearValues);
+                                           m_swapChainFramebuffers[imageIndex],
+                                           vk::Rect2D((0, 0),
+                                           m_swapChainExtent),
+                                           clearValues);
 
     commandBuffer.beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
 
@@ -883,12 +887,13 @@ void VulkanWindow::recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_
     //Line
     
     //Bind Line pipeline
-    //commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_line.getPipeline());
+    commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_line.getPipeline());
     // 
     //Bind Vertex Buffer from line
-    //commandBuffer.bindVertexBuffers(0, 1, m_line.getVertexBuffer(), m_line.getVertexBufferOffsets());
-
-
+    commandBuffer.bindVertexBuffers(0, m_line.getVertexBuffer(), m_line.getVertexBufferOffsets());
+    commandBuffer.bindIndexBuffer(m_line.getIndexBuffer(), 0, vk::IndexType::eUint32);
+    commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, m_line.getPiplineLayout(), 0, m_line.getDescritporSet(currentFrame), {});
+    commandBuffer.drawIndexed(m_line.getIndexSize(), 1, 0, 0, 0);
     //Bind IndexBuffer form Line
     //Bind Descriptiors?
     //Draw Indexed

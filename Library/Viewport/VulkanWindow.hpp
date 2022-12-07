@@ -201,6 +201,8 @@ namespace st::viewport
 		vk::PresentModeKHR chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes);
 		vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities);
 		uint32_t findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties);
+
+		//Move those function to utility class
 		void createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& buffer, vk::DeviceMemory& bufferMemory);
 		void copyBuffer(vk::Buffer srcBuffer, vk::Buffer dstBuffer, vk::DeviceSize size);
         void createImage(uint32_t width, uint32_t height, vk::Format format,

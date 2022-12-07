@@ -31,6 +31,20 @@
 
  add_custom_command(TARGET Copy_Assets_File POST_BUILD
                      COMMAND ${CMAKE_COMMAND} -E copy
+                             ${CMAKE_SOURCE_DIR}/Assets/Shaders/line_frag.spv
+                             ${CMAKE_BINARY_DIR}/Assets/Shaders/line_frag.spv
+                     COMMENT "Copy line fragment shader"
+                     )
+
+ add_custom_command(TARGET Copy_Assets_File POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy
+                             ${CMAKE_SOURCE_DIR}/Assets/Shaders/line_vert.spv
+                             ${CMAKE_BINARY_DIR}/Assets/Shaders/line_vert.spv
+                     COMMENT "Copy line vertex shader"
+                     )
+
+ add_custom_command(TARGET Copy_Assets_File POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy
                              ${CMAKE_SOURCE_DIR}/Assets/Textures/texture2.jpg
                              ${CMAKE_BINARY_DIR}/Assets/Textures/texture2.jpg
                      COMMENT "Copy texture"

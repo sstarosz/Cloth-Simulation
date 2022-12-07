@@ -11,39 +11,59 @@ namespace st::viewport
         return m_primitivesPipeline;
     }
 
-    vk::Buffer Line::getVertexBuffer() const
+    std::array<vk::Buffer, 1> Line::getVertexBuffer() const
     {
-        return vk::Buffer();
+        return std::array<vk::Buffer, 1>{m_lineVertexBuffer};
     }
 
-    vk::DeviceSize Line::getVertexBufferOffsets() const
+    std::array<vk::DeviceSize, 1> Line::getVertexBufferOffsets() const
     {
-        return vk::DeviceSize();
+        return std::array<vk::DeviceSize, 1>{0};
     }
 
     vk::Buffer Line::getIndexBuffer() const
     {
-        return vk::Buffer();
+        return m_lineIndexBuffer;
     }
 
-    //Change it to global Descirptor Set
-    void Line::createDescriptorSetLayout(const vk::Device& device)
+    uint32_t Line::getIndexSize() const
     {
-        vk::DescriptorSetLayoutBinding uboLayoutBinding{
-            0,
-            vk::DescriptorType::eUniformBuffer,
-            1,
-            vk::ShaderStageFlagBits::eVertex};
+        return m_linesIndices.size();
+    }
 
+    vk::PipelineLayout Line::getPiplineLayout() const
+    {
+        return m_linePiplineLayout;
+    }
 
+    vk::DescriptorSet Line::getDescritporSet(uint32_t m_currentFrame) const
+    {
+        return m_lineDescriptorSets[m_currentFrame];
+    }
 
-        std::array<vk::DescriptorSetLayoutBinding, 1> bindings = { uboLayoutBinding };
-        vk::DescriptorSetLayoutCreateInfo layoutInfo{
-            {},
-            bindings
+    vk::VertexInputBindingDescription Line::getLineBindingDescription()
+    {
+        vk::VertexInputBindingDescription bindingDescription{
+            0, //binding index
+            sizeof(vec3),
+            vk::VertexInputRate::eVertex
         };
 
-        m_lineDescriptorSetLayout = device.createDescriptorSetLayout(layoutInfo);
+        return bindingDescription;
+    }
+
+    std::array<vk::VertexInputAttributeDescription, 1> Line::getLineAttributeDescriptions()
+    {
+        std::array<vk::VertexInputAttributeDescription, 1> attributeDescriptions{
+                vk::VertexInputAttributeDescription{ //Pos
+                    0, //location
+                    0, //binding
+                    vk::Format::eR32G32B32Sfloat,
+                    0 //Only position is used so offset 0
+                }
+        };
+
+        return attributeDescriptions;
     }
 
     void Line::createPrimitivePipline(const vk::Device& device, vk::Extent2D& swapChainExtent, vk::RenderPass& renderPass)
@@ -107,13 +127,13 @@ namespace st::viewport
         VK_FALSE,
         VK_FALSE,
         vk::PolygonMode::eFill,
-        vk::CullModeFlagBits::eBack,
+        vk::CullModeFlagBits::eNone,
         vk::FrontFace::eCounterClockwise,
         VK_FALSE,
         0.0f,
         0.0f,
         0.0f,
-        2.0F);
+        1.0F);
 
     vk::PipelineMultisampleStateCreateInfo multisampling(
         vk::PipelineMultisampleStateCreateFlags{},
@@ -146,11 +166,14 @@ namespace st::viewport
         colorBlendAttachment,
         { 0.0f, 0.0f, 0.0f, 0.0f });
 
-    vk::PipelineLayoutCreateInfo pipelineLayoutInfo(vk::PipelineLayoutCreateFlags{});
 
+    vk::PipelineLayoutCreateInfo pipelineLayoutInfo(
+        vk::PipelineLayoutCreateFlags{},
+        m_lineDescriptorSetLayout
+        );
 
     //We don't have binding so we can crete empty pipline layout
-    auto pipelineLayout = device.createPipelineLayout(pipelineLayoutInfo);
+    m_linePiplineLayout = device.createPipelineLayout(pipelineLayoutInfo);
 
 
     vk::GraphicsPipelineCreateInfo pipelineInfo(
@@ -165,9 +188,8 @@ namespace st::viewport
         &depthStencil,
         &colorBlending,
         {},
-        pipelineLayout,
+        m_linePiplineLayout,
         renderPass);
-
 
 
 
@@ -182,25 +204,189 @@ namespace st::viewport
 	m_primitivesPipeline = result.value;
 }
 
-vk::VertexInputBindingDescription Line::getLineBindingDescription()
+void Line::createLineVertexBuffer(const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const vk::CommandPool& commandPool, const vk::Queue& graphicsQueue)
 {
-    vk::VertexInputBindingDescription bindingDescription{0,sizeof(vec3),vk::VertexInputRate::eVertex};
+    vk::DeviceSize bufferSize = sizeof(m_lines[0]) * m_lines.size();
 
-    return bindingDescription;
+    vk::Buffer stagingBuffer;
+    vk::DeviceMemory stagingBufferMemory;
+
+
+    createBuffer(physicalDevice,
+        device,
+        bufferSize,
+        vk::BufferUsageFlagBits::eTransferSrc,
+        vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+        stagingBuffer,
+        stagingBufferMemory
+    );
+
+    void* data = device.mapMemory(stagingBufferMemory, 0, bufferSize);
+    memcpy(data, m_lines.data(), (size_t)bufferSize); //vertices should fullfil trival object specyfication?
+    device.unmapMemory(stagingBufferMemory);
+
+    createBuffer(
+        physicalDevice,
+        device,
+        bufferSize,
+        vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer,
+        vk::MemoryPropertyFlagBits::eDeviceLocal,
+        m_lineVertexBuffer,
+        m_lineVertexBufferMemory);
+
+    copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, m_lineVertexBuffer, bufferSize);
+    device.destroyBuffer(stagingBuffer);
+    device.freeMemory(stagingBufferMemory);
 }
 
-std::array<vk::VertexInputAttributeDescription, 1> Line::getLineAttributeDescriptions()
+void Line::createLineIndexBuffer(const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const vk::CommandPool& commandPool, const vk::Queue& graphicsQueue)
 {
-    std::array<vk::VertexInputAttributeDescription, 1> attributeDescriptions{
-            vk::VertexInputAttributeDescription{ //Pos
-                0,
-                0,
-                vk::Format::eR32G32B32Sfloat,
-                static_cast<uint32_t>(offsetof(LineDefinition, m_startPoint))
-            }
+    vk::DeviceSize bufferSize = sizeof(m_linesIndices[0]) * m_linesIndices.size();
+
+    vk::Buffer stagingBuffer;
+    vk::DeviceMemory stagingBufferMemory;
+    createBuffer(
+        physicalDevice,
+        device,
+        bufferSize,
+        vk::BufferUsageFlagBits::eTransferSrc,
+        vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+        stagingBuffer,
+        stagingBufferMemory);
+
+    void* data = device.mapMemory(stagingBufferMemory, 0, bufferSize);
+    memcpy(data, m_linesIndices.data(), (size_t)bufferSize);
+    device.unmapMemory(stagingBufferMemory);
+
+    createBuffer(
+        physicalDevice,
+        device,
+        bufferSize,
+        vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer,
+        vk::MemoryPropertyFlagBits::eDeviceLocal,
+        m_lineIndexBuffer,
+        m_lineIndexBufferMemory);
+
+    copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, m_lineIndexBuffer, bufferSize);
+
+    device.destroyBuffer(stagingBuffer);
+    device.freeMemory(stagingBufferMemory);
+}
+
+void Line::createDescriptorSets(const vk::Device& device, const std::vector<vk::Buffer>& uniformBuffer)
+{
+    //Create Descriptor Pool
+    vk::DescriptorPoolSize poolSize{ vk::DescriptorType::eUniformBuffer, static_cast<uint32_t>(2) };
+
+    vk::DescriptorPoolCreateInfo poolInfo{ {}, static_cast<uint32_t>(2), poolSize };
+
+    auto lineDescriptorPool = device.createDescriptorPool(poolInfo);
+
+
+    //Create Descriptor Set Layout
+    vk::DescriptorSetLayoutBinding uboLayoutBinding{
+    0,
+    vk::DescriptorType::eUniformBuffer,
+    1,
+    vk::ShaderStageFlagBits::eVertex
     };
 
-    return attributeDescriptions;
+    std::array<vk::DescriptorSetLayoutBinding, 1> bindings = { uboLayoutBinding };
+    vk::DescriptorSetLayoutCreateInfo layoutInfo{
+        {},
+        bindings
+    };
+
+    m_lineDescriptorSetLayout = device.createDescriptorSetLayout(layoutInfo);
+
+
+    //Create Descriptor Sets
+    std::vector<vk::DescriptorSetLayout> layouts(2, m_lineDescriptorSetLayout);
+    vk::DescriptorSetAllocateInfo allocInfo{
+        lineDescriptorPool,
+        layouts
+    };
+
+    m_lineDescriptorSets = device.allocateDescriptorSets(allocInfo);
+
+    for (size_t i = 0; i < 2; ++i) {
+        vk::DescriptorBufferInfo bufferInfo{
+            uniformBuffer.at(i),
+            0,
+            192 //TODO to Fix
+        };
+        std::array<vk::WriteDescriptorSet, 1> descriptorWrites{
+            vk::WriteDescriptorSet {
+                m_lineDescriptorSets.at(i),
+                0,
+                0,
+                vk::DescriptorType::eUniformBuffer,
+                {},
+                bufferInfo,
+                {} }
+        };
+
+        device.updateDescriptorSets(descriptorWrites, {});
+    }
+}
+
+
+void Line::createBuffer(const vk::PhysicalDevice& physicalDevice, const vk::Device& device, vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& buffer, vk::DeviceMemory& bufferMemory)
+{
+    vk::BufferCreateInfo bufferInfo{ {}, size, usage, vk::SharingMode::eExclusive };
+
+    buffer = device.createBuffer(bufferInfo);
+
+    vk::MemoryRequirements memoryRequirements = device.getBufferMemoryRequirements(buffer);
+
+    vk::MemoryAllocateInfo allocInfo{ memoryRequirements.size,
+        findMemoryType(physicalDevice,memoryRequirements.memoryTypeBits, properties) };
+
+    bufferMemory = device.allocateMemory(allocInfo);
+
+    device.bindBufferMemory(buffer, bufferMemory, 0);
+}
+
+void Line::copyBuffer(const vk::Device& device,
+                      const vk::CommandPool& commandPool,
+                      const vk::Queue& graphicsQueue,
+                      vk::Buffer srcBuffer,
+                      vk::Buffer dstBuffer,
+                      vk::DeviceSize size)
+{
+    vk::CommandBufferAllocateInfo allocInfo{ commandPool, vk::CommandBufferLevel::ePrimary, 1 };
+
+    auto commandBuffer = device.allocateCommandBuffers(allocInfo);
+
+    vk::CommandBufferBeginInfo beginInfo{ vk::CommandBufferUsageFlagBits::eOneTimeSubmit };
+
+    commandBuffer.at(0).begin(beginInfo);
+
+    vk::BufferCopy copyRegin{ 0, 0, size };
+
+    commandBuffer.at(0).copyBuffer(srcBuffer, dstBuffer, 1, &copyRegin);
+
+    commandBuffer.at(0).end();
+
+    vk::SubmitInfo submitInfo{ {}, {}, commandBuffer };
+
+    graphicsQueue.submit(1, &submitInfo, {}); //TODO GraphicQueue should copy buffers?
+    graphicsQueue.waitIdle();
+
+    device.freeCommandBuffers(commandPool, commandBuffer);
+}
+
+uint32_t Line::findMemoryType(const vk::PhysicalDevice& physicalDevice, uint32_t typeFilter, vk::MemoryPropertyFlags properties)
+{
+    vk::PhysicalDeviceMemoryProperties memProperties = physicalDevice.getMemoryProperties();
+
+    for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+        if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+            return i;
+        }
+    }
+
+    throw std::runtime_error("failed to find suitable memory type!");
 }
 
 }
