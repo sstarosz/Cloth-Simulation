@@ -15,11 +15,14 @@ conan install .. -s build_type=Debug --build=missing
 **Add word cordination**
 
 - **What is needed**
-    Seprate Graphics Pipeline for line primitives?
-    What is need to Graphics Pipeline to create
-    Cache for Graphics Pipline
+- [x] Seprate Graphics Pipeline for line primitives?
+- [x] What is need to Graphics Pipeline to create
+- [ ] Cache for Graphics Pipline
 
 - **What to do**
+ Understand work corination and math behaind it
+ model view project
+ cordination system in vulkan
 
 - **Result**
 
