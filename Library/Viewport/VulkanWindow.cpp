@@ -8,6 +8,8 @@
 #include <iostream>
 #include <set>
 #include <string>
+#include <QMouseEvent>
+#include <QKeyEvent>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -839,8 +841,13 @@ void VulkanWindow::updateUniformBuffer(uint32_t currentImage)
     float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
     UniformBufferObject ubo{};
-    ubo.model = glm::rotate(glm::mat4(1.0F), time * glm::radians(90.0F), glm::vec3(0.0F, 0.0F, 1.0F));
+    ubo.model = glm::mat4(1.0F);
+    //glm::rotate(glm::mat4(1.0F), time * glm::radians(90.0F), glm::vec3(0.0F, 1.0F, 0.0F));
+
     ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.view = glm::mat4(1.0F);
+    ubo.view = glm::translate(ubo.view, glm::vec3(0.0, 0.0, -5.0f));
+
     ubo.proj = glm::perspective(glm::radians(45.0F), m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1F, 10.0F);
     ubo.proj[1][1] *= -1;
 
@@ -982,6 +989,141 @@ bool VulkanWindow::event(QEvent* event)
     }
 
     return QWindow::event(event);
+}
+
+void VulkanWindow::mousePressEvent(QMouseEvent* event)
+{
+    // left alt + left   mouse click + move -> rotate
+    // left alt + middle mouse click + move -> pan
+    // left alt + right  mouse click + move up and down -> zoom
+
+    //record start and stop
+    if (event->modifiers() & Qt::AltModifier)
+    {
+        if (event->buttons() & Qt::LeftButton)
+        {
+            m_fromClick = event->position().toPoint();
+            m_mouseControl.currentState = MouseControl::MouseControlState::Rotate;
+            qDebug() << "Left" << m_fromClick << "\n";
+        }
+
+        if (event->buttons() & Qt::MiddleButton)
+        {
+            m_fromClick = event->position().toPoint();
+            m_mouseControl.currentState = MouseControl::MouseControlState::Pan;
+            qDebug() << "Middle" << m_fromClick << "\n";
+
+        }
+
+        if (event->buttons() & Qt::RightButton)
+        {
+            m_fromClick = event->position().toPoint();
+            m_mouseControl.currentState = MouseControl::MouseControlState::Zoom;
+            qDebug() << "Right" << m_fromClick << "\n";
+
+        }
+    }
+
+    event->accept();
+}
+
+void VulkanWindow::mouseMoveEvent(QMouseEvent* event)
+{
+    switch (m_mouseControl.currentState)
+    {
+    case MouseControl::MouseControlState::None:
+        break;
+
+    case MouseControl::MouseControlState::Rotate:
+        m_toClick = event->position().toPoint();
+        updateRotation();
+        break;
+
+    case MouseControl::MouseControlState::Pan:
+        break;
+
+    case MouseControl::MouseControlState::Zoom:
+        break;
+
+    default:
+        break;
+    }
+}
+
+void VulkanWindow::mouseReleaseEvent(QMouseEvent* event)
+{
+    if (event->button() & Qt::Key_Alt)
+    {
+        m_toClick = event->position().toPoint();
+
+        //Update rotation pan or zoom
+    }
+    else if (event->button() & Qt::LeftButton)
+    {
+        m_toClick = event->position().toPoint();
+        qDebug() << "Left Release" << m_toClick << "\n";
+        //update rotation
+    }
+    else if (event->button() & Qt::MiddleButton)
+    {
+        m_toClick = event->position().toPoint();
+        qDebug() << "Middle Release" << m_toClick << "\n";
+
+        //Update pan
+    }
+    else if (event->button() & Qt::RightButton)
+    {
+        m_toClick = event->position().toPoint();
+        qDebug() << "Right Release" << m_toClick << "\n";
+        //Update zoom
+    }
+}
+
+void VulkanWindow::keyPressEvent(QKeyEvent* event)
+{
+
+
+    if (event->key() != Qt::Key_Alt)
+    {
+        if (event->modifiers() & Qt::AltModifier)
+        {
+            m_mouseControl.isLeftAltHeld = true;
+        }
+    }
+
+}
+
+void VulkanWindow::keyReleaseEvent(QKeyEvent* event)
+{
+
+}
+
+void VulkanWindow::updateRotation()
+{
+    qDebug() << size().height() << ", " << size().width() << "\n";
+    m_fromClick - m_toClick;
+
+    //Save lastCoord (When mouse was pressed) m_fromClick
+
+    //Convert screen space to 3d point
+    // x , y <- screen space
+
+    //Normalize mouse position
+    // x / frameBufferSize
+    // y / frameBufferSize
+
+    //
+
+}
+
+void VulkanWindow::updatePan()
+{
+
+}
+
+void VulkanWindow::updateZoom()
+{
+
 }
 
 void VulkanWindow::exposeEvent(QExposeEvent* /*unused*/)

@@ -28,7 +28,8 @@ conan install .. -s build_type=Debug --build=missing
 
 
 
-
+# Idea
+- [ ] Add Compute state that will postprocess the result image. Separate command buffer and computation pipeline is needed for that
 
 # To-Do
 - [ ] Understanding Vertex buffer to add objects in runtime

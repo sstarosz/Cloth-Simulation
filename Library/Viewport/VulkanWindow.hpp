@@ -40,6 +40,40 @@ namespace st::viewport
 		void update();
 
 	private:
+		void mousePressEvent(QMouseEvent* event) override;
+		void mouseReleaseEvent(QMouseEvent* event) override;
+		void mouseMoveEvent(QMouseEvent* event) override;
+		void keyPressEvent(QKeyEvent* event) override;
+		void keyReleaseEvent(QKeyEvent* event) override;
+
+
+		void updateRotation();
+		void updatePan();
+		void updateZoom();
+
+		struct MouseControl {
+			enum class MouseControlState : std::uint64_t
+			{
+				None,
+				Rotate,
+				Pan,
+				Zoom,
+			};
+
+			MouseControlState currentState = MouseControlState::None;
+			bool isLeftAltHeld = false;
+			bool isLeftMouseButtonHeld = false;
+			bool isMiddleMouseButtonHeld = false;
+			bool isRightleMouseButtonHeld = false;
+
+		};
+		MouseControl m_mouseControl;
+		QPoint m_fromClick;
+		QPoint m_toClick;
+		//Origin X
+		//Origin Y
+
+
 		QVulkanInstance inst;
 
 		vk::Instance m_instance;
@@ -144,6 +178,9 @@ namespace st::viewport
 			glm::mat4 view;
 			glm::mat4 proj;
 		};
+
+
+
 
 		Line m_line;
 		uint32_t currentFrame = 0;

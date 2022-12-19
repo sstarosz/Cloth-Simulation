@@ -12,14 +12,16 @@ set(SOURCES
 	"OutlinerView.cpp"
 	"GuiElements/Slider.cpp"
 	"GuiElements/WidgetBox.cpp"
-	"GuiElements/Slider.cpp")
+	"GuiElements/Slider.cpp"
+	"TransformationView.cpp")
 
 set(HEADERS
 	"SettingsView.hpp"
 	"OutlinerView.hpp"
 	"GuiElements/Slider.hpp"
 	"GuiElements/WidgetBox.hpp"
-	"GuiElements/Slider.hpp")
+	"GuiElements/Slider.hpp"
+	"TransformationView.hpp")
 
 
 #TODO

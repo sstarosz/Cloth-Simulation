@@ -11,11 +11,14 @@
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QToolBox>
+#include <QDockWidget>
 #include <QVBoxLayout>
 #include <QAction>
 
 #include <Viewport/ViewportWidget.hpp>
 #include <GUI/SettingsView.hpp>
+#include <GUI/TransformationView.hpp>
+
 
 namespace st
 {
@@ -32,6 +35,7 @@ MainWindow::MainWindow()
     
     createMenuBar();
     createStatusBar();
+    createDockWindows();
     createMainWindow();
 }
 
@@ -86,10 +90,25 @@ void MainWindow::createMainWindow()
 {
     //QWidget* centralWidget = new QWidget();
 
+
+
     viewportWidget = new viewport::ViewportWidget();
     setCentralWidget(viewportWidget);
 }
 
+
+void MainWindow::createDockWindows()
+{
+    //QWidget* centralWidget = new QWidget();
+    QDockWidget* dock = new QDockWidget(tr("Transformation"), this);
+    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    
+    p_mTransformationView = new ui::gui::TransformationView();
+    dock->setWidget(p_mTransformationView);
+
+
+    addDockWidget(Qt::RightDockWidgetArea, dock);
+}
 
 void MainWindow::openSettingsView()
 {

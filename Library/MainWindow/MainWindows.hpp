@@ -17,6 +17,7 @@ class ViewportWidget;
 
 namespace ui::gui {
 class SettingsView;
+class TransformationView;
 }
 
 
@@ -30,6 +31,8 @@ class MainWindow : public QMainWindow
 		NavigationBar* navigationBar;
 		viewport::ViewportWidget* viewportWidget;
 		ui::gui::SettingsView* p_mSettingsView;
+		ui::gui::TransformationView* p_mTransformationView;
+
 
 		QMenu* m_fileMenu;
 		QMenu* m_helpMenu;
@@ -38,6 +41,7 @@ class MainWindow : public QMainWindow
 
 		void createMenuBar();
 		void createStatusBar();
+		void createDockWindows();
 		void createMainWindow();
 
 
