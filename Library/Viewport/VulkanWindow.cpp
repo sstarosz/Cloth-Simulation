@@ -843,16 +843,26 @@ void VulkanWindow::updateUniformBuffer(uint32_t currentImage)
     UniformBufferObject ubo{};
     ubo.model = glm::mat4(1.0F);
     //glm::rotate(glm::mat4(1.0F), time * glm::radians(90.0F), glm::vec3(0.0F, 1.0F, 0.0F));
-
+    
     ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     ubo.view = glm::mat4(1.0F);
     ubo.view = glm::translate(ubo.view, glm::vec3(0.0, 0.0, -5.0f));
-
+    
     ubo.proj = glm::perspective(glm::radians(45.0F), m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1F, 10.0F);
     ubo.proj[1][1] *= -1;
 
-    void* data = m_device.mapMemory(m_uniformBuffersMemory[currentImage], 0, sizeof(ubo));
-    memcpy(data, &ubo, sizeof(ubo));
+
+    UniformBufferObjectSt ubo2{};
+    ubo2.model = geometry::Matrix4x4::indentityMatrix();
+
+    ubo2.view = geometry::Matrix4x4::indentityMatrix();
+    ubo2.view.translate(geometry::Vector3(1.0F, 0.0F, 5.0F));
+
+    ubo2.proj = geometry::Matrix4x4::projectionMatrix(45.0F, m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1F, 10.0F);
+
+
+    void* data = m_device.mapMemory(m_uniformBuffersMemory[currentImage], 0, sizeof(ubo2));
+    memcpy(data, &ubo2, sizeof(ubo2));
     m_device.unmapMemory(m_uniformBuffersMemory[currentImage]);
 }
 

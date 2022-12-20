@@ -11,6 +11,7 @@
 #include <string_view>
 #include <Geometry/Vertex.hpp>
 #include <Geometry/Object3D.hpp>
+#include <Geometry/Matrix4x4.hpp>
 #include "Line.hpp"
 
 #define GLM_FORCE_RADIANS
@@ -172,6 +173,13 @@ namespace st::viewport
 		//	geometry::mat4 view;
 		//	geometry::mat4 proj;
 		//};
+
+
+		struct UniformBufferObjectSt {
+			geometry::Matrix4x4 model;
+			geometry::Matrix4x4 view;
+			geometry::Matrix4x4 proj;
+		};
 
 		struct UniformBufferObject {
 			glm::mat4 model;
