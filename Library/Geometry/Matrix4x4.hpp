@@ -74,14 +74,6 @@ namespace st::geometry
         float m_value[16];
     };
 
-
-
-    Matrix4x4 operator*(Matrix4x4& lhs, const Matrix4x4& rhs)
-    {
-        return lhs *= rhs;
-    }
-
-
 }
 
 

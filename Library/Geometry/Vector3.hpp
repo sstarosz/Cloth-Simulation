@@ -34,10 +34,21 @@ namespace st::geometry
         auto operator<=>(const Vector3&) const = default;
 
 
+        Vector3 operator+(const Vector3& v) const;
+        Vector3 operator-(const Vector3& v) const;
+        Vector3 operator*(const float& v) const;
+
+
+       
+
+        static float lenght(const Vector3& vec);
+        static Vector3 normalize(const Vector3& vec);
 
     private:
         float m_value[3];
     };
+
+
 
 
 }

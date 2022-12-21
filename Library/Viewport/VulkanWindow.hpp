@@ -13,6 +13,7 @@
 #include <Geometry/Object3D.hpp>
 #include <Geometry/Matrix4x4.hpp>
 #include "Line.hpp"
+#include "Camera.hpp"
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
@@ -52,27 +53,9 @@ namespace st::viewport
 		void updatePan();
 		void updateZoom();
 
-		struct MouseControl {
-			enum class MouseControlState : std::uint64_t
-			{
-				None,
-				Rotate,
-				Pan,
-				Zoom,
-			};
-
-			MouseControlState currentState = MouseControlState::None;
-			bool isLeftAltHeld = false;
-			bool isLeftMouseButtonHeld = false;
-			bool isMiddleMouseButtonHeld = false;
-			bool isRightleMouseButtonHeld = false;
-
-		};
-		MouseControl m_mouseControl;
-		QPoint m_fromClick;
-		QPoint m_toClick;
-		//Origin X
-		//Origin Y
+		
+		Camera m_camera;
+		
 
 
 		QVulkanInstance inst;

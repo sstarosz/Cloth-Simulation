@@ -48,7 +48,7 @@ namespace st::geometry
 		//User se word in x right y up, z into screen
 		Matrix4x4 result = Matrix4x4::indentityMatrix();
 
-		result[6] = -1;
+		result[5] = -1;
 		result[10] = -1;
 
 		Matrix4x4 projection{};

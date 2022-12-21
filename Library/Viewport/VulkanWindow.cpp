@@ -856,9 +856,17 @@ void VulkanWindow::updateUniformBuffer(uint32_t currentImage)
     ubo2.model = geometry::Matrix4x4::indentityMatrix();
 
     ubo2.view = geometry::Matrix4x4::indentityMatrix();
-    ubo2.view.translate(geometry::Vector3(1.0F, 0.0F, 5.0F));
+    ubo2.view.translate(geometry::Vector3(0.0F, 0.0F, -1.1F));
 
     ubo2.proj = geometry::Matrix4x4::projectionMatrix(45.0F, m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1F, 10.0F);
+
+
+    ubo2.proj = geometry::Matrix4x4::indentityMatrix();
+    ubo2.proj[9] = 0;
+    //ubo2.proj[5] *= -1;
+    //ubo2.proj[10] *= -1;
+    //assert(std::memcmp(&ubo.model, &ubo2.model, sizeof(ubo2.model)));
+    //assert(std::memcmp(&ubo.model, &ubo2.model, sizeof(ubo2.model)));
 
 
     void* data = m_device.mapMemory(m_uniformBuffersMemory[currentImage], 0, sizeof(ubo2));
@@ -1006,30 +1014,29 @@ void VulkanWindow::mousePressEvent(QMouseEvent* event)
     // left alt + left   mouse click + move -> rotate
     // left alt + middle mouse click + move -> pan
     // left alt + right  mouse click + move up and down -> zoom
+    auto m_fromClick = event->position().toPoint();
 
     //record start and stop
     if (event->modifiers() & Qt::AltModifier)
     {
         if (event->buttons() & Qt::LeftButton)
         {
-            m_fromClick = event->position().toPoint();
-            m_mouseControl.currentState = MouseControl::MouseControlState::Rotate;
-            qDebug() << "Left" << m_fromClick << "\n";
+            m_camera.mousePressEvent(m_fromClick.x(), m_fromClick.y(),Camera::Actions::Orbit);
+            qDebug() << "Left (Orbit) Start: " << m_fromClick << "\n";
+
         }
 
         if (event->buttons() & Qt::MiddleButton)
         {
-            m_fromClick = event->position().toPoint();
-            m_mouseControl.currentState = MouseControl::MouseControlState::Pan;
-            qDebug() << "Middle" << m_fromClick << "\n";
+            m_camera.mousePressEvent(m_fromClick.x(), m_fromClick.y(), Camera::Actions::Pan);
+            qDebug() << "Middle (Pan) Start:" << m_fromClick << "\n";
 
         }
 
         if (event->buttons() & Qt::RightButton)
         {
-            m_fromClick = event->position().toPoint();
-            m_mouseControl.currentState = MouseControl::MouseControlState::Zoom;
-            qDebug() << "Right" << m_fromClick << "\n";
+            m_camera.mousePressEvent(m_fromClick.x(), m_fromClick.y(), Camera::Actions::Zoom);
+            qDebug() << "Right (Zoom) Start:" << m_fromClick << "\n";
 
         }
     }
