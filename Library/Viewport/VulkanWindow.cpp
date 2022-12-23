@@ -840,40 +840,20 @@ void VulkanWindow::updateUniformBuffer(uint32_t currentImage)
     auto currentTime = std::chrono::high_resolution_clock::now();
     float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
+
     UniformBufferObject ubo{};
-    ubo.model = glm::mat4(1.0F);
-    //glm::rotate(glm::mat4(1.0F), time * glm::radians(90.0F), glm::vec3(0.0F, 1.0F, 0.0F));
-    
-    ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    ubo.view = glm::mat4(1.0F);
-    ubo.view = glm::translate(ubo.view, glm::vec3(0.0, 0.0, -5.0f));
-    
-    ubo.proj = glm::perspective(glm::radians(45.0F), m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1F, 10.0F);
-    ubo.proj[1][1] *= -1;
+    ubo.model = geometry::Matrix4x4::indentityMatrix();
+    ubo.model.convertToColumnMajor();
+       
+    ubo.view = geometry::Matrix4x4::indentityMatrix();
+    ubo.view.translate(geometry::Vector3(0.0F, 0.0F, -5.0F));
+    ubo.view.convertToColumnMajor();
+       
+    ubo.proj = m_camera.getProjectionMatrix(45.0F, m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1F, 10.0F);
+    ubo.proj.convertToColumnMajor();
 
 
-    UniformBufferObjectSt ubo2{};
-    ubo2.model = geometry::Matrix4x4::indentityMatrix();
-    ubo2.model.convertToColumnMajor();
-
-
-    ubo2.view = geometry::Matrix4x4::indentityMatrix();
-    ubo2.view.translate(geometry::Vector3(0.0F, 0.0F, -5.0F));
-    ubo2.view.convertToColumnMajor();
-
-
-
-    ubo2.proj = m_camera.getProjectionMatrix(glm::radians(45.0F), m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1F, 10.0F);
-    ubo2.proj.convertToColumnMajor();
-
-
-    //ubo2.proj[5] *= -1;
-    //ubo2.proj[10] *= -1;
-    //assert(std::memcmp(&ubo.model, &ubo2.model, sizeof(ubo2.model)));
-    //assert(std::memcmp(&ubo.model, &ubo2.model, sizeof(ubo2.model)));
-
-
-    void* data = m_device.mapMemory(m_uniformBuffersMemory[currentImage], 0, sizeof(ubo2));
+    void* data = m_device.mapMemory(m_uniformBuffersMemory[currentImage], 0, sizeof(ubo));
     memcpy(data, &ubo, sizeof(ubo));
     m_device.unmapMemory(m_uniformBuffersMemory[currentImage]);
 }

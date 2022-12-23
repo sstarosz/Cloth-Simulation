@@ -63,6 +63,7 @@ namespace st::geometry
         }
 
         auto operator<=>(const Matrix4x4&) const = default;
+        Matrix4x4 operator*(const Matrix4x4& other) const;
 
 
         static Matrix4x4 indentityMatrix();
@@ -83,6 +84,35 @@ namespace st::geometry
     private:
         float m_value[16];
     };
+
+
+
+    inline Matrix4x4 Matrix4x4::operator*(const Matrix4x4& other) const
+    {
+        Matrix4x4 result;
+
+        result[0]  = m_value[0]  * other[0] + m_value[1]  * other[4] + m_value[2] * other[8]   + m_value[3] * other[12];
+        result[1]  = m_value[0]  * other[1] + m_value[1]  * other[5] + m_value[2] * other[9]   + m_value[3] * other[13];
+        result[2]  = m_value[0]  * other[2] + m_value[1]  * other[6] + m_value[2] * other[10]  + m_value[3] * other[14];
+        result[3]  = m_value[0]  * other[3] + m_value[1]  * other[7] + m_value[2] * other[11]  + m_value[3] * other[15];
+                                                                                               
+        result[4]  = m_value[4]  * other[0] + m_value[5]  * other[4] + m_value[6] * other[8]   + m_value[7] * other[12];
+        result[5]  = m_value[4]  * other[1] + m_value[5]  * other[5] + m_value[6] * other[9]   + m_value[7] * other[13];
+        result[6]  = m_value[4]  * other[2] + m_value[5]  * other[6] + m_value[6] * other[10]  + m_value[7] * other[14];
+        result[7]  = m_value[4]  * other[3] + m_value[5]  * other[7] + m_value[6] * other[11]  + m_value[7] * other[15];
+                                                                                          
+        result[8]  = m_value[8]  * other[0] + m_value[9]  * other[4] + m_value[10] * other[8]  + m_value[11] * other[12];
+        result[9]  = m_value[8]  * other[1] + m_value[9]  * other[5] + m_value[10] * other[9]  + m_value[11] * other[13];
+        result[10] = m_value[8]  * other[2] + m_value[9]  * other[6] + m_value[10] * other[10] + m_value[11] * other[14];
+        result[11] = m_value[8]  * other[3] + m_value[9]  * other[7] + m_value[10] * other[11] + m_value[11] * other[15];
+                                                                                                 
+        result[12] = m_value[12] * other[0] + m_value[13] * other[4] + m_value[14] * other[8]  + m_value[15] * other[12];
+        result[13] = m_value[12] * other[1] + m_value[13] * other[5] + m_value[14] * other[9]  + m_value[15] * other[13];
+        result[14] = m_value[12] * other[2] + m_value[13] * other[6] + m_value[14] * other[10] + m_value[15] * other[14];
+        result[15] = m_value[12] * other[3] + m_value[13] * other[7] + m_value[14] * other[11] + m_value[15] * other[15];
+
+        return result;
+    }
 
 }
 

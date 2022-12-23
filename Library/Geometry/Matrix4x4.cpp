@@ -98,7 +98,6 @@ namespace st::geometry
 		//result[1]
 
 
-
 		//4-th column
 		result[3] = 0.0;
 		result[7] = 0.0;
@@ -125,6 +124,5 @@ namespace st::geometry
 	}
 
 	
-
 
 }

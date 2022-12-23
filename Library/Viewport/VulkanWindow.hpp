@@ -15,11 +15,6 @@
 #include "Line.hpp"
 #include "Camera.hpp"
 
-#define GLM_FORCE_RADIANS
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-
 namespace st::viewport 
 {
 	class VulkanWindow : public QWindow
@@ -158,20 +153,11 @@ namespace st::viewport
 		//};
 
 
-		struct UniformBufferObjectSt {
+		struct UniformBufferObject {
 			geometry::Matrix4x4 model;
 			geometry::Matrix4x4 view;
 			geometry::Matrix4x4 proj;
 		};
-
-		struct UniformBufferObject {
-			glm::mat4 model;
-			glm::mat4 view;
-			glm::mat4 proj;
-		};
-
-
-
 
 		Line m_line;
 		uint32_t currentFrame = 0;

@@ -14,6 +14,27 @@ namespace st::viewport
 		m_mouseClickY = static_cast<float>(y);
 	}
 
+	void Camera::mouseMove(int64_t x, int64_t y)
+	{
+
+
+		switch (m_currentState)
+		{
+		case st::viewport::Camera::Actions::NoAction:
+			return;
+			break;
+		case st::viewport::Camera::Actions::Orbit:
+			orbit(static_cast<float>(x), static_cast<float>(y));
+			break;
+		case st::viewport::Camera::Actions::Zoom:
+			break;
+		case st::viewport::Camera::Actions::Pan:
+			break;
+		default:
+			break;
+		}
+	}
+
 	void Camera::orbit(float dx, float dy)
 	{
 		using namespace geometry;
@@ -38,11 +59,10 @@ namespace st::viewport
 
 
 		Matrix4x4 rotX;
-		Matrix4x4 rotY;
 
 
 		Vector3 axeZ(Vector3::normalize(centerToEye));
-		//rotY = Matrix4x4::
+		Matrix4x4 rotY = Matrix4x4::rotationAroundAxis(-dx, m_up);
 	}
 
 	void Camera::setMousePosition(int64_t x, int64_t y)
@@ -62,7 +82,7 @@ namespace st::viewport
 		float      f = farPlane;
 		float      n = nearPlane;
 
-		const float t = n * std::tan(fovy * 0.5F);
+		const float t = n * std::tan(fovy * (std::numbers::pi_v<float> / 180.0F) * 0.5F);
 		const float b = -t;
 		const float l = b * aspect;
 		const float r = t * aspect;

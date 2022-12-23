@@ -8,7 +8,6 @@
 #include <Geometry/Matrix4x4.hpp>
 #include <Geometry/Vector3.hpp>
 
-
 namespace st::viewport
 {
     class Camera
@@ -22,12 +21,15 @@ namespace st::viewport
             Pan
         };
 
-        
+
         void mousePressEvent(int64_t x, int64_t y, Actions action);
+        void mouseMove(int64_t x, int64_t y);
+
 
         void orbit(float dx, float dy);
 
         void setMousePosition(int64_t x, int64_t y);
+        void setMouseMove(int64_t x, int64_t y);
         void releaseMouseClick();
 
         geometry::Matrix4x4 getViewMatrix() const;
