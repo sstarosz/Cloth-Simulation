@@ -31,6 +31,7 @@ namespace st::viewport
         void releaseMouseClick();
 
         geometry::Matrix4x4 getViewMatrix() const;
+        geometry::Matrix4x4 getProjectionMatrix(float fovy, float aspect, float nearPlane, float farPlane) const;
 
 
     private:

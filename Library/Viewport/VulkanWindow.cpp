@@ -854,15 +854,19 @@ void VulkanWindow::updateUniformBuffer(uint32_t currentImage)
 
     UniformBufferObjectSt ubo2{};
     ubo2.model = geometry::Matrix4x4::indentityMatrix();
+    ubo2.model.convertToColumnMajor();
+
 
     ubo2.view = geometry::Matrix4x4::indentityMatrix();
-    ubo2.view.translate(geometry::Vector3(0.0F, 0.0F, -1.1F));
+    ubo2.view.translate(geometry::Vector3(0.0F, 0.0F, -5.0F));
+    ubo2.view.convertToColumnMajor();
 
-    ubo2.proj = geometry::Matrix4x4::projectionMatrix(45.0F, m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1F, 10.0F);
 
 
-    ubo2.proj = geometry::Matrix4x4::indentityMatrix();
-    ubo2.proj[9] = 0;
+    ubo2.proj = m_camera.getProjectionMatrix(glm::radians(45.0F), m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1F, 10.0F);
+    ubo2.proj.convertToColumnMajor();
+
+
     //ubo2.proj[5] *= -1;
     //ubo2.proj[10] *= -1;
     //assert(std::memcmp(&ubo.model, &ubo2.model, sizeof(ubo2.model)));
@@ -870,7 +874,7 @@ void VulkanWindow::updateUniformBuffer(uint32_t currentImage)
 
 
     void* data = m_device.mapMemory(m_uniformBuffersMemory[currentImage], 0, sizeof(ubo2));
-    memcpy(data, &ubo2, sizeof(ubo2));
+    memcpy(data, &ubo, sizeof(ubo));
     m_device.unmapMemory(m_uniformBuffersMemory[currentImage]);
 }
 
@@ -1046,51 +1050,48 @@ void VulkanWindow::mousePressEvent(QMouseEvent* event)
 
 void VulkanWindow::mouseMoveEvent(QMouseEvent* event)
 {
-    switch (m_mouseControl.currentState)
-    {
-    case MouseControl::MouseControlState::None:
-        break;
-
-    case MouseControl::MouseControlState::Rotate:
-        m_toClick = event->position().toPoint();
-        updateRotation();
-        break;
-
-    case MouseControl::MouseControlState::Pan:
-        break;
-
-    case MouseControl::MouseControlState::Zoom:
-        break;
-
-    default:
-        break;
-    }
+    //switch (m_mouseControl.currentState)
+    //{
+    //case MouseControl::MouseControlState::None:
+    //    break;
+    //
+    //case MouseControl::MouseControlState::Rotate:
+    //    m_toClick = event->position().toPoint();
+    //    updateRotation();
+    //    break;
+    //
+    //case MouseControl::MouseControlState::Pan:
+    //    break;
+    //
+    //case MouseControl::MouseControlState::Zoom:
+    //    break;
+    //
+    //default:
+    //    break;
+    //}
 }
 
 void VulkanWindow::mouseReleaseEvent(QMouseEvent* event)
 {
+    auto m_toClick = event->position().toPoint();
+
     if (event->button() & Qt::Key_Alt)
     {
-        m_toClick = event->position().toPoint();
-
         //Update rotation pan or zoom
     }
     else if (event->button() & Qt::LeftButton)
     {
-        m_toClick = event->position().toPoint();
         qDebug() << "Left Release" << m_toClick << "\n";
         //update rotation
     }
     else if (event->button() & Qt::MiddleButton)
     {
-        m_toClick = event->position().toPoint();
         qDebug() << "Middle Release" << m_toClick << "\n";
 
         //Update pan
     }
     else if (event->button() & Qt::RightButton)
     {
-        m_toClick = event->position().toPoint();
         qDebug() << "Right Release" << m_toClick << "\n";
         //Update zoom
     }
@@ -1098,15 +1099,6 @@ void VulkanWindow::mouseReleaseEvent(QMouseEvent* event)
 
 void VulkanWindow::keyPressEvent(QKeyEvent* event)
 {
-
-
-    if (event->key() != Qt::Key_Alt)
-    {
-        if (event->modifiers() & Qt::AltModifier)
-        {
-            m_mouseControl.isLeftAltHeld = true;
-        }
-    }
 
 }
 
@@ -1118,7 +1110,6 @@ void VulkanWindow::keyReleaseEvent(QKeyEvent* event)
 void VulkanWindow::updateRotation()
 {
     qDebug() << size().height() << ", " << size().width() << "\n";
-    m_fromClick - m_toClick;
 
     //Save lastCoord (When mouse was pressed) m_fromClick
 

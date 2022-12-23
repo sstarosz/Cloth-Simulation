@@ -64,6 +64,66 @@ namespace st::geometry
 		return projection;
 	}
 
+	Matrix4x4 Matrix4x4::rotationX(const float& theta)
+	{
+		return Matrix4x4();
+	}
+
+	Matrix4x4 Matrix4x4::rotationY(const float& theta)
+	{
+		return Matrix4x4();
+	}
+
+	Matrix4x4 Matrix4x4::rotationZ(const float& theta)
+	{
+		return Matrix4x4();
+	}
+
+	Matrix4x4 Matrix4x4::rotationAroundAxis(const float& theta, const Vector3& v)
+	{
+		const float cosT = std::cos(theta);
+		const float sinT = std::cos(theta);
+
+		float xx = v[0] * v[0];
+		float yy = v[1] * v[1];
+		float zz = v[2] * v[2];
+		float xy = v[0] * v[1];
+		float xz = v[0] * v[2];
+		float yz = v[1] * v[2];
+
+
+		Matrix4x4 result{};
+
+		result[0] = cosT + xx * (1 - cosT);
+		//result[1]
+
+
+
+		//4-th column
+		result[3] = 0.0;
+		result[7] = 0.0;
+		result[11] = 0.0;
+
+		//4-th row
+		result[12] = 0;
+		result[13] = 0;
+		result[14] = 0;
+		result[15] = 1;
+
+
+		return Matrix4x4();
+	}
+
+	void Matrix4x4::convertToColumnMajor()
+	{
+		std::swap(m_value[1], m_value[4]);
+		std::swap(m_value[2], m_value[8]);
+		std::swap(m_value[3], m_value[12]);
+		std::swap(m_value[6], m_value[9]);
+		std::swap(m_value[7], m_value[13]);
+		std::swap(m_value[11], m_value[14]);
+	}
+
 	
 
 
