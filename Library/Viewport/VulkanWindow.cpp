@@ -848,7 +848,7 @@ void VulkanWindow::updateUniformBuffer(uint32_t currentImage)
     ubo.view = m_camera.getViewMatrix();
     ubo.view.convertToColumnMajor();
        
-    ubo.proj = m_camera.getProjectionMatrix(45.0F, m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1F, 10.0F);
+    ubo.proj = m_camera.getProjectionMatrix(45.0F, m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1F, 100.0F);
     ubo.proj.convertToColumnMajor();
 
 
@@ -1046,33 +1046,6 @@ void VulkanWindow::keyPressEvent(QKeyEvent* event)
 }
 
 void VulkanWindow::keyReleaseEvent(QKeyEvent* event)
-{
-
-}
-
-void VulkanWindow::updateRotation()
-{
-    qDebug() << size().height() << ", " << size().width() << "\n";
-
-    //Save lastCoord (When mouse was pressed) m_fromClick
-
-    //Convert screen space to 3d point
-    // x , y <- screen space
-
-    //Normalize mouse position
-    // x / frameBufferSize
-    // y / frameBufferSize
-
-    //
-
-}
-
-void VulkanWindow::updatePan()
-{
-
-}
-
-void VulkanWindow::updateZoom()
 {
 
 }

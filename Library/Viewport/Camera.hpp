@@ -33,6 +33,8 @@ namespace st::viewport
 
         geometry::Matrix4x4 lookAt(const geometry::Vector3& eye, const geometry::Vector3& center, const geometry::Vector3& up);
         void orbit(float dx, float dy);
+        void pan(float dx, float dy);
+        void  dolly(float dx, float dy);
         geometry::Vector3 orbitTest(float dx, float dy);
 
 

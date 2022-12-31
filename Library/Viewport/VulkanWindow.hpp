@@ -44,14 +44,8 @@ namespace st::viewport
 		void keyReleaseEvent(QKeyEvent* event) override;
 
 
-		void updateRotation();
-		void updatePan();
-		void updateZoom();
-
-		
 		Camera m_camera;
 		
-
 
 		QVulkanInstance inst;
 

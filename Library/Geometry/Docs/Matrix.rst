@@ -19,3 +19,9 @@ u_zu_x(1-\cos\theta) + u_y\sin\theta & u_zu_y(1-\cos\theta) + u_x\sin\theta & \c
 
 
 https://en.wikipedia.org/w/index.php?title=Rotation_matrix&action=edit&section=13
+
+
+
+TODO
+
+Add posiblity to rotate camera round object in y axis

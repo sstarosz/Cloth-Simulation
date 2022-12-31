@@ -45,8 +45,10 @@ namespace st::viewport
 			orbit(localX, localY);
 			break;
 		case Camera::Actions::Zoom:
+			dolly(localX, localY);
 			break;
 		case Camera::Actions::Pan:
+			pan(localX, localY);
 			break;
 		default:
 			break;
@@ -114,6 +116,53 @@ namespace st::viewport
 
 		m_eye = centerToEye + origin;
 	}
+
+
+	void Camera::dolly(float dx, float dy)
+	{
+		using namespace geometry;
+		Vector3 z = m_center - m_eye;
+		const float lenght =Vector3::lenght(z);
+
+		if (lenght < 0.000001F)
+		{
+			return;
+		}
+
+		const float dd = std::fabs(dx) > std::fabs(dx) ? dx : -dy;
+
+		float factor = 3.0F * dd;
+
+		// Adjust speed based on distance.
+		if (factor >= 1.0F)
+		{
+			return;
+		}
+		z *= factor;
+
+		m_eye = m_eye + z;
+
+	}
+
+
+	void Camera::pan(float dx, float dy)
+	{
+		using namespace geometry;
+
+		Vector3 z(m_eye - m_center);
+		float         length = static_cast<float>(Vector3::lenght(z)) / 0.785f;  // 45 degrees
+		z = Vector3::normalize(z);
+		Vector3 x = Vector3::crossProduct(m_up, z);
+		x = Vector3::normalize(x);
+		Vector3 y = Vector3::crossProduct(z, x);
+		y = Vector3::normalize(y);
+		x *= -dx * length;
+		y *= dy * length;
+
+		m_eye = m_eye + x + y;
+		m_center = m_center + x + y;
+	}
+
 
 
 	geometry::Vector3 Camera::orbitTest(float dx, float dy)
