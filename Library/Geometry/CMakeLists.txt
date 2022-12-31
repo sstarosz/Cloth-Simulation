@@ -10,14 +10,16 @@ set(SOURCES
 	"Point3D.cpp"
 	"Object3D.cpp"
 	"Matrix4x4.cpp"
-	"Vector3.cpp")
+	"Vector3.cpp"
+	"Vector4.cpp")
 
 set(HEADERS
 	"Vertex.hpp"
 	"Point3D.hpp"
 	"Object3D.hpp"
 	"Matrix4x4.hpp"
-	"Vector3.hpp")
+	"Vector3.hpp"
+	"Vector4.hpp")
 
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})

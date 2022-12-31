@@ -37,12 +37,14 @@ namespace st::geometry
         Vector3 operator+(const Vector3& v) const;
         Vector3 operator-(const Vector3& v) const;
         Vector3 operator*(const float& v) const;
+        Vector3 operator*=(const float& v);
 
 
        
 
         static float lenght(const Vector3& vec);
         static Vector3 normalize(const Vector3& vec);
+        static Vector3 crossProduct(const Vector3& v, const Vector3& w);
 
     private:
         float m_value[3];

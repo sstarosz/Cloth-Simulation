@@ -845,8 +845,7 @@ void VulkanWindow::updateUniformBuffer(uint32_t currentImage)
     ubo.model = geometry::Matrix4x4::indentityMatrix();
     ubo.model.convertToColumnMajor();
        
-    ubo.view = geometry::Matrix4x4::indentityMatrix();
-    ubo.view.translate(geometry::Vector3(0.0F, 0.0F, -5.0F));
+    ubo.view = m_camera.getViewMatrix();
     ubo.view.convertToColumnMajor();
        
     ubo.proj = m_camera.getProjectionMatrix(45.0F, m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1F, 10.0F);
@@ -1030,51 +1029,15 @@ void VulkanWindow::mousePressEvent(QMouseEvent* event)
 
 void VulkanWindow::mouseMoveEvent(QMouseEvent* event)
 {
-    //switch (m_mouseControl.currentState)
-    //{
-    //case MouseControl::MouseControlState::None:
-    //    break;
-    //
-    //case MouseControl::MouseControlState::Rotate:
-    //    m_toClick = event->position().toPoint();
-    //    updateRotation();
-    //    break;
-    //
-    //case MouseControl::MouseControlState::Pan:
-    //    break;
-    //
-    //case MouseControl::MouseControlState::Zoom:
-    //    break;
-    //
-    //default:
-    //    break;
-    //}
+    const auto mousePosition = event->position().toPoint();
+    m_camera.mouseMove(mousePosition.x(), mousePosition.y());
 }
 
 void VulkanWindow::mouseReleaseEvent(QMouseEvent* event)
 {
-    auto m_toClick = event->position().toPoint();
-
-    if (event->button() & Qt::Key_Alt)
-    {
-        //Update rotation pan or zoom
-    }
-    else if (event->button() & Qt::LeftButton)
-    {
-        qDebug() << "Left Release" << m_toClick << "\n";
-        //update rotation
-    }
-    else if (event->button() & Qt::MiddleButton)
-    {
-        qDebug() << "Middle Release" << m_toClick << "\n";
-
-        //Update pan
-    }
-    else if (event->button() & Qt::RightButton)
-    {
-        qDebug() << "Right Release" << m_toClick << "\n";
-        //Update zoom
-    }
+    const auto mousePosition = event->position().toPoint();
+    m_camera.mouseMove(mousePosition.x(), mousePosition.y());
+    m_camera.releaseMouseClick();
 }
 
 void VulkanWindow::keyPressEvent(QKeyEvent* event)

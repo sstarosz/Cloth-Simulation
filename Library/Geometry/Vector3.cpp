@@ -19,7 +19,6 @@ namespace st::geometry
 		m_value[2] = z;
 	}
 
-
 	Vector3 Vector3::operator+(const Vector3& v) const
 	{
 		return Vector3{ m_value[0] + v.m_value[0],
@@ -44,12 +43,24 @@ namespace st::geometry
 		return result;
 	}
 
+	Vector3 Vector3::operator*=(const float& v)
+	{
+		m_value[0] *= v;
+		m_value[1] *= v;
+		m_value[2] *= v;
+		return *this;
+	}
+
+
+	//Also know as magnitude
 	float Vector3::lenght(const Vector3& vec)
 	{
 		return std::sqrtf(vec.m_value[0] * vec.m_value[0] + 
 						  vec.m_value[1] * vec.m_value[1] +
 						  vec.m_value[2] * vec.m_value[2]);
 	}
+
+	//divide vector by it magnitude to make it a unit vector
 	Vector3 Vector3::normalize(const Vector3& vec)
 	{
 		Vector3 u{ vec };
@@ -67,6 +78,15 @@ namespace st::geometry
 		}
 
 		return u * norm;
+	}
+
+	Vector3 Vector3::crossProduct(const Vector3& v, const Vector3& w)
+	{
+		Vector3 u;
+		u[0] = v[1] * w[2] - v[2] * w[1];
+		u[1] = v[2] * w[0] - v[0] * w[2];
+		u[2] = v[0] * w[1] - v[1] * w[0];
+		return u;
 	}
 }
 

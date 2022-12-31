@@ -82,7 +82,7 @@ namespace st::geometry
 	Matrix4x4 Matrix4x4::rotationAroundAxis(const float& theta, const Vector3& v)
 	{
 		const float cosT = std::cos(theta);
-		const float sinT = std::cos(theta);
+		const float sinT = std::sin(theta);
 
 		float xx = v[0] * v[0];
 		float yy = v[1] * v[1];
@@ -94,8 +94,18 @@ namespace st::geometry
 
 		Matrix4x4 result{};
 
-		result[0] = cosT + xx * (1 - cosT);
-		//result[1]
+		result[0]  = cosT + xx * (1 - cosT);
+		result[1]  = xy * (1 - cosT) - v[2] * sinT;
+		result[2]  = xz * (1 - cosT) + v[1] * sinT;
+
+		result[4]  = xy * (1 - cosT) + v[2] * sinT;
+		result[5]  = cosT + yy * (1 - cosT);
+		result[6]  = yz * (1 - cosT) - v[0] * sinT;
+
+		result[8]  = xz * (1 - cosT) - v[1] * sinT;
+		result[9]  = yz * (1 - cosT) + v[0] * sinT;
+		result[10] = cosT + zz * (1 - cosT);
+
 
 
 		//4-th column
@@ -110,7 +120,7 @@ namespace st::geometry
 		result[15] = 1;
 
 
-		return Matrix4x4();
+		return result;
 	}
 
 	void Matrix4x4::convertToColumnMajor()

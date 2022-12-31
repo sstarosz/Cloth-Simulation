@@ -7,6 +7,7 @@
 #include <vulkan/vulkan.hpp>
 #include <Geometry/Matrix4x4.hpp>
 #include <Geometry/Vector3.hpp>
+#include <Geometry/Vector4.hpp>
 
 namespace st::viewport
 {
@@ -21,16 +22,20 @@ namespace st::viewport
             Pan
         };
 
+        Camera();
 
         void mousePressEvent(int64_t x, int64_t y, Actions action);
         void mouseMove(int64_t x, int64_t y);
-
-
-        void orbit(float dx, float dy);
-
-        void setMousePosition(int64_t x, int64_t y);
-        void setMouseMove(int64_t x, int64_t y);
         void releaseMouseClick();
+
+
+        void update();
+
+        geometry::Matrix4x4 lookAt(const geometry::Vector3& eye, const geometry::Vector3& center, const geometry::Vector3& up);
+        void orbit(float dx, float dy);
+        geometry::Vector3 orbitTest(float dx, float dy);
+
+
 
         geometry::Matrix4x4 getViewMatrix() const;
         geometry::Matrix4x4 getProjectionMatrix(float fovy, float aspect, float nearPlane, float farPlane) const;
@@ -43,6 +48,8 @@ namespace st::viewport
         geometry::Vector3 m_eye;
         geometry::Vector3 m_center;
         geometry::Vector3 m_up;
+
+        geometry::Matrix4x4 m_matrix;
 
         float m_fov = 60.0f;
 
