@@ -12,9 +12,10 @@ ViewportWidget::ViewportWidget()
     /* Viewport Layout*/
     vulkan_window = new VulkanWindow;
     auto* vulkanContainer = QWidget::createWindowContainer(vulkan_window);
-    vulkanContainer->setMinimumSize(800, 500);
-    vulkanContainer->setSizePolicy(QSizePolicy::Expanding,
-        QSizePolicy::Expanding);
+    vulkanContainer->setFocusPolicy(Qt::StrongFocus);
+    vulkanContainer->setFocus();
+    //vulkanContainer->setMinimumSize(800, 800);
+    //vulkanContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     viewportLayout->addWidget(vulkanContainer);
 

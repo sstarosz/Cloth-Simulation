@@ -69,6 +69,9 @@ namespace st::viewport
 		vk::DescriptorSetLayout m_descriptorSetLayout;
 		vk::PipelineLayout m_pipelineLayout;
 		vk::PipelineCache m_pipelineCache;
+		std::vector<vk::DynamicState> m_dynamicStateEnables;
+		vk::PipelineDynamicStateCreateInfo m_pipelineDynamicStateCreateInfo;
+
 		vk::Pipeline m_graphicsPipeline;
 
 		std::vector<vk::Framebuffer> m_swapChainFramebuffers;

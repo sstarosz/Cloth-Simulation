@@ -107,20 +107,21 @@ namespace st::viewport
                                                            VK_FALSE);
 
 
-    vk::Viewport viewport(
-        0.0F,
-        0.0F,
-        static_cast<float>(swapChainExtent.width),
-        static_cast<float>(swapChainExtent.height),
-        0.0F,
-        1.0F);
-
-    vk::Rect2D scissor(vk::Offset2D{ 0, 0 }, swapChainExtent);
+   //vk::Viewport viewport(
+   //    0.0F,
+   //    0.0F,
+   //    static_cast<float>(swapChainExtent.width),
+   //    static_cast<float>(swapChainExtent.height),
+   //    0.0F,
+   //    1.0F);
+   //
+   //vk::Rect2D scissor(vk::Offset2D{ 0, 0 }, swapChainExtent);
 
     vk::PipelineViewportStateCreateInfo viewportState(
-        vk::PipelineViewportStateCreateFlags{},
-        viewport,
-        scissor);
+        vk::PipelineViewportStateCreateFlags{} //,
+        //viewport,
+        //scissor
+        );
 
     vk::PipelineRasterizationStateCreateInfo rasterizer(
         vk::PipelineRasterizationStateCreateFlags{},
@@ -148,6 +149,9 @@ namespace st::viewport
         false,
         false,
         };
+
+    m_dynamicStateEnables = { vk::DynamicState::eViewport, vk::DynamicState::eScissor };
+    m_pipelineDynamicStateCreateInfo = vk::PipelineDynamicStateCreateInfo{ {}, m_dynamicStateEnables };
 
     vk::PipelineColorBlendAttachmentState colorBlendAttachment(
         VK_FALSE,
@@ -187,7 +191,7 @@ namespace st::viewport
         &multisampling,
         &depthStencil,
         &colorBlending,
-        {},
+        &m_pipelineDynamicStateCreateInfo,
         m_linePiplineLayout,
         renderPass);
 

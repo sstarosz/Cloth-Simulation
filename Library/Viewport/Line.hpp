@@ -64,6 +64,8 @@ namespace st::viewport
         std::vector<vk::DescriptorSet> m_lineDescriptorSets;
 
         vk::PipelineLayout m_linePiplineLayout;
+        std::vector<vk::DynamicState> m_dynamicStateEnables;
+        vk::PipelineDynamicStateCreateInfo m_pipelineDynamicStateCreateInfo;
 
         vk::Buffer m_lineVertexBuffer;
         vk::DeviceMemory m_lineVertexBufferMemory;

@@ -31,7 +31,7 @@ MainWindow::MainWindow()
     //Setup StatusBar
     //Setup Main Widget/Viewport 3D
     //Dock Widget
-	this->setFixedSize(800, 600);
+	this->setMinimumSize(800, 600);
     
     createMenuBar();
     createStatusBar();

@@ -531,22 +531,23 @@ void VulkanWindow::createGraphicsPipeline()
         vk::PrimitiveTopology::eTriangleList,
         VK_FALSE);
 
-    vk::Viewport viewport(
-        0.0F,
-        0.0F,
-        static_cast<float>(m_swapChainExtent.width),
-        static_cast<float>(m_swapChainExtent.height),
-        0.0F,
-        1.0F);
-
-    vk::Rect2D scissor(
-        vk::Offset2D { 0, 0 },
-        m_swapChainExtent);
+    //vk::Viewport viewport(
+    //    0.0F,
+    //    0.0F,
+    //    static_cast<float>(m_swapChainExtent.width),
+    //    static_cast<float>(m_swapChainExtent.height),
+    //    0.0F,
+    //    1.0F);
+    //
+    //vk::Rect2D scissor(
+    //    vk::Offset2D { 0, 0 },
+    //    m_swapChainExtent);
 
     vk::PipelineViewportStateCreateInfo viewportState(
-        vk::PipelineViewportStateCreateFlags {},
-        viewport,
-        scissor);
+        vk::PipelineViewportStateCreateFlags {}
+        //viewport,
+        //scissor
+        );
 
     vk::PipelineRasterizationStateCreateInfo rasterizer(
         vk::PipelineRasterizationStateCreateFlags {},
@@ -574,6 +575,9 @@ void VulkanWindow::createGraphicsPipeline()
         false,
         false,
     };
+
+    m_dynamicStateEnables = {vk::DynamicState::eViewport, vk::DynamicState::eScissor };
+    m_pipelineDynamicStateCreateInfo = vk::PipelineDynamicStateCreateInfo{ {}, m_dynamicStateEnables};
 
     vk::PipelineColorBlendAttachmentState colorBlendAttachment(
         VK_FALSE,
@@ -609,7 +613,7 @@ void VulkanWindow::createGraphicsPipeline()
         &multisampling,
         &depthStencil,
         &colorBlending,
-        {},
+        &m_pipelineDynamicStateCreateInfo,
         m_pipelineLayout,
         m_renderPass);
 
@@ -879,6 +883,20 @@ void VulkanWindow::recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_
 
     commandBuffer.beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
 
+    vk::Viewport viewport{
+        0.0F,
+        0.0F,
+        static_cast<float>(m_swapChainExtent.width),
+        static_cast<float>(m_swapChainExtent.height),
+        0.0F,
+        1.0F
+    };
+
+    vk::Rect2D scissor{ {0, 0}, m_swapChainExtent };
+    commandBuffer.setViewport(0, 1, &viewport);
+    commandBuffer.setScissor(0, 1, &scissor);
+
+
     commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_graphicsPipeline);
 
     vk::Buffer vertexBuffers[] = { m_vertexBuffer };
@@ -956,7 +974,7 @@ void VulkanWindow::drawFrame()
         recreateSwapChain();
     }
 
-    if (/*result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR ||*/ m_framebufferResized) {
+    if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR || m_framebufferResized) {
         m_framebufferResized = false;
         recreateSwapChain();
     } else if (result != vk::Result::eSuccess) {
@@ -967,9 +985,11 @@ void VulkanWindow::drawFrame()
     requestUpdate();
 }
 
-void VulkanWindow::resizeEvent(QResizeEvent*)
+void VulkanWindow::resizeEvent(QResizeEvent* event)
 {
-    // QWindow::resizeEvent( < unnamed >);
+
+    recreateSwapChain();
+    QWindow::resizeEvent(event);
 }
 
 bool VulkanWindow::event(QEvent* event)
@@ -1397,13 +1417,13 @@ void VulkanWindow::createDepthResources()
     vk::Format depthFormat = findDepthFormat();
 
     createImage(m_swapChainExtent.width,
-        m_swapChainExtent.height,
-        depthFormat,
-        vk::ImageTiling::eOptimal,
-        vk::ImageUsageFlagBits::eDepthStencilAttachment,
-        vk::MemoryPropertyFlagBits::eDeviceLocal,
-        m_depthImage,
-        m_depthImageMemory);
+                m_swapChainExtent.height,
+                depthFormat,
+                vk::ImageTiling::eOptimal,
+                vk::ImageUsageFlagBits::eDepthStencilAttachment,
+                vk::MemoryPropertyFlagBits::eDeviceLocal,
+                m_depthImage,
+                m_depthImageMemory);
 
     m_depthImageView = createImageView(m_depthImage, depthFormat, vk::ImageAspectFlagBits::eDepth);
 
