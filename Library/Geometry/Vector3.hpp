@@ -12,47 +12,91 @@ namespace st::geometry
          *
          *  Detailed description starts here.
          */
-    class Vector3
+    class Vector3D
     {
     public:
-        Vector3() noexcept;
-        Vector3(float x, float y, float z) noexcept;
+        Vector3D() noexcept;
+        Vector3D(float x, float y, float z) noexcept;
 
 
         constexpr float& operator[](const size_t index)
         {
             assert(index >= 0 && index < 4);
-            return m_value[index];
+            return ((&x)[index]);   //TODO More safe version?
         }
          
-        const float& operator[](const size_t index) const
+        constexpr const float& operator[](const size_t index) const
         {
             assert(index >= 0 && index < 4);
-            return m_value[index];
+            return ((&x)[index]); //TODO More safe version?
         }
 
-        auto operator<=>(const Vector3&) const = default;
+        auto operator<=>(const Vector3D&) const = default;
 
 
-        Vector3 operator+(const Vector3& v) const;
-        Vector3 operator-(const Vector3& v) const;
-        Vector3 operator*(const float& v) const;
-        Vector3 operator*=(const float& v);
+        Vector3D operator+(const Vector3D& vec) const
+        {
+            return {x + vec.x, y + vec.y, z + vec.z};
+        }
+
+        Vector3D operator-(const Vector3D& vec) const
+        {
+            return {x - vec.x, y - vec.y, z - vec.z};
+        }
+
+        //Vector3D operator*(const float& s) const
+        //{
+		//    return {x * s, y * s, z * s};
+	    //}
 
 
+        Vector3D& operator*=(const float& s)
+        {
+            x *= s;
+            y *= s;
+            z *= s;
+            return *this;
+	    }
+
+        Vector3D& operator/=(const float& s)
+        {
+            assert(s != 0.0F);
+            const float ms = 1.0F / s;
+            x *= ms;
+            y *= ms;
+            z *= ms;
+            return *this;
+	    }
        
 
-        static float lenght(const Vector3& vec);
-        static Vector3 normalize(const Vector3& vec);
-        static Vector3 crossProduct(const Vector3& v, const Vector3& w);
+        static float lenght(const Vector3D& vec);
+        static Vector3D normalize(const Vector3D& vec);
+        static Vector3D crossProduct(const Vector3D& vec, const Vector3D& w);
 
-    private:
-        float m_value[3];
+    public:
+        float x;
+        float y;
+        float z;
     };
 
 
 
+    inline Vector3D operator*(const Vector3D& vec, float s)
+    {
+        return {vec.x * s, vec.y * s, vec.z * s};
+    }
 
+    inline Vector3D operator/(const Vector3D& vec, float s)
+    {
+        assert(s != 0.0F);
+        const float ms = 1.0F / s;
+        return {vec.x * ms, vec.y * ms, vec.z * ms};
+    }
+
+    inline Vector3D operator-(const Vector3D& vec)
+    {
+        return {-vec.x, -vec.y, -vec.z};
+    }
 }
 
 

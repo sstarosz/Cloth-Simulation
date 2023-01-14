@@ -4,71 +4,32 @@
 
 namespace st::geometry
 {
-	Vector3::Vector3() noexcept
-	{
-		m_value[0] = 0;
-		m_value[1] = 0;
-		m_value[2] = 0;
+	Vector3D::Vector3D()noexcept:
+	x(0.0F), 
+	y(0.0F),
+	z(0.0F) 
+	{}
 
-	}
-
-	Vector3::Vector3(float x, float y, float z) noexcept
-	{
-		m_value[0] = x;
-		m_value[1] = y;
-		m_value[2] = z;
-	}
-
-	Vector3 Vector3::operator+(const Vector3& v) const
-	{
-		return Vector3{ m_value[0] + v.m_value[0],
-						m_value[1] + v.m_value[1],
-						m_value[2] + v.m_value[2] };
-	}
-
-	Vector3 Vector3::operator-(const Vector3& v) const
-	{
-		return Vector3{ m_value[0] - v.m_value[0],
-						m_value[1] - v.m_value[1],
-						m_value[2] - v.m_value[2] };
-	}
-
-	Vector3 Vector3::operator*(const float& v) const
-	{
-		Vector3 result;
-		result[0] = m_value[0] * v;
-		result[1] = m_value[1] * v;
-		result[2] = m_value[2] * v;
-
-		return result;
-	}
-
-	Vector3 Vector3::operator*=(const float& v)
-	{
-		m_value[0] *= v;
-		m_value[1] *= v;
-		m_value[2] *= v;
-		return *this;
-	}
-
+	Vector3D::Vector3D(float x, float y, float z) noexcept:
+	x(x),
+	y(y),
+	z(z) 
+	{}
 
 	//Also know as magnitude
-	float Vector3::lenght(const Vector3& vec)
+	float Vector3D::lenght(const Vector3D& vec)
 	{
-		return std::sqrtf(vec.m_value[0] * vec.m_value[0] + 
-						  vec.m_value[1] * vec.m_value[1] +
-						  vec.m_value[2] * vec.m_value[2]);
+		return std::sqrtf(vec.x * vec.x + 
+						  vec.y * vec.y +
+						  vec.y * vec.y);
 	}
 
 	//divide vector by it magnitude to make it a unit vector
-	Vector3 Vector3::normalize(const Vector3& vec)
+	Vector3D Vector3D::normalize(const Vector3D& vec)
 	{
-		Vector3 u{ vec };
-		float norm = std::sqrtf(vec.m_value[0] * vec.m_value[0] +
-								vec.m_value[1] * vec.m_value[1] +
-								vec.m_value[2] * vec.m_value[2]);
+		float norm = Vector3D::lenght(vec);
 		
-		if (norm > 10e-6)
+		if (norm > 10e-6) // TODO change to elipson
 		{
 			norm = 1.0F / norm;
 		}
@@ -77,15 +38,15 @@ namespace st::geometry
 			norm = 0.0F;
 		}
 
-		return u * norm;
+		return {vec * norm};
 	}
 
-	Vector3 Vector3::crossProduct(const Vector3& v, const Vector3& w)
+	Vector3D Vector3D::crossProduct(const Vector3D& v, const Vector3D& w)
 	{
-		Vector3 u;
-		u[0] = v[1] * w[2] - v[2] * w[1];
-		u[1] = v[2] * w[0] - v[0] * w[2];
-		u[2] = v[0] * w[1] - v[1] * w[0];
+		Vector3D u;
+		u.x = v.y * w.z - v.z * w.y;
+		u.y = v.z * w.x - v.x * w.z;
+		u.z = v.x * w.y - v.y * w.x;
 		return u;
 	}
 }

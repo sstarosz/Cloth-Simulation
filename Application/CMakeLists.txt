@@ -7,7 +7,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-set(SOURCES main.cpp)
+set(SOURCES "main.cpp")
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 

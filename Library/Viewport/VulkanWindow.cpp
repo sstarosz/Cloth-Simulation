@@ -65,6 +65,8 @@ void VulkanWindow::initialize()
     createDescriptorSets();
     createCommandBuffers();
     createSyncObjects();
+
+    isInitialised = true;
 }
 
 void VulkanWindow::releaseResources()
@@ -544,9 +546,11 @@ void VulkanWindow::createGraphicsPipeline()
     //    m_swapChainExtent);
 
     vk::PipelineViewportStateCreateInfo viewportState(
-        vk::PipelineViewportStateCreateFlags {}
-        //viewport,
-        //scissor
+        vk::PipelineViewportStateCreateFlags {},
+        1,
+        {},
+        1,
+        {}
         );
 
     vk::PipelineRasterizationStateCreateInfo rasterizer(
@@ -987,8 +991,10 @@ void VulkanWindow::drawFrame()
 
 void VulkanWindow::resizeEvent(QResizeEvent* event)
 {
-
-    recreateSwapChain();
+    if (isInitialised)
+    {
+        recreateSwapChain();
+    }
     QWindow::resizeEvent(event);
 }
 

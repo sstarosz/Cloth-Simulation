@@ -3,7 +3,6 @@
 #include <Geometry/Matrix4x4.hpp>
 
 
-#include <chrono>
 
 namespace st::geometry::unittests {
 
@@ -25,17 +24,10 @@ namespace st::geometry::unittests {
                           171, 146, 172, 268,
                           105, 169, 128, 169 };
 
-        auto start = std::chrono::steady_clock::now();
 
         Matrix4x4 C = A * B;
 
-        auto end = std::chrono::steady_clock::now();
-        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us" << "\n";
-        std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms" << "\n";
-        std::cout << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << " s" << "\n";
-
-
-
+       
         EXPECT_EQ(Result, C);
     }
 

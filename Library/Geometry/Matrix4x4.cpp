@@ -36,11 +36,11 @@ namespace st::geometry
 						 0.0, 0.0, 0.0, 1.0);
 	}
 
-	void Matrix4x4::translate(const Vector3 vector)
+	void Matrix4x4::translate(const Vector3D vector)
 	{
-		m_value[3]  += vector[0];
-		m_value[7]  += vector[1];
-		m_value[11] += vector[2];
+		m_value[3]  += vector.x;
+		m_value[7]  += vector.y;
+		m_value[11] += vector.z;
 	}
 
 	Matrix4x4 Matrix4x4::projectionMatrix(float fieldOfView, float framebufferAspectRatio, float nearPlane, float farPlane)
@@ -79,31 +79,31 @@ namespace st::geometry
 		return Matrix4x4();
 	}
 
-	Matrix4x4 Matrix4x4::rotationAroundAxis(const float& theta, const Vector3& v)
+	Matrix4x4 Matrix4x4::rotationAroundAxis(const float& theta, const Vector3D& v)
 	{
 		const float cosT = std::cos(theta);
 		const float sinT = std::sin(theta);
 
-		float xx = v[0] * v[0];
-		float yy = v[1] * v[1];
-		float zz = v[2] * v[2];
-		float xy = v[0] * v[1];
-		float xz = v[0] * v[2];
-		float yz = v[1] * v[2];
+		float xx = v.x * v.x;
+		float yy = v.y * v.y;
+		float zz = v.z * v.z;
+		float xy = v.x * v.y;
+		float xz = v.x * v.z;
+		float yz = v.y * v.z;
 
 
 		Matrix4x4 result{};
 
 		result[0]  = cosT + xx * (1 - cosT);
-		result[1]  = xy * (1 - cosT) - v[2] * sinT;
-		result[2]  = xz * (1 - cosT) + v[1] * sinT;
+		result[1]  = xy * (1 - cosT) - v.z * sinT;
+		result[2]  = xz * (1 - cosT) + v.y * sinT;
 
-		result[4]  = xy * (1 - cosT) + v[2] * sinT;
+		result[4]  = xy * (1 - cosT) + v.z * sinT;
 		result[5]  = cosT + yy * (1 - cosT);
-		result[6]  = yz * (1 - cosT) - v[0] * sinT;
+		result[6]  = yz * (1 - cosT) - v.x * sinT;
 
-		result[8]  = xz * (1 - cosT) - v[1] * sinT;
-		result[9]  = yz * (1 - cosT) + v[0] * sinT;
+		result[8]  = xz * (1 - cosT) - v.y * sinT;
+		result[9]  = yz * (1 - cosT) + v.x * sinT;
 		result[10] = cosT + zz * (1 - cosT);
 
 

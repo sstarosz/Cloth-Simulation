@@ -67,7 +67,7 @@ namespace st::geometry
 
 
         static Matrix4x4 indentityMatrix();
-        void translate(const Vector3 vector);
+        void translate(const Vector3D vector);
 
         static Matrix4x4 projectionMatrix(float fieldOfView, float framebufferAspectRatio, float nearPlane, float farPlane);
 
@@ -76,7 +76,7 @@ namespace st::geometry
         static Matrix4x4 rotationX(const float& theta);
         static Matrix4x4 rotationY(const float& theta);
         static Matrix4x4 rotationZ(const float& theta);
-        static Matrix4x4 rotationAroundAxis(const float& theta, const Vector3& v);
+        static Matrix4x4 rotationAroundAxis(const float& theta, const Vector3D& v);
 
 
         void convertToColumnMajor();

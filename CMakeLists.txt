@@ -19,12 +19,10 @@ set(USE_FOLDERS True)
 
 #Project Dependicies
 find_package(Qt6 CONFIG REQUIRED
-        COMPONENTS
-            Core
-            Gui
-            Widgets
-            CoreTools
-        )
+             COMPONENTS Core
+                        Gui
+                        Widgets
+                        CoreTools)
 
 
 

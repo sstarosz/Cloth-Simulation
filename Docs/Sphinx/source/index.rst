@@ -25,27 +25,6 @@ Contents
 Docs
 ====
 
-Doxygen Index
-====
-.. doxygenindex::
 
 
-Doxygen Function
-====
-.. doxygenfunction::
 
-Doxygen Struct
-====
-.. doxygenstruct::
-
-Doxygen Enum
-====
-.. doxygenenum::
-
-Doxygen Typedef
-====
-.. doxygentypedef::
-
-Doxygen Typedef
-====
-.. doxygenclass::

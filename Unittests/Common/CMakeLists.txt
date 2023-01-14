@@ -2,11 +2,11 @@
 project(unittests_common)
 
 set(SOURCES
-    Helpers.cpp
+    "Helpers.cpp"
 )
 
 set(HEADERS
-    Helpers.hpp
+    "Helpers.hpp"
 )
 
 

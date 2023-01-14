@@ -166,6 +166,7 @@ namespace st::viewport
 				const bool enableValidationLayers = true;
 		#endif
 
+		bool isInitialised = false;
 
 		/*Init*/
 		void createInstance();
