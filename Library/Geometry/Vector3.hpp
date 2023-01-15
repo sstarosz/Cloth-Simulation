@@ -25,7 +25,7 @@ namespace st::geometry
             return ((&x)[index]);   //TODO More safe version?
         }
          
-        constexpr const float& operator[](const size_t index) const
+        const float& operator[](const size_t index) const
         {
             assert(index >= 0 && index < 4);
             return ((&x)[index]); //TODO More safe version?

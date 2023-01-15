@@ -107,7 +107,7 @@ namespace st::viewport
 		vect_temp = rotX * Vector4(centerToEye, 0.0F);
 		Vector3D vectRot{ vect_temp[0], vect_temp[1], vect_temp[2] };
 
-		if (sign(vectRot[0]) == sign(centerToEye[0]))
+		if (sign(vectRot.x) == sign(centerToEye.x))
 		{
 			centerToEye = vectRot;
 		}
@@ -239,16 +239,17 @@ namespace st::viewport
 		Vector3D z;
 
 		//Z vector
-		z[0] = eye[0] - center[0];
-		z[1] = eye[1] - center[1];
-		z[2] = eye[2] - center[2];
+		//TODO substract vectors
+		z.x = eye.x - center.x;
+		z.y = eye.y - center.y;
+		z.z = eye.z - center.z;
 		z = Vector3D::normalize(z);
 
 
 		//Y vector
-		y[0] = up[0];
-		y[1] = up[1];
-		y[2] = up[2];
+		y.x = up.x;
+		y.y = up.y;
+		y.z = up.z;
 
 		x = Vector3D::crossProduct(y, z);
 
@@ -259,20 +260,20 @@ namespace st::viewport
 		y = Vector3D::normalize(y);
 
 
-		result[0] =  x[0];
-		result[1] =  x[1];
-		result[2] =  x[2];
-		result[3] = -x[0] * eye[0] - x[1] * eye[1] - x[2] * eye[2];
+		result[0] =  x.x;
+		result[1] =  x.y;
+		result[2] =  x.z;
+		result[3] = -x.x * eye.x - x.y * eye.y - x.z * eye.z;
 
-		result[4] =  y[0];
-		result[5] =  y[1];
-		result[6] =  y[2];
-		result[7] = -y[0] * eye[0] - y[1] * eye[1] - y[2] * eye[2];
+		result[4] =  y.x;
+		result[5] =  y.y;
+		result[6] =  y.z;
+		result[7] = -y.x * eye.x - y.y * eye.y - y.z * eye.z;
 
-		result[8]  =  z[0];
-		result[9]  =  z[1];
-		result[10] =  z[2];
-		result[11] = -z[0] * eye[0] - z[1] * eye[1] - z[2] * eye[2];
+		result[8]  =  z.x;
+		result[9]  =  z.y;
+		result[10] =  z.z;
+		result[11] = -z.x * eye.x - z.y * eye.y - z.z * eye.z;
 
 
 		result[12] = 0.0F;

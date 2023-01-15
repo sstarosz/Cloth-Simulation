@@ -1104,14 +1104,16 @@ void VulkanWindow::cleanupSwapChain()
 
 void VulkanWindow::recreateSwapChain()
 {
-    m_device.waitIdle();
+    if (isInitialised)
+    {
+        m_device.waitIdle();
 
-    cleanupSwapChain();
-
-    createSwapChain();
-    createImageViews();
-    createDepthResources();
-    createFramebuffers();
+        cleanupSwapChain();
+        createSwapChain();
+        createImageViews();
+        createDepthResources();
+        createFramebuffers();
+    }
 }
 
 void VulkanWindow::update()

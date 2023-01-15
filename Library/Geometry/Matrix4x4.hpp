@@ -67,7 +67,7 @@ namespace st::geometry
 
 
         static Matrix4x4 indentityMatrix();
-        void translate(const Vector3D vector);
+        void translate(const Vector3D& vector);
 
         static Matrix4x4 projectionMatrix(float fieldOfView, float framebufferAspectRatio, float nearPlane, float farPlane);
 

@@ -21,7 +21,7 @@ namespace st::geometry
 	{
 		return std::sqrtf(vec.x * vec.x + 
 						  vec.y * vec.y +
-						  vec.y * vec.y);
+						  vec.z * vec.z);
 	}
 
 	//divide vector by it magnitude to make it a unit vector

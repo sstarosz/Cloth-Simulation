@@ -36,7 +36,7 @@ namespace st::geometry
 						 0.0, 0.0, 0.0, 1.0);
 	}
 
-	void Matrix4x4::translate(const Vector3D vector)
+	void Matrix4x4::translate(const Vector3D& vector)
 	{
 		m_value[3]  += vector.x;
 		m_value[7]  += vector.y;
