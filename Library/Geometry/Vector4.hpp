@@ -19,7 +19,7 @@ namespace st::geometry
     public:
         Vector4() noexcept;
         Vector4(float x, float y, float z, float w) noexcept;
-        Vector4(Vector3 v, float w) noexcept;
+        Vector4(Vector3D v, float w) noexcept;
 
 
         constexpr float& operator[](const size_t index)

@@ -19,11 +19,11 @@ namespace st::geometry
 		m_value[3] = w;
 	}
 
-	Vector4::Vector4(Vector3 v, float w) noexcept
+	Vector4::Vector4(Vector3D v, float w) noexcept
 	{
-		m_value[0] = v[0];
-		m_value[1] = v[1];
-		m_value[2] = v[2];
+		m_value[0] = v.x;
+		m_value[1] = v.y;
+		m_value[2] = v.z;
 		m_value[3] = w;
 	}
 

@@ -7,7 +7,7 @@
 
 namespace st::viewport::unittests {
 
-    void printEyeVector(const geometry::Vector3& eye)
+    void printEyeVector(const geometry::Vector3D& eye)
     {
         std::cout <<"Eye: " << eye[0] << " " << eye[1] << " " << eye[2] << std::endl;
     }

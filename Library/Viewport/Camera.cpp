@@ -79,35 +79,35 @@ namespace st::viewport
 		dy *= 2 * std::numbers::pi_v<float>;
 
 		// Get the camera
-		Vector3 origin = m_center;
-		Vector3 position = m_eye;
+		Vector3D origin = m_center;
+		Vector3D position = m_eye;
 
 		// Get the length of sight
-		Vector3 centerToEye{ position - origin };
-		float radius = Vector3::lenght(centerToEye);
-		centerToEye = Vector3::normalize(centerToEye);
+		Vector3D centerToEye{ position - origin };
+		float radius = Vector3D::lenght(centerToEye);
+		centerToEye = Vector3D::normalize(centerToEye);
 
 
 		// Find the rotation around the UP axis (Y)
-		Vector3 axeZ(Vector3::normalize(centerToEye));
+		Vector3D axeZ(Vector3D::normalize(centerToEye));
 		//Problem hire
 		Matrix4x4 rotY = Matrix4x4::rotationAroundAxis(-dx, m_up);
 
 		// Apply the (Y) rotation to the eye-center vector
 		Vector4 vect_temp = rotY * Vector4(centerToEye, 0.0F);
-		centerToEye = Vector3(vect_temp[0], vect_temp[1], vect_temp[2]);
+		centerToEye = Vector3D(vect_temp[0], vect_temp[1], vect_temp[2]);
 
 
 		// Find the rotation around the X vector: cross between eye-center and up (X)
-		Vector3 axeX = Vector3::crossProduct(m_up, axeZ);
-		axeX = Vector3::normalize(axeX);
+		Vector3D axeX = Vector3D::crossProduct(m_up, axeZ);
+		axeX = Vector3D::normalize(axeX);
 		Matrix4x4 rotX = Matrix4x4::rotationAroundAxis(-dy, axeX);
 
 		// Apply the (X) rotation to the eye-center vector
 		vect_temp = rotX * Vector4(centerToEye, 0.0F);
-		Vector3 vectRot{ vect_temp[0], vect_temp[1], vect_temp[2] };
+		Vector3D vectRot{ vect_temp[0], vect_temp[1], vect_temp[2] };
 
-		if (sign(vectRot[0]) == sign(centerToEye[0]))
+		if (sign(vectRot.x) == sign(centerToEye.x))
 		{
 			centerToEye = vectRot;
 		}
@@ -121,8 +121,8 @@ namespace st::viewport
 	void Camera::dolly(float dx, float dy)
 	{
 		using namespace geometry;
-		Vector3 z = m_center - m_eye;
-		const float lenght =Vector3::lenght(z);
+		Vector3D z = m_center - m_eye;
+		const float lenght =Vector3D::lenght(z);
 
 		if (lenght < 0.000001F)
 		{
@@ -149,13 +149,13 @@ namespace st::viewport
 	{
 		using namespace geometry;
 
-		Vector3 z(m_eye - m_center);
-		float         length = static_cast<float>(Vector3::lenght(z)) / 0.785f;  // 45 degrees
-		z = Vector3::normalize(z);
-		Vector3 x = Vector3::crossProduct(m_up, z);
-		x = Vector3::normalize(x);
-		Vector3 y = Vector3::crossProduct(z, x);
-		y = Vector3::normalize(y);
+		Vector3D z(m_eye - m_center);
+		float         length = static_cast<float>(Vector3D::lenght(z)) / 0.785f;  // 45 degrees
+		z = Vector3D::normalize(z);
+		Vector3D x = Vector3D::crossProduct(m_up, z);
+		x = Vector3D::normalize(x);
+		Vector3D y = Vector3D::crossProduct(z, x);
+		y = Vector3D::normalize(y);
 		x *= -dx * length;
 		y *= dy * length;
 
@@ -165,7 +165,7 @@ namespace st::viewport
 
 
 
-	geometry::Vector3 Camera::orbitTest(float dx, float dy)
+	geometry::Vector3D Camera::orbitTest(float dx, float dy)
 	{
 		using namespace geometry;
 
@@ -179,33 +179,33 @@ namespace st::viewport
 		dy *= 2 * std::numbers::pi_v<float>;
 
 		// Get the camera
-		Vector3 origin = m_center;
-		Vector3 position = m_eye;
+		Vector3D origin = m_center;
+		Vector3D position = m_eye;
 
 		// Get the length of sight
-		Vector3 centerToEye{ position - origin };
-		float radius = Vector3::lenght(centerToEye);
-		centerToEye = Vector3::normalize(centerToEye);
+		Vector3D centerToEye{ position - origin };
+		float radius = Vector3D::lenght(centerToEye);
+		centerToEye = Vector3D::normalize(centerToEye);
 
 
 		// Find the rotation around the UP axis (Y)
-		Vector3 axeZ(Vector3::normalize(centerToEye));
+		Vector3D axeZ(Vector3D::normalize(centerToEye));
 		//Problem hire
 		Matrix4x4 rotY = Matrix4x4::rotationAroundAxis(-dx, m_up);
 
 		// Apply the (Y) rotation to the eye-center vector
 		Vector4 vect_temp = rotY * Vector4(centerToEye, 0.0F);
-		centerToEye = Vector3(vect_temp[0], vect_temp[1], vect_temp[2]);
+		centerToEye = Vector3D(vect_temp[0], vect_temp[1], vect_temp[2]);
 
 
 		// Find the rotation around the X vector: cross between eye-center and up (X)
-		Vector3 axeX = Vector3::crossProduct(m_up, axeZ);
-		axeX = Vector3::normalize(axeX);
+		Vector3D axeX = Vector3D::crossProduct(m_up, axeZ);
+		axeX = Vector3D::normalize(axeX);
 		Matrix4x4 rotX = Matrix4x4::rotationAroundAxis(-dy, axeX);
 
 		// Apply the (X) rotation to the eye-center vector
 		vect_temp = rotX * Vector4(centerToEye, 0.0F);
-		Vector3 vectRot{ vect_temp[0], vect_temp[1], vect_temp[2] };
+		Vector3D vectRot{ vect_temp[0], vect_temp[1], vect_temp[2] };
 
 		if (sign(vectRot[0]) == sign(centerToEye[0]))
 		{
@@ -214,7 +214,7 @@ namespace st::viewport
 
 		centerToEye *= radius;
 
-		Vector3 newPosition = centerToEye + origin;
+		Vector3D newPosition = centerToEye + origin;
 		m_eye = newPosition;
 		return newPosition;
 	}
@@ -229,50 +229,51 @@ namespace st::viewport
 		return m_matrix;
 	}
 
-	geometry::Matrix4x4 Camera::lookAt(const geometry::Vector3& eye, const geometry::Vector3& center, const geometry::Vector3& up)
+	geometry::Matrix4x4 Camera::lookAt(const geometry::Vector3D& eye, const geometry::Vector3D& center, const geometry::Vector3D& up)
 	{
 		using namespace geometry;
 
 		Matrix4x4 result;
-		Vector3 x;
-		Vector3 y;
-		Vector3 z;
+		Vector3D x;
+		Vector3D y;
+		Vector3D z;
 
 		//Z vector
-		z[0] = eye[0] - center[0];
-		z[1] = eye[1] - center[1];
-		z[2] = eye[2] - center[2];
-		z = Vector3::normalize(z);
+		//TODO substract vectors
+		z.x = eye.x - center.x;
+		z.y = eye.y - center.y;
+		z.z = eye.z - center.z;
+		z = Vector3D::normalize(z);
 
 
 		//Y vector
-		y[0] = up[0];
-		y[1] = up[1];
-		y[2] = up[2];
+		y.x = up.x;
+		y.y = up.y;
+		y.z = up.z;
 
-		x = Vector3::crossProduct(y, z);
+		x = Vector3D::crossProduct(y, z);
 
-		y = Vector3::crossProduct(z, x);
-
-
-		x = Vector3::normalize(x);
-		y = Vector3::normalize(y);
+		y = Vector3D::crossProduct(z, x);
 
 
-		result[0] =  x[0];
-		result[1] =  x[1];
-		result[2] =  x[2];
-		result[3] = -x[0] * eye[0] - x[1] * eye[1] - x[2] * eye[2];
+		x = Vector3D::normalize(x);
+		y = Vector3D::normalize(y);
 
-		result[4] =  y[0];
-		result[5] =  y[1];
-		result[6] =  y[2];
-		result[7] = -y[0] * eye[0] - y[1] * eye[1] - y[2] * eye[2];
 
-		result[8]  =  z[0];
-		result[9]  =  z[1];
-		result[10] =  z[2];
-		result[11] = -z[0] * eye[0] - z[1] * eye[1] - z[2] * eye[2];
+		result[0] =  x.x;
+		result[1] =  x.y;
+		result[2] =  x.z;
+		result[3] = -x.x * eye.x - x.y * eye.y - x.z * eye.z;
+
+		result[4] =  y.x;
+		result[5] =  y.y;
+		result[6] =  y.z;
+		result[7] = -y.x * eye.x - y.y * eye.y - y.z * eye.z;
+
+		result[8]  =  z.x;
+		result[9]  =  z.y;
+		result[10] =  z.z;
+		result[11] = -z.x * eye.x - z.y * eye.y - z.z * eye.z;
 
 
 		result[12] = 0.0F;
