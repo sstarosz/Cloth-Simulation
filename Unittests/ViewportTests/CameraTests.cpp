@@ -7,9 +7,9 @@
 
 namespace st::viewport::unittests {
 
-    void printEyeVector(const geometry::Vector3D& eye)
+    void printEyeVector(const geometry::Vector3& eye)
     {
-        std::cout <<"Eye: " << eye[0] << " " << eye[1] << " " << eye[2] << std::endl;
+        std::cout <<"Eye: " << eye.X << " " << eye.Y << " " << eye.Z << std::endl;
     }
 
 
@@ -52,9 +52,6 @@ namespace st::viewport::unittests {
         orbit(0.0,  0.5F);
         orbit(0.0F, 0.75F);
         orbit(0.0F, 1.0F);
-
-
-
 
     }
 

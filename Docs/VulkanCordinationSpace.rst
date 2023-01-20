@@ -1,5 +1,5 @@
 ﻿normalized device coordinates only contain primitives within the unit cube from 
-(−1,−1,0)T to (1,1,1)T. 
+(-1,−1,0)T to (1,1,1)T. 
 
 
 ramebuffer space’s x and y coordinates range from 

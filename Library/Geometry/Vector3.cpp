@@ -4,30 +4,18 @@
 
 namespace st::geometry
 {
-	Vector3D::Vector3D()noexcept:
-	x(0.0F), 
-	y(0.0F),
-	z(0.0F) 
-	{}
-
-	Vector3D::Vector3D(float x, float y, float z) noexcept:
-	x(x),
-	y(y),
-	z(z) 
-	{}
-
 	//Also know as magnitude
-	float Vector3D::lenght(const Vector3D& vec)
+	float Vector3::lenght(const Vector3& Vec) //TODO make it constexpr
 	{
-		return std::sqrtf(vec.x * vec.x + 
-						  vec.y * vec.y +
-						  vec.z * vec.z);
+		return std::sqrt(Vec.X * Vec.X + 
+						  Vec.Y * Vec.Y +
+						  Vec.Z * Vec.Z);
 	}
 
 	//divide vector by it magnitude to make it a unit vector
-	Vector3D Vector3D::normalize(const Vector3D& vec)
+	Vector3 Vector3::normalize(const Vector3& Vec) //TODO make it constexpr
 	{
-		float norm = Vector3D::lenght(vec);
+		float norm = Vector3::lenght(Vec);
 		
 		if (norm > 10e-6) // TODO change to elipson
 		{
@@ -38,17 +26,9 @@ namespace st::geometry
 			norm = 0.0F;
 		}
 
-		return {vec * norm};
+		return { Vec * norm };
 	}
 
-	Vector3D Vector3D::crossProduct(const Vector3D& v, const Vector3D& w)
-	{
-		Vector3D u;
-		u.x = v.y * w.z - v.z * w.y;
-		u.y = v.z * w.x - v.x * w.z;
-		u.z = v.x * w.y - v.y * w.x;
-		return u;
-	}
 }
 
 
