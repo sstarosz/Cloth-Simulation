@@ -43,3 +43,4 @@ if(Build_Unit_Test)
     add_subdirectory(Unittests)
 endif()
 
+add_subdirectory(Utility)

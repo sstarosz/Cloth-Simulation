@@ -15,6 +15,8 @@
 #include <stb_image.h>
 #include "IO/ImporterProxy.hpp"
 
+#include <span>
+
 PFN_vkCreateDebugUtilsMessengerEXT pfnVkCreateDebugUtilsMessengerEXT;
 PFN_vkDestroyDebugUtilsMessengerEXT pfnVkDestroyDebugUtilsMessengerEXT;
 
@@ -684,31 +686,59 @@ void VulkanWindow::loadModel()
 
 void VulkanWindow::createVertexBuffer()
 {
+    //vk::DeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
+
+    //vk::Buffer stagingBuffer;
+    //vk::DeviceMemory stagingBufferMemory;
+
+    //createBuffer(bufferSize,
+    //    vk::BufferUsageFlagBits::eTransferSrc,
+    //    vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+    //    stagingBuffer,
+    //    stagingBufferMemory
+    //);
+
+    //void* data = m_device.mapMemory(stagingBufferMemory, 0, bufferSize);
+    //memcpy(data, vertices.data(), (size_t)bufferSize); //vertices should fullfil trival object specyfication?
+    //m_device.unmapMemory(stagingBufferMemory);
+
+    //createBuffer(bufferSize,
+    //    vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer,
+    //    vk::MemoryPropertyFlagBits::eDeviceLocal,
+    //    m_vertexBuffer,
+    //    m_vertexBufferMemory);
+
+    //copyBuffer(stagingBuffer, m_vertexBuffer, bufferSize);
+    //m_device.destroyBuffer(stagingBuffer);
+    //m_device.freeMemory(stagingBufferMemory);
+
+
+
     vk::DeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
-    vk::Buffer stagingBuffer;
-    vk::DeviceMemory stagingBufferMemory;
+    static bool isBufferInitialized = false;
 
-    createBuffer(bufferSize,
-        vk::BufferUsageFlagBits::eTransferSrc,
-        vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-        stagingBuffer,
-        stagingBufferMemory
-    );
+    if (!isBufferInitialized)
+	{
+		createBuffer(
+			bufferSize, vk::BufferUsageFlagBits::eVertexBuffer,
+			vk::MemoryPropertyFlagBits::eHostVisible
+				| vk::MemoryPropertyFlagBits::eHostCoherent,
+			m_vertexBuffer, m_vertexBufferMemory
+		);
 
-    void* data = m_device.mapMemory(stagingBufferMemory, 0, bufferSize);
-    memcpy(data, vertices.data(), (size_t)bufferSize); //vertices should fullfil trival object specyfication?
-    m_device.unmapMemory(stagingBufferMemory);
+        isBufferInitialized = true;
+    }
+	//createBuffer(bufferSize,
+    //    vk::BufferUsageFlagBits::eVertexBuffer,
+	//    vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+	//	m_vertexBuffer,
+    //    m_vertexBufferMemory
+	//);
 
-    createBuffer(bufferSize,
-        vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer,
-        vk::MemoryPropertyFlagBits::eDeviceLocal,
-        m_vertexBuffer,
-        m_vertexBufferMemory);
-
-    copyBuffer(stagingBuffer, m_vertexBuffer, bufferSize);
-    m_device.destroyBuffer(stagingBuffer);
-    m_device.freeMemory(stagingBufferMemory);
+    std::span<std::byte> data {static_cast<std::byte*>(m_device.mapMemory(m_vertexBufferMemory, 0, bufferSize)),bufferSize};
+	std::memcpy(	data.data(), vertices.data(), static_cast<size_t>(bufferSize)); //vertices should fullfil trival object specyfication?
+	m_device.unmapMemory(m_vertexBufferMemory);
 }
 
 uint32_t VulkanWindow::findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties)
@@ -735,7 +765,7 @@ void VulkanWindow::createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage,
     vk::MemoryRequirements memoryRequirements = m_device.getBufferMemoryRequirements(buffer);
 
     vk::MemoryAllocateInfo allocInfo { memoryRequirements.size,
-        findMemoryType(memoryRequirements.memoryTypeBits, properties) };
+                                       findMemoryType(memoryRequirements.memoryTypeBits, properties)};
 
     bufferMemory = m_device.allocateMemory(allocInfo);
 
@@ -950,7 +980,8 @@ void VulkanWindow::drawFrame()
     }
 
     auto [result, imageIndex] = m_device.acquireNextImageKHR(m_swapChain, UINT64_MAX, m_imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE);
-
+	
+    updateGeometry();
     updateUniformBuffer(currentFrame);
 
     m_device.resetFences(m_inFlightFences.at(currentFrame));
@@ -988,6 +1019,27 @@ void VulkanWindow::drawFrame()
     currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
     requestUpdate();
 }
+
+void VulkanWindow::updateGeometry()
+{
+	static float time { 0.0F };
+
+
+    const float amplitude = 0.01F;	
+    const float frequency = 0.1F;
+	const float moveX = amplitude * std::cos(frequency * time);
+	std::cout << moveX << std::endl;
+
+    for (auto& vertex : vertices)
+	{
+		vertex.m_pos.x += moveX;
+    }
+
+
+    time += 0.1F;
+    createVertexBuffer();
+}
+
 
 void VulkanWindow::resizeEvent(QResizeEvent* event)
 {
