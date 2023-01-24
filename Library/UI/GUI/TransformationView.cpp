@@ -87,6 +87,7 @@ namespace st::ui::gui {
 		mainLayout->addLayout(leftRightLayout);
 		mainLayout->addLayout(downUpLayout);
 		mainLayout->addLayout(frontBackLayout);
+		mainLayout->addStretch();
 
 	}
 

@@ -6,6 +6,7 @@ project(Geometry
 
 
 set(SOURCES
+	"Math.cpp"
 	"Vertex.cpp"
 	"Point3D.cpp"
 	"Object3D.cpp"
@@ -14,6 +15,7 @@ set(SOURCES
 	"Vector4.cpp")
 
 set(HEADERS
+	"Math.hpp"
 	"Vertex.hpp"
 	"Point3D.hpp"
 	"Object3D.hpp"

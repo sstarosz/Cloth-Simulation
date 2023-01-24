@@ -12,92 +12,114 @@ namespace st::geometry
          *
          *  Detailed description starts here.
          */
-    class Vector3D
+    struct alignas(16) Vector3
     {
     public:
-        Vector3D() noexcept;
-        Vector3D(float x, float y, float z) noexcept;
+		constexpr Vector3() noexcept:
+		X(0.0F),
+		Y(0.0F),
+		Z(0.0F)
+		{}
+
+		constexpr Vector3(float x, float y, float z) noexcept:
+		X(x),
+		Y(y),
+		Z(z)
+		{}
 
 
         constexpr float& operator[](const size_t index)
         {
             assert(index >= 0 && index < 4);
-            return ((&x)[index]);   //TODO More safe version?
+            return ((&X)[index]);   //TODO More safe version?
         }
          
         const float& operator[](const size_t index) const
         {
             assert(index >= 0 && index < 4);
-            return ((&x)[index]); //TODO More safe version?
+            return ((&X)[index]); //TODO More safe version?
         }
 
-        auto operator<=>(const Vector3D&) const = default;
+        auto operator<=>(const Vector3&) const = default;
 
-
-        Vector3D operator+(const Vector3D& vec) const
+        //Operators with other Vector
+		constexpr Vector3 operator+(const Vector3& Vec) const
         {
-            return {x + vec.x, y + vec.y, z + vec.z};
+			return { X + Vec.X, Y + Vec.Y, Z + Vec.Z };
         }
 
-        Vector3D operator-(const Vector3D& vec) const
+        constexpr Vector3 operator-(const Vector3& Vec) const
         {
-            return {x - vec.x, y - vec.y, z - vec.z};
+			return { X - Vec.X, Y - Vec.Y, Z - Vec.Z };
         }
 
-        //Vector3D operator*(const float& s) const
-        //{
-		//    return {x * s, y * s, z * s};
-	    //}
-
-
-        Vector3D& operator*=(const float& s)
+        constexpr Vector3 operator*(const Vector3& Vec) const
         {
-            x *= s;
-            y *= s;
-            z *= s;
+			return { X * Vec.X, Y * Vec.Y, Z * Vec.Z };
+	    }
+
+		constexpr Vector3 operator/(const Vector3& Vec) const
+		{
+			return { X / Vec.X, Y / Vec.Y, Z / Vec.Z };
+		}
+
+        //Assine operators
+		constexpr Vector3& operator*=(float Scale)
+        {
+            X *= Scale;
+            Y *= Scale;
+            Z *= Scale;
             return *this;
 	    }
 
-        Vector3D& operator/=(const float& s)
+        constexpr Vector3& operator/=(float Scale)
         {
-            assert(s != 0.0F);
-            const float ms = 1.0F / s;
-            x *= ms;
-            y *= ms;
-            z *= ms;
+			assert(Scale != 0.0F);
+			const float ms = 1.0F / Scale;
+            X *= ms;
+            Y *= ms;
+            Z *= ms;
             return *this;
 	    }
        
 
-        static float lenght(const Vector3D& vec);
-        static Vector3D normalize(const Vector3D& vec);
-        static Vector3D crossProduct(const Vector3D& vec, const Vector3D& w);
+        //Operator with Scale
+		constexpr Vector3 operator*(float Scale) const
+        {
+			return { X * Scale, Y * Scale, Z * Scale };
+        }
+
+		constexpr Vector3 operator/(float Scale) const
+		{
+			assert(Scale != 0.0F);
+			const float ms = 1.0F / Scale;
+			return { X * ms, Y * ms, Z * ms };
+		}
+
+        //Negation
+		inline constexpr Vector3 operator-() const
+        {
+			return { -X, -Y, -Z };
+        }
+
+        static float lenght(const Vector3& Vec);
+		static Vector3 normalize(const Vector3& Vec);
+		static constexpr Vector3 crossProduct(const Vector3& Vec1, const Vector3& Vec2)
+		{
+			Vector3 u;
+			u.X = Vec1.Y * Vec2.Z - Vec1.Z * Vec2.Y;
+			u.Y = Vec1.Z * Vec2.X - Vec1.X * Vec2.Z;
+			u.Z = Vec1.X * Vec2.Y - Vec1.Y * Vec2.X;
+			return u;
+		}
 
     public:
-        float x;
-        float y;
-        float z;
+        float X;
+        float Y;
+        float Z;
     };
 
-
-
-    inline Vector3D operator*(const Vector3D& vec, float s)
-    {
-        return {vec.x * s, vec.y * s, vec.z * s};
-    }
-
-    inline Vector3D operator/(const Vector3D& vec, float s)
-    {
-        assert(s != 0.0F);
-        const float ms = 1.0F / s;
-        return {vec.x * ms, vec.y * ms, vec.z * ms};
-    }
-
-    inline Vector3D operator-(const Vector3D& vec)
-    {
-        return {-vec.x, -vec.y, -vec.z};
-    }
+  
 }
-
 
 #endif // !GEOMETRY_OBJECT3D_HPP

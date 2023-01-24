@@ -16,6 +16,6 @@
  set_target_properties(PerformanceTests PROPERTIES VS_DEBUGGER_COMMAND "--benchmark_out_format=json --benchmark_out=test.txt")
  target_compile_features(PerformanceTests PRIVATE cxx_std_20)
  target_link_libraries(PerformanceTests 
-								benchmark::benchmark
-								Geometry)
+										benchmark::benchmark
+										Geometry)
 

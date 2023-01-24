@@ -749,8 +749,11 @@ uint32_t VulkanWindow::findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFla
     throw std::runtime_error("failed to find suitable memory type!");
 }
 
-void VulkanWindow::createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties,
-    vk::Buffer& buffer, vk::DeviceMemory& bufferMemory)
+void VulkanWindow::createBuffer(vk::DeviceSize size,
+                            vk::BufferUsageFlags usage,
+                            vk::MemoryPropertyFlags properties,
+                            vk::Buffer& buffer,
+                            vk::DeviceMemory& bufferMemory)
 {
 
     vk::BufferCreateInfo bufferInfo { {}, size, usage, vk::SharingMode::eExclusive };
