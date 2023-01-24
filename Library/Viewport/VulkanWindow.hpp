@@ -200,6 +200,7 @@ namespace st::viewport
 
 		void updateUniformBuffer(uint32_t currentImage);
 		void recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_t imageIndex);
+		void updateGeometry();
 		void drawFrame();
 
 		/*Clean up*/
