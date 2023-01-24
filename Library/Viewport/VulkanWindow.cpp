@@ -729,15 +729,10 @@ void VulkanWindow::createVertexBuffer()
 
         isBufferInitialized = true;
     }
-	//createBuffer(bufferSize,
-    //    vk::BufferUsageFlagBits::eVertexBuffer,
-	//    vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-	//	m_vertexBuffer,
-    //    m_vertexBufferMemory
-	//);
+
 
     std::span<std::byte> data {static_cast<std::byte*>(m_device.mapMemory(m_vertexBufferMemory, 0, bufferSize)),bufferSize};
-	std::memcpy(	data.data(), vertices.data(), static_cast<size_t>(bufferSize)); //vertices should fullfil trival object specyfication?
+	std::memcpy(data.data(), vertices.data(), static_cast<size_t>(bufferSize)); //vertices should fullfil trival object specyfication?
 	m_device.unmapMemory(m_vertexBufferMemory);
 }
 
