@@ -1,19 +1,17 @@
 #ifndef RENDERER_EXTENSIONS_HPP
 #define RENDERER_EXTENSIONS_HPP
 
-#include <array>
+#include <vector>
 
 namespace st::renderer {
 
+/*TODO add validationLayer enable flags*/
 
 class Extensions
 {
 public:
-	static auto getEnabledExtensions();
+	static std::vector<const char*> getEnabledExtensions();
 
-	private:
-		constexpr static std::array m_validationLayers
-			= { "VK_LAYER_KHRONOS_validation" };
 };
 
 

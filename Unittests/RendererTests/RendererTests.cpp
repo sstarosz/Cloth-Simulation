@@ -1,5 +1,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+
 #include <Renderer/Renderer.hpp>
 
 
@@ -17,7 +18,7 @@ public:
  TEST(RendererTests, VulkanInstanceInitialization)
 {
 	 Renderer renderer;
-
+	 renderer.initialize();
 
 }
 

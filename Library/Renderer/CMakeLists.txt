@@ -3,6 +3,7 @@ project(Renderer
 		DESCRIPTION "Vulkan Renderer"
 		LANGUAGES CXX)
 
+configure_file(Config.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/Config.hpp @ONLY)
 
 set(SOURCES
 	"Extensions.cpp"
@@ -16,7 +17,6 @@ set(HEADERS
 	"ValidationLayers.hpp")
 
 
-configure_file(Config.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/Config.hpp @ONLY)
 
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
@@ -28,7 +28,7 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 target_compile_options(${PROJECT_NAME} PRIVATE ${Compiler_Flags})
 
 target_link_libraries(${PROJECT_NAME} 
-						PRIVATE 
+						PUBLIC 
 							Geometry
 							Vulkan::Vulkan
 					)

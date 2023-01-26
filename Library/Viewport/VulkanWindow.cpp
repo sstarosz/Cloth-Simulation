@@ -43,6 +43,8 @@ VulkanWindow::VulkanWindow()
 
 void VulkanWindow::initialize()
 {
+	m_renderer.initialize();
+
     createInstance();
     setupDebugMessenger();
     createSurface();
@@ -112,7 +114,7 @@ void VulkanWindow::releaseResources()
     m_device.destroy();
 
     if (enableValidationLayers) {
-        m_instance.destroyDebugUtilsMessengerEXT(m_debugMessenger);
+		m_renderer.getInstance().destroyDebugUtilsMessengerEXT(m_debugMessenger);
     }
 
 
@@ -133,22 +135,7 @@ VkBool32 VulkanWindow::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT mess
 
 void VulkanWindow::createInstance()
 {
-    // check validation layer
-    if (enableValidationLayers && !checkValidationLayerSupport()) {
-        throw std::runtime_error("validation layer requested, but not available!");
-    }
-
-    //TODO replace String to reading from config file?
-    vk::ApplicationInfo appInfo { "Hello Triangle App", VK_MAKE_API_VERSION(1, 0, 0, 0), "No Engine",
-        VK_MAKE_API_VERSION(1U, 0U, 0U, 0U), VK_API_VERSION_1_3 };
-
-    auto extensions = getRequiredExtensions();
-
-    // To-Do check if validationLayers and extension is not empty
-    vk::InstanceCreateInfo instanceCreateInfo({}, &appInfo, validationLayers, extensions);
-
-    m_instance = vk::createInstance(instanceCreateInfo);
-    inst.setVkInstance(m_instance);
+	inst.setVkInstance(m_renderer.getInstance());
 
     if (!inst.create())
     {
@@ -156,43 +143,6 @@ void VulkanWindow::createInstance()
     }
 
     setVulkanInstance(&inst);
-}
-
-bool VulkanWindow::checkValidationLayerSupport()
-{
-    std::vector<vk::LayerProperties> availableLayers = vk::enumerateInstanceLayerProperties();
-
-    for (const auto* layerName : validationLayers) {
-        bool layerFound = false;
-
-        for (const auto& layerProperties : availableLayers) {
-            if (strcmp(layerName, layerProperties.layerName) == 0) {
-                layerFound = true;
-                break;
-            }
-        }
-
-        if (!layerFound) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-std::vector<const char*> VulkanWindow::getRequiredExtensions() const
-{
-    std::vector<const char*> extensions;
-
-    extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
-    extensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-
-    if (enableValidationLayers) {
-        extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-        extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-    }
-
-    return extensions;
 }
 
 void VulkanWindow::setupDebugMessenger()
@@ -213,21 +163,25 @@ void VulkanWindow::setupDebugMessenger()
         };
 
         pfnVkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
-            m_instance.getProcAddr("vkCreateDebugUtilsMessengerEXT"));
+				m_renderer.getInstance().getProcAddr("vkCreateDebugUtilsMessengerEXT")
+			);
         if (!pfnVkCreateDebugUtilsMessengerEXT) {
             std::cout << "GetInstanceProcAddr: Unable to find pfnVkCreateDebugUtilsMessengerEXT function." << std::endl;
             exit(1);
         }
 
         pfnVkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
-            m_instance.getProcAddr("vkDestroyDebugUtilsMessengerEXT"));
+				m_renderer.getInstance().getProcAddr("vkDestroyDebugUtilsMessengerEXT")
+			);
         if (!pfnVkDestroyDebugUtilsMessengerEXT) {
             std::cout << "GetInstanceProcAddr: Unable to find pfnVkDestroyDebugUtilsMessengerEXT function."
                       << std::endl;
             exit(1);
         }
 
-        m_debugMessenger = m_instance.createDebugUtilsMessengerEXT(debugUtilsMessengerCreateInfoEXT);
+        m_debugMessenger = m_renderer.getInstance().createDebugUtilsMessengerEXT(
+			debugUtilsMessengerCreateInfoEXT
+		);
     }
 }
 
@@ -243,7 +197,8 @@ void VulkanWindow::createSurface()
 
 void VulkanWindow::pickPhysicalDevice()
 {
-    std::vector<vk::PhysicalDevice> devices = m_instance.enumeratePhysicalDevices();
+	std::vector<vk::PhysicalDevice> devices
+		= m_renderer.getInstance().enumeratePhysicalDevices();
 
     if (devices.empty()) {
         throw std::runtime_error("Failed to find GPU's with Vulkan support!");

@@ -1,5 +1,4 @@
 #include "Renderer.hpp"
-#include "vulkan/vulkan.hpp"
 
 #include "ValidationLayers.hpp"
 #include "Extensions.hpp"
@@ -10,6 +9,7 @@ namespace st::renderer {
 
 void Renderer::initialize()
 {
+	createInstance();
 
 }
 
@@ -31,9 +31,18 @@ void Renderer::createInstance()
 	 vk::InstanceCreateInfo instanceCreateInfo {
 		{},
 		&appInfo,
-		ValidationLayer::getValidationLayers(), enabledExtensions
+		validationLayers,
+		enabledExtensions
 	};
 
+
+
+	  m_instance = vk::createInstance(instanceCreateInfo);
+}
+
+vk::Instance Renderer::getInstance()
+{
+	 return m_instance;
 }
 
 }

@@ -15,6 +15,8 @@
 #include "Line.hpp"
 #include "Camera.hpp"
 
+#include "Renderer/Renderer.hpp"
+
 namespace st::viewport 
 {
 	class VulkanWindow : public QWindow
@@ -49,7 +51,8 @@ namespace st::viewport
 
 		QVulkanInstance inst;
 
-		vk::Instance m_instance;
+		renderer::Renderer m_renderer;
+
 		vk::DebugUtilsMessengerEXT m_debugMessenger;
 		vk::SurfaceKHR m_surface;
 		vk::PhysicalDevice m_physicalDevice;
@@ -170,8 +173,6 @@ namespace st::viewport
 
 		/*Init*/
 		void createInstance();
-		bool checkValidationLayerSupport();
-		std::vector<const char*> getRequiredExtensions() const;
         void setupDebugMessenger();
         void createSurface();
         void pickPhysicalDevice();

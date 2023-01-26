@@ -7,7 +7,7 @@
 
 namespace st::renderer
 {
-	auto Extensions::getEnabledExtensions()
+std::vector<const char*> Extensions::getEnabledExtensions()
 	{
 		std::vector<const char*> extensions;
 
@@ -25,7 +25,7 @@ namespace st::renderer
 		std::array extensionsResult(extensions.begin(), extensions.end());
 
 
-		return extensionsResult;
+		return extensions;
 	}
 }
 
