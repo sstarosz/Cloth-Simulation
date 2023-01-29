@@ -26,10 +26,25 @@ VulkanWindow::VulkanWindow()
 
 void VulkanWindow::initialize()
 {
+
+    m_renderer.createInstance();
+	createInstance();
+
+	auto m_surface = static_cast<vk::SurfaceKHR>(QVulkanInstance::surfaceForWindow(this));
+	if (!m_surface)
+	{
+		exit(999);
+	}
+
+	m_renderer.setupSurface(m_surface);
+
+
+
 	m_renderer.initialize();
 
-    createInstance();
-    createSurface();
+
+
+
     pickPhysicalDevice();
     createLogicalDevice();
     createSwapChain();
@@ -111,56 +126,6 @@ void VulkanWindow::createInstance()
     setVulkanInstance(&inst);
 }
 
-//void VulkanWindow::setupDebugMessenger()
-//{
-//    if (!enableValidationLayers)
-//    {
-//        return;
-//    }
-//
-//    if (enableValidationLayers) {
-//
-//        vk::DebugUtilsMessageSeverityFlagsEXT severityFlags { vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose | vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning | vk::DebugUtilsMessageSeverityFlagBitsEXT::eError };
-//
-//        vk::DebugUtilsMessageTypeFlagsEXT messageTypeFlags { vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral | vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance | vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation };
-//
-//        vk::DebugUtilsMessengerCreateInfoEXT debugUtilsMessengerCreateInfoEXT {
-//            {}, severityFlags, messageTypeFlags, &debugCallback
-//        };
-//
-//        //pfnVkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
-//		//		m_renderer.getInstance().getProcAddr("vkCreateDebugUtilsMessengerEXT")
-//		//	);
-//        //if (!pfnVkCreateDebugUtilsMessengerEXT) {
-//        //    std::cout << "GetInstanceProcAddr: Unable to find pfnVkCreateDebugUtilsMessengerEXT function." << std::endl;
-//        //    exit(1);
-//        //}
-//
-//        //pfnVkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
-//		//		m_renderer.getInstance().getProcAddr("vkDestroyDebugUtilsMessengerEXT")
-//		//	);
-//        //if (!pfnVkDestroyDebugUtilsMessengerEXT) {
-//        //    std::cout << "GetInstanceProcAddr: Unable to find pfnVkDestroyDebugUtilsMessengerEXT function."
-//        //              << std::endl;
-//        //    exit(1);
-//        //}
-//
-//        m_debugMessenger = m_renderer.getInstance().createDebugUtilsMessengerEXT(
-//			debugUtilsMessengerCreateInfoEXT
-//		);
-//    }
-//}
-
-void VulkanWindow::createSurface()
-{
-
-    m_surface = QVulkanInstance::surfaceForWindow(this);
-
-    if (!m_surface) {
-        exit(999);
-    }
-}
-
 void VulkanWindow::pickPhysicalDevice()
 {
 	std::vector<vk::PhysicalDevice> devices
@@ -172,7 +137,7 @@ void VulkanWindow::pickPhysicalDevice()
 
     for (const auto& device : devices) {
         // Check if devices contain all required functionality
-        if (isDeviceSuitable(device, m_surface)) {
+        if (isDeviceSuitable(device, m_renderer.getSurface())) {
             m_physicalDevice = vk::PhysicalDevice(device);
             break;
         }
@@ -181,7 +146,9 @@ void VulkanWindow::pickPhysicalDevice()
 
 void VulkanWindow::createLogicalDevice()
 {
-    QueueFamilyIndices indices = QueueFamilyIndices::findQueueFamilies(m_physicalDevice, m_surface);
+	QueueFamilyIndices indices = QueueFamilyIndices::findQueueFamilies(
+		m_physicalDevice, m_renderer.getSurface()
+	);
     std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
 
     std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
@@ -242,7 +209,10 @@ bool VulkanWindow::checkDeviceExtensionSupport(const vk::PhysicalDevice& device)
 
 void VulkanWindow::createSwapChain()
 {
-    SwapChainSupportDetails swapChainSupport = SwapChainSupportDetails::querySwapChainSupport(m_physicalDevice, m_surface);
+	SwapChainSupportDetails swapChainSupport
+		= SwapChainSupportDetails::querySwapChainSupport(
+			m_physicalDevice, m_renderer.getSurface()
+		);
 
     vk::SurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
     vk::PresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
@@ -253,7 +223,9 @@ void VulkanWindow::createSwapChain()
         imageCount = swapChainSupport.capabilities.maxImageCount;
     }
 
-    QueueFamilyIndices indices = QueueFamilyIndices::findQueueFamilies(m_physicalDevice, m_surface);
+    QueueFamilyIndices indices = QueueFamilyIndices::findQueueFamilies(
+		m_physicalDevice, m_renderer.getSurface()
+	);
     std::array<uint32_t, 2> queueFamilyIndices{indices.graphicsFamily.value(), indices.presentFamily.value()};
 
     vk::SharingMode imageSharingMode;
@@ -263,7 +235,8 @@ void VulkanWindow::createSwapChain()
         imageSharingMode = vk::SharingMode::eExclusive;
     }
 
-    vk::SwapchainCreateInfoKHR createInfo(vk::SwapchainCreateFlagsKHR(), m_surface,
+    vk::SwapchainCreateInfoKHR createInfo(
+		vk::SwapchainCreateFlagsKHR(), m_renderer.getSurface(),
                                             imageCount,
                                             surfaceFormat.format,
                                             surfaceFormat.colorSpace,
@@ -578,7 +551,9 @@ void VulkanWindow::createFramebuffers()
 
 void VulkanWindow::createCommandPool()
 {
-    QueueFamilyIndices queueFamilyIndices = QueueFamilyIndices::findQueueFamilies(m_physicalDevice, m_surface);
+	QueueFamilyIndices queueFamilyIndices = QueueFamilyIndices::findQueueFamilies(
+		m_physicalDevice, m_renderer.getSurface()
+	);
 
     //TODO This is a graphic commandPoll
     vk::CommandPoolCreateInfo poolInfo(

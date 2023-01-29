@@ -53,7 +53,6 @@ namespace st::viewport
 
 		renderer::Renderer m_renderer;
 
-		vk::SurfaceKHR m_surface;
 		vk::PhysicalDevice m_physicalDevice;
 		vk::Device m_device;
 		vk::Queue m_graphicsQueue;
@@ -172,7 +171,6 @@ namespace st::viewport
 
 		/*Init*/
 		void createInstance();
-        void createSurface();
         void pickPhysicalDevice();
         void createLogicalDevice();
         void createSwapChain();

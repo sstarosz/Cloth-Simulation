@@ -5,31 +5,20 @@
 
 class Boo
 {
+public:
 		uint32_t idx;
 		std::string name;
 };
 
-class Foo
-{
-public:
-		Foo(const Boo& boo):
-		m_boo(boo) {
-
-			};
-
-
-private:
-
-	const Boo& m_boo;
-
-};
+typedef struct Boo* myBoo;
 
 
 
 int main()
 {
-	Boo b;
-	Foo a { b };
+	myBoo b = {};
+
+	b->idx;
 
 	
 	return 0;
