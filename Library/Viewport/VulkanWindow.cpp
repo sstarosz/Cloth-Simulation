@@ -44,8 +44,7 @@ void VulkanWindow::initialize()
 
 
 
-
-    pickPhysicalDevice();
+    //pickPhysicalDevice();
     createLogicalDevice();
     createSwapChain();
     createImageViews();
@@ -126,28 +125,28 @@ void VulkanWindow::createInstance()
     setVulkanInstance(&inst);
 }
 
-void VulkanWindow::pickPhysicalDevice()
-{
-	std::vector<vk::PhysicalDevice> devices
-		= m_renderer.getInstance().enumeratePhysicalDevices();
-
-    if (devices.empty()) {
-        throw std::runtime_error("Failed to find GPU's with Vulkan support!");
-    }
-
-    for (const auto& device : devices) {
-        // Check if devices contain all required functionality
-        if (isDeviceSuitable(device, m_renderer.getSurface())) {
-            m_physicalDevice = vk::PhysicalDevice(device);
-            break;
-        }
-    }
-}
+//void VulkanWindow::pickPhysicalDevice()
+//{
+//	std::vector<vk::PhysicalDevice> devices
+//		= m_renderer.getInstance().enumeratePhysicalDevices();
+//
+//    if (devices.empty()) {
+//        throw std::runtime_error("Failed to find GPU's with Vulkan support!");
+//    }
+//
+//    for (const auto& device : devices) {
+//        // Check if devices contain all required functionality
+//        if (isDeviceSuitable(device, m_renderer.getSurface())) {
+//            m_physicalDevice = vk::PhysicalDevice(device);
+//            break;
+//        }
+//    }
+//}
 
 void VulkanWindow::createLogicalDevice()
 {
 	QueueFamilyIndices indices = QueueFamilyIndices::findQueueFamilies(
-		m_physicalDevice, m_renderer.getSurface()
+		m_renderer.getPhysicalDevice(), m_renderer.getSurface()
 	);
     std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
 
@@ -172,7 +171,7 @@ void VulkanWindow::createLogicalDevice()
         createInfo.enabledLayerCount = 0;
     }
 
-    m_device = m_physicalDevice.createDevice(createInfo);
+    m_device = m_renderer.getPhysicalDevice().createDevice(createInfo);
 
     m_graphicsQueue = m_device.getQueue(indices.graphicsFamily.value(), 0);
     m_presentQueue = m_device.getQueue(indices.presentFamily.value(), 0);
@@ -211,7 +210,7 @@ void VulkanWindow::createSwapChain()
 {
 	SwapChainSupportDetails swapChainSupport
 		= SwapChainSupportDetails::querySwapChainSupport(
-			m_physicalDevice, m_renderer.getSurface()
+			m_renderer.getPhysicalDevice(), m_renderer.getSurface()
 		);
 
     vk::SurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
@@ -224,7 +223,7 @@ void VulkanWindow::createSwapChain()
     }
 
     QueueFamilyIndices indices = QueueFamilyIndices::findQueueFamilies(
-		m_physicalDevice, m_renderer.getSurface()
+		m_renderer.getPhysicalDevice(), m_renderer.getSurface()
 	);
     std::array<uint32_t, 2> queueFamilyIndices{indices.graphicsFamily.value(), indices.presentFamily.value()};
 
@@ -552,7 +551,7 @@ void VulkanWindow::createFramebuffers()
 void VulkanWindow::createCommandPool()
 {
 	QueueFamilyIndices queueFamilyIndices = QueueFamilyIndices::findQueueFamilies(
-		m_physicalDevice, m_renderer.getSurface()
+		m_renderer.getPhysicalDevice(), m_renderer.getSurface()
 	);
 
     //TODO This is a graphic commandPoll
@@ -576,8 +575,12 @@ void VulkanWindow::loadModel()
 
     m_line.createDescriptorSets(m_device, m_uniformBuffers);
     m_line.createPrimitivePipline(m_device, m_swapChainExtent, m_renderPass);
-    m_line.createLineVertexBuffer(m_physicalDevice, m_device, m_commandPool, m_graphicsQueue);
-    m_line.createLineIndexBuffer(m_physicalDevice, m_device, m_commandPool, m_graphicsQueue);
+	m_line.createLineVertexBuffer(
+		m_renderer.getPhysicalDevice(), m_device, m_commandPool, m_graphicsQueue
+	);
+	m_line.createLineIndexBuffer(
+		m_renderer.getPhysicalDevice(), m_device, m_commandPool, m_graphicsQueue
+	);
 }
 
 void VulkanWindow::createVertexBuffer()
@@ -634,7 +637,7 @@ void VulkanWindow::createVertexBuffer()
 
 uint32_t VulkanWindow::findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties)
 {
-    vk::PhysicalDeviceMemoryProperties memProperties = m_physicalDevice.getMemoryProperties();
+	vk::PhysicalDeviceMemoryProperties memProperties = m_renderer.getPhysicalDevice().getMemoryProperties();
 
     for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
         if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
@@ -1342,7 +1345,8 @@ vk::ImageView VulkanWindow::createImageView(vk::Image image, vk::Format format, 
 void VulkanWindow::createTextureSampler()
 {
 
-    vk::PhysicalDeviceProperties properties = m_physicalDevice.getProperties();
+    vk::PhysicalDeviceProperties properties
+		= m_renderer.getPhysicalDevice().getProperties();
 
     vk::SamplerCreateInfo sampleInfo {
         {},
@@ -1388,7 +1392,9 @@ vk::Format VulkanWindow::findSupportedFormat(const std::vector<vk::Format>& cand
     vk::FormatFeatureFlags features)
 {
     for (const auto& format : candidates) {
-        vk::FormatProperties props { m_physicalDevice.getFormatProperties(format) };
+		vk::FormatProperties props {
+			m_renderer.getPhysicalDevice().getFormatProperties(format)
+		};
 
         if (tiling == vk::ImageTiling::eLinear && (props.linearTilingFeatures & features) == features) {
             return format;

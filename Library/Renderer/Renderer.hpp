@@ -4,6 +4,7 @@
 #include <vulkan/vulkan.hpp>
 #include "DebugMessenger/DebugMessenger.hpp"
 #include "Surface.hpp"
+#include "PhysicalDevice.hpp"
 
 #include <optional>
 
@@ -25,24 +26,14 @@ public:
 
 
 	vk::Instance getInstance() const;
+
+	//TODO - Delete after refactor
 	vk::SurfaceKHR getSurface() const;
-
-	//TODO
-
-	//SetupDebugMessenger
-
-	//PickUpPhysicalDevice
+	vk::PhysicalDevice getPhysicalDevice() const;
 
 
-	//Render Pass
-	//Create Graphics Pipline
-	//
-
-	
-	//Initialize function
 
 
-	//Clean up function
 
 private:
 
@@ -50,7 +41,7 @@ private:
 	vk::Instance m_instance;
 	DebugMessenger m_debugMessenger;
 	std::optional<Surface> m_surface;
-
+	PhysicalDevice m_physicalDevice;
 };
 
 }

@@ -10,7 +10,11 @@ set(SOURCES
 	"Extensions.cpp"
 	"Renderer.cpp"
 	"ValidationLayers.cpp"
-	"Surface.cpp")
+	"Surface.cpp"
+	"PhysicalDevice.cpp"
+	"QueueFamily.cpp"
+	"SwapChainSupport.cpp"
+	"Instance.cpp")
 
 set(HEADERS
 	"Config.hpp"
@@ -18,7 +22,11 @@ set(HEADERS
 	"Extensions.cpp"
 	"Renderer.hpp"
 	"ValidationLayers.hpp"
-	"Surface.hpp")
+	"Surface.hpp"
+	"PhysicalDevice.hpp"
+	"QueueFamily.hpp"
+	"SwapChainSupport.hpp"
+	"Instance.hpp")
 
 
 

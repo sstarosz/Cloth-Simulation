@@ -53,7 +53,7 @@ namespace st::viewport
 
 		renderer::Renderer m_renderer;
 
-		vk::PhysicalDevice m_physicalDevice;
+		//vk::PhysicalDevice m_physicalDevice;
 		vk::Device m_device;
 		vk::Queue m_graphicsQueue;
 		vk::Queue m_presentQueue;

@@ -27,4 +27,4 @@ private:
 }
 
 
-#endif // !RENDERER_VALIDATION_LAYERS_HPP
+#endif // !RENDERER_SURFACE_HPP

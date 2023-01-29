@@ -8,7 +8,8 @@ namespace st::renderer {
 	Renderer::Renderer():
 	m_instance(),
 	m_debugMessenger(m_instance),
-	m_surface()
+	m_surface(),
+	m_physicalDevice()
 	{
 
 	}
@@ -20,7 +21,8 @@ void Renderer::setupSurface(const vk::SurfaceKHR& surface)
 
 void Renderer::initialize()
 {
-	
+	m_physicalDevice = PhysicalDevice(m_instance, m_surface->getSurface());
+	m_physicalDevice.initialize();
 
 }
 
@@ -71,6 +73,11 @@ vk::Instance Renderer::getInstance() const
 vk::SurfaceKHR Renderer::getSurface() const
 {
 	 return m_surface->getSurface();
+}
+
+vk::PhysicalDevice Renderer::getPhysicalDevice() const
+{
+	 return m_physicalDevice.getPhysicalDevice();
 }
 
 }
