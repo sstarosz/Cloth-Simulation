@@ -6,15 +6,19 @@ project(Renderer
 configure_file(Config.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/Config.hpp @ONLY)
 
 set(SOURCES
+	"DebugMessenger/DebugMessenger.cpp"
 	"Extensions.cpp"
 	"Renderer.cpp"
-	"ValidationLayers.cpp")
+	"ValidationLayers.cpp"
+	)
 
 set(HEADERS
 	"Config.hpp"
+	"DebugMessenger/DebugMessenger.hpp"
 	"Extensions.cpp"
 	"Renderer.hpp"
-	"ValidationLayers.hpp")
+	"ValidationLayers.hpp"
+	)
 
 
 

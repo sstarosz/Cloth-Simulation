@@ -9,7 +9,7 @@ namespace st::renderer {
 
 		std::vector<const char*> validationLayers { "VK_LAYER_KHRONOS_validation" };
 
-		if (checkValidationLayerSupport(validationLayers))
+		if (!checkValidationLayerSupport(validationLayers))
 		{
 			//TODO - Better validation layer handling
 			throw std::runtime_error("validation layer requested, but not available!");

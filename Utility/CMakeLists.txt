@@ -17,3 +17,7 @@
 
  add_executable(TypeTraits "TypeTraits.cpp")
  target_compile_features(TypeTraits PRIVATE cxx_std_20)
+
+
+  add_executable(Prototyping "Prototyping.cpp")
+ target_compile_features(Prototyping PRIVATE cxx_std_20)

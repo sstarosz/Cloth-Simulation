@@ -2,6 +2,7 @@
 #define RENDERER_RENDERER_HPP
 
 #include <vulkan/vulkan.hpp>
+#include "DebugMessenger/DebugMessenger.hpp"
 
 namespace st::renderer
 {
@@ -9,7 +10,11 @@ namespace st::renderer
 class Renderer
 {
 public:	
+
+	Renderer();
+
 	void initialize();
+	void releaseResources();
 
 
 	vk::Instance getInstance();
@@ -37,6 +42,8 @@ private:
 
 
 	vk::Instance m_instance;
+	DebugMessenger m_debugMessenger;
+
 };
 
 }

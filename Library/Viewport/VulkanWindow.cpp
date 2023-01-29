@@ -17,23 +17,6 @@
 
 #include <span>
 
-PFN_vkCreateDebugUtilsMessengerEXT pfnVkCreateDebugUtilsMessengerEXT;
-PFN_vkDestroyDebugUtilsMessengerEXT pfnVkDestroyDebugUtilsMessengerEXT;
-
-[[maybe_unused]] VKAPI_ATTR VkResult VKAPI_CALL
-vkCreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-    const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger)
-{
-    return pfnVkCreateDebugUtilsMessengerEXT(instance, pCreateInfo, pAllocator, pMessenger);
-}
-
-[[maybe_unused]] VKAPI_ATTR void VKAPI_CALL vkDestroyDebugUtilsMessengerEXT(VkInstance instance,
-    VkDebugUtilsMessengerEXT messenger,
-    VkAllocationCallbacks const* pAllocator)
-{
-    return pfnVkDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
-}
-
 namespace st::viewport {
 
 VulkanWindow::VulkanWindow()
@@ -46,7 +29,6 @@ void VulkanWindow::initialize()
 	m_renderer.initialize();
 
     createInstance();
-    setupDebugMessenger();
     createSurface();
     pickPhysicalDevice();
     createLogicalDevice();
@@ -113,24 +95,8 @@ void VulkanWindow::releaseResources()
 
     m_device.destroy();
 
-    if (enableValidationLayers) {
-		m_renderer.getInstance().destroyDebugUtilsMessengerEXT(m_debugMessenger);
-    }
-
-
-    //TODO
-    //vkDestroySurfaceKHR(instance, surface, nullptr);
-    //vkDestroyInstance(instance, nullptr);
-
-}
-
-VkBool32 VulkanWindow::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                    VkDebugUtilsMessageTypeFlagsEXT messageType,
-                                    const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
-{
-	std::cerr << "validation layer: " << pCallbackData->pMessage << "\n\n";
-
-    return VK_FALSE;
+    
+    m_renderer.releaseResources();
 }
 
 void VulkanWindow::createInstance()
@@ -145,45 +111,45 @@ void VulkanWindow::createInstance()
     setVulkanInstance(&inst);
 }
 
-void VulkanWindow::setupDebugMessenger()
-{
-    if (!enableValidationLayers)
-    {
-        return;
-    }
-
-    if (enableValidationLayers) {
-
-        vk::DebugUtilsMessageSeverityFlagsEXT severityFlags { vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose | vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning | vk::DebugUtilsMessageSeverityFlagBitsEXT::eError };
-
-        vk::DebugUtilsMessageTypeFlagsEXT messageTypeFlags { vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral | vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance | vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation };
-
-        vk::DebugUtilsMessengerCreateInfoEXT debugUtilsMessengerCreateInfoEXT {
-            {}, severityFlags, messageTypeFlags, &debugCallback
-        };
-
-        pfnVkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
-				m_renderer.getInstance().getProcAddr("vkCreateDebugUtilsMessengerEXT")
-			);
-        if (!pfnVkCreateDebugUtilsMessengerEXT) {
-            std::cout << "GetInstanceProcAddr: Unable to find pfnVkCreateDebugUtilsMessengerEXT function." << std::endl;
-            exit(1);
-        }
-
-        pfnVkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
-				m_renderer.getInstance().getProcAddr("vkDestroyDebugUtilsMessengerEXT")
-			);
-        if (!pfnVkDestroyDebugUtilsMessengerEXT) {
-            std::cout << "GetInstanceProcAddr: Unable to find pfnVkDestroyDebugUtilsMessengerEXT function."
-                      << std::endl;
-            exit(1);
-        }
-
-        m_debugMessenger = m_renderer.getInstance().createDebugUtilsMessengerEXT(
-			debugUtilsMessengerCreateInfoEXT
-		);
-    }
-}
+//void VulkanWindow::setupDebugMessenger()
+//{
+//    if (!enableValidationLayers)
+//    {
+//        return;
+//    }
+//
+//    if (enableValidationLayers) {
+//
+//        vk::DebugUtilsMessageSeverityFlagsEXT severityFlags { vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose | vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning | vk::DebugUtilsMessageSeverityFlagBitsEXT::eError };
+//
+//        vk::DebugUtilsMessageTypeFlagsEXT messageTypeFlags { vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral | vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance | vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation };
+//
+//        vk::DebugUtilsMessengerCreateInfoEXT debugUtilsMessengerCreateInfoEXT {
+//            {}, severityFlags, messageTypeFlags, &debugCallback
+//        };
+//
+//        //pfnVkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
+//		//		m_renderer.getInstance().getProcAddr("vkCreateDebugUtilsMessengerEXT")
+//		//	);
+//        //if (!pfnVkCreateDebugUtilsMessengerEXT) {
+//        //    std::cout << "GetInstanceProcAddr: Unable to find pfnVkCreateDebugUtilsMessengerEXT function." << std::endl;
+//        //    exit(1);
+//        //}
+//
+//        //pfnVkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
+//		//		m_renderer.getInstance().getProcAddr("vkDestroyDebugUtilsMessengerEXT")
+//		//	);
+//        //if (!pfnVkDestroyDebugUtilsMessengerEXT) {
+//        //    std::cout << "GetInstanceProcAddr: Unable to find pfnVkDestroyDebugUtilsMessengerEXT function."
+//        //              << std::endl;
+//        //    exit(1);
+//        //}
+//
+//        m_debugMessenger = m_renderer.getInstance().createDebugUtilsMessengerEXT(
+//			debugUtilsMessengerCreateInfoEXT
+//		);
+//    }
+//}
 
 void VulkanWindow::createSurface()
 {

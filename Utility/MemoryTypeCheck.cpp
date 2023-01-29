@@ -50,15 +50,15 @@ vk::Instance createInstance()
 
 
 //Debug
-PFN_vkCreateDebugUtilsMessengerEXT pfnVkCreateDebugUtilsMessengerEXT;
-PFN_vkDestroyDebugUtilsMessengerEXT pfnVkDestroyDebugUtilsMessengerEXT;
+PFN_vkCreateDebugUtilsMessengerEXT m_pfnVkCreateDebugUtilsMessengerEXT;
+PFN_vkDestroyDebugUtilsMessengerEXT m_pfnVkDestroyDebugUtilsMessengerEXT;
 
 [[maybe_unused]] VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugUtilsMessengerEXT(
 	VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
 	const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger
 )
 {
-	return pfnVkCreateDebugUtilsMessengerEXT(
+	return m_pfnVkCreateDebugUtilsMessengerEXT(
 		instance, pCreateInfo, pAllocator, pMessenger
 	);
 }
@@ -68,7 +68,7 @@ PFN_vkDestroyDebugUtilsMessengerEXT pfnVkDestroyDebugUtilsMessengerEXT;
 	VkAllocationCallbacks const* pAllocator
 )
 {
-	return pfnVkDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
+	return m_pfnVkDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
 }
 
 VkBool32 debugCallback(
@@ -103,8 +103,8 @@ vk::DebugUtilsMessengerEXT setupDebugMessenger(const vk::Instance& instance)
 		&debugCallback
 	};
 
-	pfnVkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(instance.getProcAddr("vkCreateDebugUtilsMessengerEXT"));
-	if (!pfnVkCreateDebugUtilsMessengerEXT)
+	m_pfnVkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(instance.getProcAddr("vkCreateDebugUtilsMessengerEXT"));
+	if (!m_pfnVkCreateDebugUtilsMessengerEXT)
 	{
 		std::cout << "GetInstanceProcAddr: Unable to find "
 					 "pfnVkCreateDebugUtilsMessengerEXT function."
@@ -112,11 +112,11 @@ vk::DebugUtilsMessengerEXT setupDebugMessenger(const vk::Instance& instance)
 		exit(1);
 	}
 
-	pfnVkDestroyDebugUtilsMessengerEXT
+	m_pfnVkDestroyDebugUtilsMessengerEXT
 		= reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
 			instance.getProcAddr("vkDestroyDebugUtilsMessengerEXT")
 		);
-	if (!pfnVkDestroyDebugUtilsMessengerEXT)
+	if (!m_pfnVkDestroyDebugUtilsMessengerEXT)
 	{
 		std::cout << "GetInstanceProcAddr: Unable to find "
 					 "pfnVkDestroyDebugUtilsMessengerEXT function."

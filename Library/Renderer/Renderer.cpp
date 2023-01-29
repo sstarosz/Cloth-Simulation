@@ -5,12 +5,23 @@
 
 namespace st::renderer {
 
+	Renderer::Renderer():
+	m_instance(),
+	m_debugMessenger(m_instance)
+	{
 
+	}
 
 void Renderer::initialize()
 {
 	createInstance();
+	m_debugMessenger.initialize();
+}
 
+void Renderer::releaseResources() 
+{
+	m_debugMessenger.releaseResources();
+	m_instance.destroy();
 }
 
 void Renderer::createInstance()

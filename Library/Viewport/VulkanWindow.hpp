@@ -53,7 +53,6 @@ namespace st::viewport
 
 		renderer::Renderer m_renderer;
 
-		vk::DebugUtilsMessengerEXT m_debugMessenger;
 		vk::SurfaceKHR m_surface;
 		vk::PhysicalDevice m_physicalDevice;
 		vk::Device m_device;
@@ -173,7 +172,6 @@ namespace st::viewport
 
 		/*Init*/
 		void createInstance();
-        void setupDebugMessenger();
         void createSurface();
         void pickPhysicalDevice();
         void createLogicalDevice();
