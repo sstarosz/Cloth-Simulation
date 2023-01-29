@@ -10,7 +10,7 @@ set(SOURCES
 	"Extensions.cpp"
 	"Renderer.cpp"
 	"ValidationLayers.cpp"
-	)
+	"Surface.cpp")
 
 set(HEADERS
 	"Config.hpp"
@@ -18,7 +18,7 @@ set(HEADERS
 	"Extensions.cpp"
 	"Renderer.hpp"
 	"ValidationLayers.hpp"
-	)
+	"Surface.hpp")
 
 
 

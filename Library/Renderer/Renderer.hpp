@@ -3,6 +3,9 @@
 
 #include <vulkan/vulkan.hpp>
 #include "DebugMessenger/DebugMessenger.hpp"
+#include "Surface.hpp"
+
+#include <optional>
 
 namespace st::renderer
 {
@@ -13,11 +16,16 @@ public:
 
 	Renderer();
 
+
+	void setupSurface(const vk::SurfaceKHR& surface);
+
+	void createInstance();
 	void initialize();
 	void releaseResources();
 
 
-	vk::Instance getInstance();
+	vk::Instance getInstance() const;
+	vk::SurfaceKHR getSurface() const;
 
 	//TODO
 
@@ -37,12 +45,11 @@ public:
 	//Clean up function
 
 private:
-	void createInstance();
-
 
 
 	vk::Instance m_instance;
 	DebugMessenger m_debugMessenger;
+	std::optional<Surface> m_surface;
 
 };
 

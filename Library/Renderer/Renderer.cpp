@@ -7,22 +7,31 @@ namespace st::renderer {
 
 	Renderer::Renderer():
 	m_instance(),
-	m_debugMessenger(m_instance)
+	m_debugMessenger(m_instance),
+	m_surface()
 	{
 
 	}
 
+void Renderer::setupSurface(const vk::SurfaceKHR& surface)
+{ 
+	m_surface.emplace(surface);
+}
+
 void Renderer::initialize()
 {
-	createInstance();
-	m_debugMessenger.initialize();
+	
+
 }
 
 void Renderer::releaseResources() 
 {
+	
 	m_debugMessenger.releaseResources();
 	m_instance.destroy();
 }
+
+
 
 void Renderer::createInstance()
 {
@@ -47,13 +56,21 @@ void Renderer::createInstance()
 	};
 
 
-
 	  m_instance = vk::createInstance(instanceCreateInfo);
+
+	  m_debugMessenger.initialize();
 }
 
-vk::Instance Renderer::getInstance()
+
+
+vk::Instance Renderer::getInstance() const
 {
 	 return m_instance;
+}
+
+vk::SurfaceKHR Renderer::getSurface() const
+{
+	 return m_surface->getSurface();
 }
 
 }
