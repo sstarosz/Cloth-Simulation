@@ -14,15 +14,7 @@ class DebugMessenger
 public:
 	 DebugMessenger(const vk::Instance& m_instance);
 	
-	//VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugUtilsMessengerEXT(VkInstance instance,
-	//															   const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-	//															   const VkAllocationCallbacks* pAllocator,
-	//															   VkDebugUtilsMessengerEXT* pMessenger);
-	//
-	//VKAPI_ATTR void VKAPI_CALL vkDestroyDebugUtilsMessengerEXT(VkInstance instance,
-	//															VkDebugUtilsMessengerEXT messenger,
-	//															VkAllocationCallbacks const* pAllocator);
-	//
+
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 														VkDebugUtilsMessageTypeFlagsEXT messageType,
 														const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,

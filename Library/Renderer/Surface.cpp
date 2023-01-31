@@ -5,14 +5,14 @@
 namespace st::renderer 
 {
 
-	Surface::Surface(const vk::SurfaceKHR& surface):
+	Surface::Surface(const vk::SurfaceKHR surface):
 	m_surface(surface)
 	{ 
 
 	}
 
 
-	vk::SurfaceKHR Surface::getSurface() const
+	const vk::SurfaceKHR& Surface::getSurface() const
 	{
 		return m_surface;
 	}

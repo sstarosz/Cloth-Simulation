@@ -10,11 +10,7 @@ namespace st::renderer {
 class PhysicalDevice
 {
 	public:
-		PhysicalDevice(const vk::Instance& instance, const vk::SurfaceKHR surface);
-		PhysicalDevice(const PhysicalDevice& physicalDevice) = default;
-
-		PhysicalDevice(PhysicalDevice&& physicalDevice) = default;
-		PhysicalDevice& operator=(PhysicalDevice&&) = default;
+		PhysicalDevice(const vk::Instance& instance, const vk::SurfaceKHR& surface);
 
 		void initialize();
 		void releaseResources();
@@ -28,8 +24,8 @@ class PhysicalDevice
 		bool checkDeviceExtensionSupport(const vk::PhysicalDevice& device);
 
 
-		const const vk::Instance&   m_instance;
-		const const vk::SurfaceKHR& m_surface;
+		const vk::Instance&   m_instance;
+		const vk::SurfaceKHR& m_surface;
 
 
 		vk::PhysicalDevice m_physicalDevice;

@@ -9,12 +9,16 @@
 #include <QVulkanInstance>
 #include <array>
 #include <string_view>
+#include <memory>
 #include <Geometry/Vertex.hpp>
 #include <Geometry/Object3D.hpp>
 #include <Geometry/Matrix4x4.hpp>
 #include "Line.hpp"
 #include "Camera.hpp"
 
+
+#include "Renderer/Instance.hpp"
+#include "Renderer/Surface.hpp"
 #include "Renderer/Renderer.hpp"
 
 namespace st::viewport 
@@ -50,8 +54,9 @@ namespace st::viewport
 		
 
 		QVulkanInstance inst;
-
-		renderer::Renderer m_renderer;
+		std::unique_ptr<renderer::StInstance> m_instance;
+		std::unique_ptr<renderer::Surface> m_surface;
+		std::unique_ptr<renderer::Renderer> m_renderer;
 
 		//vk::PhysicalDevice m_physicalDevice;
 		vk::Device m_device;
@@ -170,8 +175,8 @@ namespace st::viewport
 		bool isInitialised = false;
 
 		/*Init*/
-		void createInstance();
-        void pickPhysicalDevice();
+		void createQtInstance(vk::Instance instance);
+        //void pickPhysicalDevice();
         void createLogicalDevice();
         void createSwapChain();
         void createImageViews();

@@ -9,7 +9,7 @@ namespace st::renderer {
 
 PhysicalDevice::PhysicalDevice(
 	const vk::Instance& instance,
-	const vk::SurfaceKHR surface
+	const vk::SurfaceKHR& surface
 ):
 	m_instance(instance),
 	m_surface(surface)

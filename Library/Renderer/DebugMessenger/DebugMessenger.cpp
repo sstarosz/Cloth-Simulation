@@ -111,6 +111,7 @@ VkBool32 DebugMessenger::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT me
 	return false;
 }
 
+
 void DebugMessenger::initialize()
 {
 	 pfnVkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>( m_instance.getProcAddr("vkCreateDebugUtilsMessengerEXT"));

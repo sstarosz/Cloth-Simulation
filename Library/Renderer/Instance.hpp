@@ -2,23 +2,32 @@
 #define RENDERER_INSTANCE_HPP
 
 #include "Config.hpp"
+#include "DebugMessenger/DebugMessenger.hpp"
 #include <vulkan/vulkan.hpp>
+
 
 namespace st::renderer {
 
 /*TODO Change it to ingletone?*/
 
-class Instance
+class StInstance
 {
-
-
 public:
-	vk::Instance getInstance();
+	StInstance();
+
+	void create();
+
+	void destroy();
+
+
+
+	const vk::Instance& getInstance() const;
 
 
 
 private:
 	vk::Instance m_instance;
+	DebugMessenger m_debugMessenger;
 };
 
 

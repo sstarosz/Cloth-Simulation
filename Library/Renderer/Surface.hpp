@@ -12,11 +12,11 @@ namespace st::renderer {
 class Surface
 {
 public:
-	Surface(const vk::SurfaceKHR& surface);
+	Surface(const vk::SurfaceKHR surface);
 
 
 
-	vk::SurfaceKHR getSurface() const;
+	const vk::SurfaceKHR& getSurface() const;
 
 private:
 	const vk::SurfaceKHR m_surface;

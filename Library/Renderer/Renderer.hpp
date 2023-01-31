@@ -3,6 +3,7 @@
 
 #include <vulkan/vulkan.hpp>
 #include "DebugMessenger/DebugMessenger.hpp"
+#include "Instance.hpp"
 #include "Surface.hpp"
 #include "PhysicalDevice.hpp"
 
@@ -15,12 +16,8 @@ class Renderer
 {
 public:	
 
-	Renderer();
+	Renderer(const StInstance& instance, const Surface& surface);
 
-
-	void setupSurface(const vk::SurfaceKHR& surface);
-
-	void createInstance();
 	void initialize();
 	void releaseResources();
 
@@ -38,9 +35,8 @@ public:
 private:
 
 
-	vk::Instance m_instance;
-	DebugMessenger m_debugMessenger;
-	std::optional<Surface> m_surface;
+	const StInstance& m_instance;
+	const Surface& m_surface;
 	PhysicalDevice m_physicalDevice;
 };
 
