@@ -14,7 +14,8 @@ set(SOURCES
 	"PhysicalDevice.cpp"
 	"QueueFamily.cpp"
 	"SwapChainSupport.cpp"
-	"Instance.cpp" "LogicalDevice.cpp")
+	"Instance.cpp" "LogicalDevice.cpp"
+	"SwapChain.cpp")
 
 set(HEADERS
 	"Config.hpp"
@@ -26,7 +27,8 @@ set(HEADERS
 	"PhysicalDevice.hpp"
 	"QueueFamily.hpp"
 	"SwapChainSupport.hpp"
-	"Instance.hpp" "LogicalDevice.cpp")
+	"Instance.hpp" "LogicalDevice.cpp"
+	"SwapChain.hpp")
 
 
 

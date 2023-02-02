@@ -7,6 +7,7 @@
 #include "Surface.hpp"
 #include "PhysicalDevice.hpp"
 #include "LogicalDevice.hpp"
+#include "SwapChain.hpp"
 
 #include <optional>
 
@@ -25,6 +26,13 @@ public:
 
 	vk::Instance getInstance() const;
 
+
+	void updateSwapChain(uint64_t width, uint64_t height);
+	void recreateSwapChain(uint64_t width, uint64_t height);
+
+
+
+
 	//TODO - Delete after refactor
 	const vk::SurfaceKHR& getSurface() const;
 	const vk::PhysicalDevice& getPhysicalDevice() const;
@@ -33,7 +41,10 @@ public:
 	const vk::Queue& getPresentationQueue() const;
 
 
-
+	const vk::SwapchainKHR& getSwapchain() const;
+	const vk::Extent2D& getSwapchainExtend2D() const;
+	const vk::Format& getSwapChainImageFormat() const;
+	const std::vector<vk::Image>& getSwapChainImages() const;
 
 private:
 
@@ -42,6 +53,7 @@ private:
 	const Surface& m_surface;
 	PhysicalDevice m_physicalDevice;
 	LogicalDevice m_logicalDevice;
+	SwapChain m_swapChain;
 };
 
 }

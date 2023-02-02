@@ -59,10 +59,10 @@ namespace st::viewport
 		std::unique_ptr<renderer::Renderer> m_renderer;
 
 
-		vk::SwapchainKHR m_swapChain;
-		std::vector<vk::Image> m_swapChainImages;
-		vk::Format m_swapChainImageFormat;
-		vk::Extent2D m_swapChainExtent;
+		//vk::SwapchainKHR m_swapChain;
+		//std::vector<vk::Image> m_swapChainImages;
+		//vk::Format m_swapChainImageFormat;
+		//vk::Extent2D m_swapChainExtent;
 
 		std::vector<vk::ImageView> m_swapChainImageViews;
 
@@ -160,7 +160,7 @@ namespace st::viewport
 
 		/*Init*/
 		void createQtInstance(vk::Instance instance);
-        void createSwapChain();
+        //void createSwapChain();
         void createImageViews();
         void createRenderPass();
         void createDescriptorSetLayout();
@@ -192,9 +192,9 @@ namespace st::viewport
 		void recreateSwapChain();
 
 		/*Hellper function*/
-		vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats);
-		vk::PresentModeKHR chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes);
-		vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities);
+		//vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats);
+		//vk::PresentModeKHR chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes);
+		//vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities);
 		uint32_t findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties);
 
 		//Move those function to utility class

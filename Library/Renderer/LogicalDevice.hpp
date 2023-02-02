@@ -12,8 +12,8 @@ class LogicalDevice
 {
 	public:
 		LogicalDevice(const vk::Instance& instance,
-			const vk::PhysicalDevice& physicalDevice,
-			const vk::SurfaceKHR& surface);
+					  const vk::PhysicalDevice& physicalDevice,
+					  const vk::SurfaceKHR& surface);
 
 		void initialize();
 		void releaseResources();
