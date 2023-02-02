@@ -58,10 +58,6 @@ namespace st::viewport
 		std::unique_ptr<renderer::Surface> m_surface;
 		std::unique_ptr<renderer::Renderer> m_renderer;
 
-		//vk::PhysicalDevice m_physicalDevice;
-		vk::Device m_device;
-		vk::Queue m_graphicsQueue;
-		vk::Queue m_presentQueue;
 
 		vk::SwapchainKHR m_swapChain;
 		std::vector<vk::Image> m_swapChainImages;
@@ -112,18 +108,6 @@ namespace st::viewport
 
 		const static uint32_t MAX_FRAMES_IN_FLIGHT = 2;
 
-		constexpr static std::array validationLayers = {
-			"VK_LAYER_KHRONOS_validation"
-		};
-
-		constexpr static std::array deviceExtensions = {
-				VK_KHR_SWAPCHAIN_EXTENSION_NAME
-		};
-
-		static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-			VkDebugUtilsMessageTypeFlagsEXT messageType,
-			const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-			void* pUserData);
 
 
 		/*To Delete*/
@@ -176,8 +160,6 @@ namespace st::viewport
 
 		/*Init*/
 		void createQtInstance(vk::Instance instance);
-        //void pickPhysicalDevice();
-        void createLogicalDevice();
         void createSwapChain();
         void createImageViews();
         void createRenderPass();
@@ -210,8 +192,6 @@ namespace st::viewport
 		void recreateSwapChain();
 
 		/*Hellper function*/
-		bool isDeviceSuitable(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface);
-		bool checkDeviceExtensionSupport(const vk::PhysicalDevice& device);
 		vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats);
 		vk::PresentModeKHR chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes);
 		vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities);

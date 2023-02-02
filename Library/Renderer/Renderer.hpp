@@ -6,6 +6,7 @@
 #include "Instance.hpp"
 #include "Surface.hpp"
 #include "PhysicalDevice.hpp"
+#include "LogicalDevice.hpp"
 
 #include <optional>
 
@@ -25,9 +26,11 @@ public:
 	vk::Instance getInstance() const;
 
 	//TODO - Delete after refactor
-	vk::SurfaceKHR getSurface() const;
-	vk::PhysicalDevice getPhysicalDevice() const;
-
+	const vk::SurfaceKHR& getSurface() const;
+	const vk::PhysicalDevice& getPhysicalDevice() const;
+	const vk::Device& getLogicalDevice() const;
+	const vk::Queue& getGraphicsQueue() const;
+	const vk::Queue& getPresentationQueue() const;
 
 
 
@@ -38,6 +41,7 @@ private:
 	const StInstance& m_instance;
 	const Surface& m_surface;
 	PhysicalDevice m_physicalDevice;
+	LogicalDevice m_logicalDevice;
 };
 
 }

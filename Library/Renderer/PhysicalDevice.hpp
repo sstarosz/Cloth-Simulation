@@ -16,7 +16,7 @@ class PhysicalDevice
 		void releaseResources();
 
 
-		vk::PhysicalDevice getPhysicalDevice() const;
+		const vk::PhysicalDevice& getPhysicalDevice() const;
 
 	private:
 		void pickPhysicalDevice();

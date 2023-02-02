@@ -28,7 +28,7 @@ void PhysicalDevice::releaseResources()
 
 
 //Return copy of pointer
-vk::PhysicalDevice PhysicalDevice::getPhysicalDevice() const
+const vk::PhysicalDevice& PhysicalDevice::getPhysicalDevice() const
 {
 	return m_physicalDevice;
 }
