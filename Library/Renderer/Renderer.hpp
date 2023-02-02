@@ -45,10 +45,9 @@ public:
 	const vk::Extent2D& getSwapchainExtend2D() const;
 	const vk::Format& getSwapChainImageFormat() const;
 	const std::vector<vk::Image>& getSwapChainImages() const;
+	const std::vector<vk::ImageView>& getSwapChainImagesViews() const;
 
 private:
-
-
 	const StInstance& m_instance;
 	const Surface& m_surface;
 	PhysicalDevice m_physicalDevice;

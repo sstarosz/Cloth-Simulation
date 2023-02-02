@@ -26,9 +26,10 @@ void Renderer::initialize()
 
 void Renderer::releaseResources() 
 {
-	m_physicalDevice.releaseResources();
-	m_logicalDevice.releaseResources();
+	//Reverse order then intialization
 	m_swapChain.releaseResources();
+	m_logicalDevice.releaseResources();
+	m_physicalDevice.releaseResources();
 }
 
 
@@ -92,5 +93,9 @@ const std::vector<vk::Image>& Renderer::getSwapChainImages() const
 	 return m_swapChain.getSwapChainImages();
 }
 
+const std::vector<vk::ImageView>& Renderer::getSwapChainImagesViews() const
+{
+	 return m_swapChain.getSwapChainImagesViews();
+}
 
 }

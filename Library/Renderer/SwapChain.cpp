@@ -16,17 +16,16 @@ SwapChain::SwapChain(
 
 void SwapChain::initialize()
 {
-	SwapChainSupportDetails swapChainSupport
-		= SwapChainSupportDetails::querySwapChainSupport(m_physicalDevice, m_surface);
+	SwapChainSupportDetails swapChainSupport = SwapChainSupportDetails::querySwapChainSupport(m_physicalDevice, m_surface);
 
-	vk::SurfaceFormatKHR surfaceFormat
-		= chooseSwapSurfaceFormat(swapChainSupport.formats);
+	vk::SurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
 	vk::PresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
 	vk::Extent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
 
+	//TODO - Image count == 2?
 	uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
-	if (swapChainSupport.capabilities.maxImageCount > 0
-		&& imageCount > swapChainSupport.capabilities.maxImageCount)
+	if (swapChainSupport.capabilities.maxImageCount > 0 &&
+		imageCount > swapChainSupport.capabilities.maxImageCount)
 	{
 		imageCount = swapChainSupport.capabilities.maxImageCount;
 	}
@@ -64,10 +63,20 @@ void SwapChain::initialize()
 	m_swapChainImages = m_device.getSwapchainImagesKHR(m_swapChain);
 	m_swapChainImageFormat = surfaceFormat.format;
 	m_swapChainExtent = extent;
+
+	createImageViews();
 }
 
 void SwapChain::releaseResources()
 {
+
+	for (auto& imageView : m_swapChainImageViews)
+	{
+		m_device.destroy(imageView);
+	}
+	m_swapChainImageViews.clear();
+
+
 	m_device.destroySwapchainKHR(m_swapChain);
 }
 
@@ -102,6 +111,11 @@ const vk::Format& SwapChain::getSwapChainImageFormat() const
 const std::vector<vk::Image>& SwapChain::getSwapChainImages() const
 {
 	return m_swapChainImages;
+}
+
+const std::vector<vk::ImageView>& SwapChain::getSwapChainImagesViews() const
+{
+	return m_swapChainImageViews;
 }
 
 vk::SurfaceFormatKHR SwapChain::chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats) const
@@ -156,6 +170,36 @@ vk::Extent2D SwapChain::chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capab
 
 		return actualExtent;
 	}
+}
+
+void SwapChain::createImageViews()
+{
+	for (const auto& swapChainImage : m_swapChainImages)
+	{
+		vk::ImageViewCreateInfo createInfo {
+			vk::ImageViewCreateFlags {},
+			swapChainImage,
+			vk::ImageViewType::e2D,
+			m_swapChainImageFormat,
+			vk::ComponentMapping {
+								  vk::ComponentSwizzle::eIdentity,
+								  vk::ComponentSwizzle::eIdentity,
+								  vk::ComponentSwizzle::eIdentity,
+								  vk::ComponentSwizzle::eIdentity
+			},
+			vk::ImageSubresourceRange 
+			{
+				vk::ImageAspectFlags { vk::ImageAspectFlagBits::eColor },
+				0,
+				1,
+				0,
+				1 
+			}
+		};
+
+		m_swapChainImageViews.emplace_back(m_device.createImageView(createInfo));
+	}
+
 }
 
 }

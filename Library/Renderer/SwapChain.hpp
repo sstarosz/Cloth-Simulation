@@ -28,12 +28,15 @@ public:
 	const vk::Format& getSwapChainImageFormat() const;
 	const std::vector<vk::Image>& getSwapChainImages() const;
 
+	const std::vector<vk::ImageView>& getSwapChainImagesViews() const;
 
 
 private:
 	vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats) const;
 	vk::PresentModeKHR chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes) const;
 	vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities) const;
+
+	void createImageViews();
 
 
 	uint64_t m_width;
@@ -48,6 +51,7 @@ private:
 	std::vector<vk::Image> m_swapChainImages;
 	vk::Format m_swapChainImageFormat;
 	vk::Extent2D m_swapChainExtent;
+	std::vector<vk::ImageView> m_swapChainImageViews;
 };
 
 
