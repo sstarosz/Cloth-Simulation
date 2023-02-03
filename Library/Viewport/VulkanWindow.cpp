@@ -49,7 +49,7 @@ void VulkanWindow::initialize()
 
 
 
-    createRenderPass();
+    //createRenderPass();
     createDescriptorSetLayout();
     createGraphicsPipeline();
     createCommandPool();
@@ -77,7 +77,7 @@ void VulkanWindow::releaseResources()
     m_renderer->getLogicalDevice().destroyPipelineCache(m_pipelineCache);
      m_renderer->getLogicalDevice().destroyPipeline(m_graphicsPipeline);
      m_renderer->getLogicalDevice().destroyPipelineLayout(m_pipelineLayout);
-     m_renderer->getLogicalDevice().destroyRenderPass(m_renderPass);
+     //m_renderer->getLogicalDevice().destroyRenderPass(m_renderPass);
 
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
          m_renderer->getLogicalDevice().destroyBuffer(m_uniformBuffers[i]);
@@ -124,66 +124,67 @@ void VulkanWindow::createQtInstance(vk::Instance instance)
     setVulkanInstance(&inst);
 }
 
-void VulkanWindow::createRenderPass()
-{
-
-    vk::AttachmentDescription colorAttachment(
-        vk::AttachmentDescriptionFlags(),
-        m_renderer->getSwapChainImageFormat(),
-        vk::SampleCountFlagBits::e1,
-        vk::AttachmentLoadOp::eClear,
-        vk::AttachmentStoreOp::eStore,
-        vk::AttachmentLoadOp::eDontCare,
-        vk::AttachmentStoreOp::eDontCare,
-        vk::ImageLayout::eUndefined,
-        vk::ImageLayout::ePresentSrcKHR);
-
-    vk::AttachmentDescription depthAttachment {
-		vk::AttachmentDescriptionFlags(),
-		findDepthFormat(),
-		vk::SampleCountFlagBits::e1,
-		vk::AttachmentLoadOp::eClear,
-		vk::AttachmentStoreOp::eDontCare,
-		vk::AttachmentLoadOp::eDontCare,
-		vk::AttachmentStoreOp::eDontCare,
-		vk::ImageLayout::eUndefined,
-		vk::ImageLayout::eDepthStencilAttachmentOptimal
-	};
-
-
-    vk::AttachmentReference colorAttachmentRef(0, vk::ImageLayout::eColorAttachmentOptimal);
-	vk::AttachmentReference depthAttachmentRef(1, vk::ImageLayout::eDepthStencilAttachmentOptimal);
-
-
-    vk::SubpassDescription subpass(
-        vk::SubpassDescriptionFlags(),
-        vk::PipelineBindPoint::eGraphics,
-        {},
-		colorAttachmentRef,
-        {},
-        &depthAttachmentRef
-	);
-
-    vk::SubpassDependency dependency(
-        VK_SUBPASS_EXTERNAL,
-        0,
-		vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-		vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-        vk::AccessFlagBits::eNoneKHR,
-        vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
-
-
-
-    std::array<vk::AttachmentDescription, 2> attachments = {colorAttachment, depthAttachment};
-
-    vk::RenderPassCreateInfo renderPassInfo(
-        vk::RenderPassCreateFlags(),
-        attachments,
-        subpass,
-        dependency);
-
-    m_renderPass = m_renderer->getLogicalDevice().createRenderPass(renderPassInfo);
-}
+//void VulkanWindow::createRenderPass()
+//{
+//
+//    vk::AttachmentDescription colorAttachment(
+//        vk::AttachmentDescriptionFlags(),
+//        m_renderer->getSwapChainImageFormat(),
+//        vk::SampleCountFlagBits::e1,
+//        vk::AttachmentLoadOp::eClear,
+//        vk::AttachmentStoreOp::eStore,
+//        vk::AttachmentLoadOp::eDontCare,
+//        vk::AttachmentStoreOp::eDontCare,
+//        vk::ImageLayout::eUndefined,
+//        vk::ImageLayout::ePresentSrcKHR);
+//
+//    vk::AttachmentDescription depthAttachment {
+//		vk::AttachmentDescriptionFlags(),
+//		findDepthFormat(),
+//		vk::SampleCountFlagBits::e1,
+//		vk::AttachmentLoadOp::eClear,
+//		vk::AttachmentStoreOp::eDontCare,
+//		vk::AttachmentLoadOp::eDontCare,
+//		vk::AttachmentStoreOp::eDontCare,
+//		vk::ImageLayout::eUndefined,
+//		vk::ImageLayout::eDepthStencilAttachmentOptimal
+//	};
+//
+//
+//    vk::AttachmentReference colorAttachmentRef(0, vk::ImageLayout::eColorAttachmentOptimal);
+//	vk::AttachmentReference depthAttachmentRef(1, vk::ImageLayout::eDepthStencilAttachmentOptimal);
+//
+//
+//    vk::SubpassDescription subpass(
+//        vk::SubpassDescriptionFlags(),
+//        vk::PipelineBindPoint::eGraphics,
+//        {},
+//		colorAttachmentRef,
+//        {},
+//        &depthAttachmentRef,
+//        {}
+//	);
+//
+//    vk::SubpassDependency dependency(
+//        VK_SUBPASS_EXTERNAL,
+//        0,
+//		vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+//		vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+//        vk::AccessFlagBits::eNoneKHR,
+//        vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
+//
+//
+//
+//    std::array<vk::AttachmentDescription, 2> attachments = {colorAttachment, depthAttachment};
+//
+//    vk::RenderPassCreateInfo renderPassInfo(
+//        vk::RenderPassCreateFlags(),
+//        attachments,
+//        subpass,
+//        dependency);
+//
+//    m_renderPass = m_renderer->getLogicalDevice().createRenderPass(renderPassInfo);
+//}
 
 void VulkanWindow::createDescriptorSetLayout()
 {
@@ -332,7 +333,8 @@ void VulkanWindow::createGraphicsPipeline()
         &colorBlending,
         &m_pipelineDynamicStateCreateInfo,
         m_pipelineLayout,
-        m_renderPass);
+        m_renderer->getRenderPass()
+	);
 
     m_pipelineCache
 		= m_renderer->getLogicalDevice().createPipelineCache(vk::PipelineCacheCreateInfo()
@@ -362,7 +364,7 @@ void VulkanWindow::createFramebuffers()
 
         vk::FramebufferCreateInfo framebufferInfo(
             vk::FramebufferCreateFlags {},
-            m_renderPass,
+            m_renderer->getRenderPass(),
             attachments,
 			m_renderer->getSwapchainExtend2D().width,
 			m_renderer->getSwapchainExtend2D().height,
@@ -402,9 +404,11 @@ void VulkanWindow::loadModel()
 
     vk::Extent2D swapChainExtent = m_renderer->getSwapchainExtend2D();
 
+
+
     m_line.createDescriptorSets(m_renderer->getLogicalDevice(), m_uniformBuffers);
 	m_line.createPrimitivePipline(
-		m_renderer->getLogicalDevice(), swapChainExtent, m_renderPass
+		m_renderer->getLogicalDevice(), swapChainExtent, m_renderer->getRenderPass()
 	);
 	m_line.createLineVertexBuffer(
 		m_renderer->getPhysicalDevice(), m_renderer->getLogicalDevice(), m_commandPool,
@@ -661,7 +665,8 @@ void VulkanWindow::recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_
 
     //Draw primitive
 	vk::Extent2D swapChainExtent = m_renderer->getSwapchainExtend2D();
-    vk::RenderPassBeginInfo renderPassInfo(m_renderPass,
+	vk::RenderPassBeginInfo renderPassInfo(
+		m_renderer->getRenderPass(),
                                            m_swapChainFramebuffers[imageIndex],
                                            vk::Rect2D((0, 0), swapChainExtent),
                                            clearValues);

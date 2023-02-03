@@ -66,8 +66,11 @@ namespace st::viewport
         return attributeDescriptions;
     }
 
-    void Line::createPrimitivePipline(const vk::Device& device, vk::Extent2D& swapChainExtent, vk::RenderPass& renderPass)
-{
+    void Line::createPrimitivePipline(
+		const vk::Device& device, vk::Extent2D& swapChainExtent,
+		const vk::RenderPass& renderPass
+	)
+	{
 
 
     auto vertShaderCode = Shader::readFile("../Assets/Shaders/line_vert.spv");

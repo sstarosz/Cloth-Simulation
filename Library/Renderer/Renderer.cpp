@@ -10,9 +10,9 @@ m_instance(instance),
 m_surface(surface),
 m_physicalDevice(m_instance.getInstance(), surface.getSurface()),
 m_logicalDevice(m_instance.getInstance(), m_physicalDevice.getPhysicalDevice(), m_surface.getSurface()),
-m_swapChain(m_physicalDevice.getPhysicalDevice(), m_surface.getSurface(),m_logicalDevice.getDevice())
+m_swapChain(m_physicalDevice.getPhysicalDevice(), m_surface.getSurface(),m_logicalDevice.getDevice()),
+m_renderPass(m_physicalDevice.getPhysicalDevice(), m_swapChain.getSwapChainImageFormat(), m_logicalDevice.getDevice())
 {
-
 }
 
 
@@ -21,12 +21,14 @@ void Renderer::initialize()
 	m_physicalDevice.initialize();
 	m_logicalDevice.initialize();
 	m_swapChain.initialize();
+	m_renderPass.initialize();
 
 }
 
 void Renderer::releaseResources() 
 {
 	//Reverse order then intialization
+	m_renderPass.releaseResources();
 	m_swapChain.releaseResources();
 	m_logicalDevice.releaseResources();
 	m_physicalDevice.releaseResources();
@@ -96,6 +98,11 @@ const std::vector<vk::Image>& Renderer::getSwapChainImages() const
 const std::vector<vk::ImageView>& Renderer::getSwapChainImagesViews() const
 {
 	 return m_swapChain.getSwapChainImagesViews();
+}
+
+const vk::RenderPass& Renderer::getRenderPass() const
+{
+	 return m_renderPass.getRenderPass();
 }
 
 }

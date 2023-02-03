@@ -58,7 +58,7 @@ namespace st::viewport
 		std::unique_ptr<renderer::Surface> m_surface;
 		std::unique_ptr<renderer::Renderer> m_renderer;
 
-		vk::RenderPass m_renderPass;
+		//vk::RenderPass m_renderPass;
 
 		vk::DescriptorSetLayout m_descriptorSetLayout;
 		vk::PipelineLayout m_pipelineLayout;
@@ -152,7 +152,7 @@ namespace st::viewport
 
 		/*Init*/
 		void createQtInstance(vk::Instance instance);
-        void createRenderPass();
+        //void createRenderPass();
         void createDescriptorSetLayout();
         void createGraphicsPipeline();
         void createCommandPool();

@@ -15,7 +15,9 @@ set(SOURCES
 	"QueueFamily.cpp"
 	"SwapChainSupport.cpp"
 	"Instance.cpp" "LogicalDevice.cpp"
-	"SwapChain.cpp")
+	"SwapChain.cpp"
+	"RenderPass.cpp"
+	"Pipeline/GraphicsPipeline.cpp")
 
 set(HEADERS
 	"Config.hpp"
@@ -28,7 +30,9 @@ set(HEADERS
 	"QueueFamily.hpp"
 	"SwapChainSupport.hpp"
 	"Instance.hpp" "LogicalDevice.cpp"
-	"SwapChain.hpp")
+	"SwapChain.hpp"
+	"RenderPass.cpp"
+	"Pipeline/GraphicsPipeline.cpp")
 
 
 

@@ -8,6 +8,7 @@
 #include "PhysicalDevice.hpp"
 #include "LogicalDevice.hpp"
 #include "SwapChain.hpp"
+#include "RenderPass.hpp"
 
 #include <optional>
 
@@ -47,12 +48,16 @@ public:
 	const std::vector<vk::Image>& getSwapChainImages() const;
 	const std::vector<vk::ImageView>& getSwapChainImagesViews() const;
 
+	const vk::RenderPass& getRenderPass() const;
+
+
 private:
 	const StInstance& m_instance;
 	const Surface& m_surface;
 	PhysicalDevice m_physicalDevice;
 	LogicalDevice m_logicalDevice;
 	SwapChain m_swapChain;
+	RenderPass m_renderPass;
 };
 
 }

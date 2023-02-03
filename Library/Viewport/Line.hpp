@@ -41,7 +41,7 @@ namespace st::viewport
         vk::VertexInputBindingDescription getLineBindingDescription();
         std::array<vk::VertexInputAttributeDescription, 1> getLineAttributeDescriptions();
 
-        void createPrimitivePipline(const vk::Device& device, vk::Extent2D& swapChainExtent, vk::RenderPass& renderPass);
+        void createPrimitivePipline(const vk::Device& device, vk::Extent2D& swapChainExtent, const vk::RenderPass& renderPass);
         void createLineVertexBuffer(const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const vk::CommandPool& commandPool, const vk::Queue& graphicsQueue);
         void createLineIndexBuffer(const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const vk::CommandPool& commandPool, const vk::Queue& graphicsQueue);
         void createDescriptorSets(const vk::Device& device, const std::vector<vk::Buffer>& uniformBuffer);
