@@ -17,22 +17,26 @@ set(SOURCES
 	"Instance.cpp" "LogicalDevice.cpp"
 	"SwapChain.cpp"
 	"RenderPass.cpp"
-	"Pipeline/GraphicsPipeline.cpp")
+	"Pipeline/GraphicsPipeline.cpp"
+	"Shaders/Shader.cpp"
+	"CommandBuffers/CommandPool.cpp")
 
 set(HEADERS
 	"Config.hpp"
 	"DebugMessenger/DebugMessenger.hpp"
-	"Extensions.cpp"
+	"Extensions.hpp"
 	"Renderer.hpp"
 	"ValidationLayers.hpp"
 	"Surface.hpp"
 	"PhysicalDevice.hpp"
 	"QueueFamily.hpp"
 	"SwapChainSupport.hpp"
-	"Instance.hpp" "LogicalDevice.cpp"
+	"Instance.hpp" "LogicalDevice.hpp"
 	"SwapChain.hpp"
-	"RenderPass.cpp"
-	"Pipeline/GraphicsPipeline.cpp")
+	"RenderPass.hpp"
+	"Pipeline/GraphicsPipeline.hpp"
+	"Shaders/Shader.hpp"
+	"CommandBuffers/CommandPool.hpp")
 
 
 

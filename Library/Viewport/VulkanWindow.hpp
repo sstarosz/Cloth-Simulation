@@ -60,17 +60,17 @@ namespace st::viewport
 
 		//vk::RenderPass m_renderPass;
 
-		vk::DescriptorSetLayout m_descriptorSetLayout;
-		vk::PipelineLayout m_pipelineLayout;
-		vk::PipelineCache m_pipelineCache;
-		std::vector<vk::DynamicState> m_dynamicStateEnables;
-		vk::PipelineDynamicStateCreateInfo m_pipelineDynamicStateCreateInfo;
-
-		vk::Pipeline m_graphicsPipeline;
+		//vk::DescriptorSetLayout m_descriptorSetLayout;
+		//vk::PipelineLayout m_pipelineLayout;
+		//vk::PipelineCache m_pipelineCache;
+		//std::vector<vk::DynamicState> m_dynamicStateEnables;
+		//vk::PipelineDynamicStateCreateInfo m_pipelineDynamicStateCreateInfo;
+		//
+		//vk::Pipeline m_graphicsPipeline;
 
 		std::vector<vk::Framebuffer> m_swapChainFramebuffers;
 
-		vk::CommandPool m_commandPool;
+		//vk::CommandPool m_commandPool;
 
 		vk::Buffer m_vertexBuffer;
 		vk::DeviceMemory m_vertexBufferMemory;
@@ -152,10 +152,7 @@ namespace st::viewport
 
 		/*Init*/
 		void createQtInstance(vk::Instance instance);
-        //void createRenderPass();
-        void createDescriptorSetLayout();
-        void createGraphicsPipeline();
-        void createCommandPool();
+        //void createCommandPool();
         void createDepthResources();
         void createFramebuffers();
         void createTextureImage();

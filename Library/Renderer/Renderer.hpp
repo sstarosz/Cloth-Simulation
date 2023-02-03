@@ -9,7 +9,8 @@
 #include "LogicalDevice.hpp"
 #include "SwapChain.hpp"
 #include "RenderPass.hpp"
-
+#include "Pipeline/GraphicsPipeline.hpp"
+#include "CommandBuffers/CommandPool.hpp"
 #include <optional>
 
 namespace st::renderer
@@ -49,8 +50,12 @@ public:
 	const std::vector<vk::ImageView>& getSwapChainImagesViews() const;
 
 	const vk::RenderPass& getRenderPass() const;
+	const vk::Pipeline& getGraphicsPipeline() const;
+	const vk::PipelineLayout& getPipelineLayout() const;
+	const vk::DescriptorSetLayout& getDescriptorSetLayout() const;
+	const vk::CommandPool& getCommandPool() const;
 
-
+		
 private:
 	const StInstance& m_instance;
 	const Surface& m_surface;
@@ -58,6 +63,8 @@ private:
 	LogicalDevice m_logicalDevice;
 	SwapChain m_swapChain;
 	RenderPass m_renderPass;
+	GraphicsPipeline m_graphicPipeline;
+	CommandPool m_commandPool;
 };
 
 }

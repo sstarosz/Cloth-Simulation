@@ -49,10 +49,6 @@ void VulkanWindow::initialize()
 
 
 
-    //createRenderPass();
-    createDescriptorSetLayout();
-    createGraphicsPipeline();
-    createCommandPool();
     createDepthResources();
     createFramebuffers();
     createTextureImage();
@@ -74,11 +70,6 @@ void VulkanWindow::releaseResources()
 {
     cleanupSwapChain();
 
-    m_renderer->getLogicalDevice().destroyPipelineCache(m_pipelineCache);
-     m_renderer->getLogicalDevice().destroyPipeline(m_graphicsPipeline);
-     m_renderer->getLogicalDevice().destroyPipelineLayout(m_pipelineLayout);
-     //m_renderer->getLogicalDevice().destroyRenderPass(m_renderPass);
-
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
          m_renderer->getLogicalDevice().destroyBuffer(m_uniformBuffers[i]);
          m_renderer->getLogicalDevice().freeMemory(m_uniformBuffersMemory[i]);
@@ -92,8 +83,6 @@ void VulkanWindow::releaseResources()
     m_renderer->getLogicalDevice().destroyImage(m_textureImage);
     m_renderer->getLogicalDevice().freeMemory(m_textureImageMemory);
 
-    m_renderer->getLogicalDevice().destroyDescriptorSetLayout(m_descriptorSetLayout);
-
     m_renderer->getLogicalDevice().destroyBuffer(m_indexBuffer);
 	m_renderer->getLogicalDevice().freeMemory(m_indexBufferMemory);
 
@@ -105,8 +94,6 @@ void VulkanWindow::releaseResources()
 		m_renderer->getLogicalDevice().destroySemaphore(m_imageAvailableSemaphores[i]);
 		m_renderer->getLogicalDevice().destroyFence(m_inFlightFences[i]);
     }
-
-    m_renderer->getLogicalDevice().destroyCommandPool(m_commandPool);
 
   
     m_renderer->releaseResources();
@@ -122,232 +109,6 @@ void VulkanWindow::createQtInstance(vk::Instance instance)
     }
 
     setVulkanInstance(&inst);
-}
-
-//void VulkanWindow::createRenderPass()
-//{
-//
-//    vk::AttachmentDescription colorAttachment(
-//        vk::AttachmentDescriptionFlags(),
-//        m_renderer->getSwapChainImageFormat(),
-//        vk::SampleCountFlagBits::e1,
-//        vk::AttachmentLoadOp::eClear,
-//        vk::AttachmentStoreOp::eStore,
-//        vk::AttachmentLoadOp::eDontCare,
-//        vk::AttachmentStoreOp::eDontCare,
-//        vk::ImageLayout::eUndefined,
-//        vk::ImageLayout::ePresentSrcKHR);
-//
-//    vk::AttachmentDescription depthAttachment {
-//		vk::AttachmentDescriptionFlags(),
-//		findDepthFormat(),
-//		vk::SampleCountFlagBits::e1,
-//		vk::AttachmentLoadOp::eClear,
-//		vk::AttachmentStoreOp::eDontCare,
-//		vk::AttachmentLoadOp::eDontCare,
-//		vk::AttachmentStoreOp::eDontCare,
-//		vk::ImageLayout::eUndefined,
-//		vk::ImageLayout::eDepthStencilAttachmentOptimal
-//	};
-//
-//
-//    vk::AttachmentReference colorAttachmentRef(0, vk::ImageLayout::eColorAttachmentOptimal);
-//	vk::AttachmentReference depthAttachmentRef(1, vk::ImageLayout::eDepthStencilAttachmentOptimal);
-//
-//
-//    vk::SubpassDescription subpass(
-//        vk::SubpassDescriptionFlags(),
-//        vk::PipelineBindPoint::eGraphics,
-//        {},
-//		colorAttachmentRef,
-//        {},
-//        &depthAttachmentRef,
-//        {}
-//	);
-//
-//    vk::SubpassDependency dependency(
-//        VK_SUBPASS_EXTERNAL,
-//        0,
-//		vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-//		vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-//        vk::AccessFlagBits::eNoneKHR,
-//        vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
-//
-//
-//
-//    std::array<vk::AttachmentDescription, 2> attachments = {colorAttachment, depthAttachment};
-//
-//    vk::RenderPassCreateInfo renderPassInfo(
-//        vk::RenderPassCreateFlags(),
-//        attachments,
-//        subpass,
-//        dependency);
-//
-//    m_renderPass = m_renderer->getLogicalDevice().createRenderPass(renderPassInfo);
-//}
-
-void VulkanWindow::createDescriptorSetLayout()
-{
-    vk::DescriptorSetLayoutBinding uboLayoutBinding {
-        0,
-        vk::DescriptorType::eUniformBuffer,
-        1,
-        vk::ShaderStageFlagBits::eVertex
-    };
-
-    vk::DescriptorSetLayoutBinding samplerLayoutBinding {
-        1,
-        vk::DescriptorType::eCombinedImageSampler,
-        1,
-        vk::ShaderStageFlagBits::eFragment
-    };
-
-    std::array<vk::DescriptorSetLayoutBinding, 2> bindings = { uboLayoutBinding, samplerLayoutBinding };
-    vk::DescriptorSetLayoutCreateInfo layoutInfo {
-        {},
-        bindings
-    };
-
-    m_descriptorSetLayout
-		= m_renderer->getLogicalDevice().createDescriptorSetLayout(layoutInfo);
-}
-
-void VulkanWindow::createGraphicsPipeline()
-{
-    auto vertShaderCode = Shader::readFile("../Assets/Shaders/vert.spv");
-    auto fragShaderCode = Shader::readFile("../Assets/Shaders/frag.spv");
-
-    vk::ShaderModule vertShaderModule
-		= Shader::createShaderModule(m_renderer->getLogicalDevice(), vertShaderCode);
-	vk::ShaderModule fragShaderModule
-		= Shader::createShaderModule(m_renderer->getLogicalDevice(), fragShaderCode);
-
-    vk::PipelineShaderStageCreateInfo vertShaderStageInfo {
-        {}, vk::ShaderStageFlagBits::eVertex, vertShaderModule, "main"
-    };
-
-    vk::PipelineShaderStageCreateInfo fragShaderStageInfo {
-        {}, vk::ShaderStageFlagBits::eFragment, fragShaderModule, "main"
-    };
-
-    std::vector<vk::PipelineShaderStageCreateInfo> shaderStages { vertShaderStageInfo, fragShaderStageInfo };
-
-    auto bindingDescription = geometry::Vertex::getBindingDescription();
-    auto attributeDescriptions = geometry::Vertex::getAttributeDescriptions();
-
-    vk::PipelineVertexInputStateCreateInfo vertexInputInfo(
-        {},
-        bindingDescription,
-        attributeDescriptions
-    );
-
-    vk::PipelineInputAssemblyStateCreateInfo inputAssembly(
-        vk::PipelineInputAssemblyStateCreateFlags {},
-        vk::PrimitiveTopology::eTriangleList,
-        VK_FALSE);
-
-    //vk::Viewport viewport(
-    //    0.0F,
-    //    0.0F,
-    //    static_cast<float>(m_swapChainExtent.width),
-    //    static_cast<float>(m_swapChainExtent.height),
-    //    0.0F,
-    //    1.0F);
-    //
-    //vk::Rect2D scissor(
-    //    vk::Offset2D { 0, 0 },
-    //    m_swapChainExtent);
-
-    vk::PipelineViewportStateCreateInfo viewportState(
-        vk::PipelineViewportStateCreateFlags {},
-        1,
-        {},
-        1,
-        {}
-        );
-
-    vk::PipelineRasterizationStateCreateInfo rasterizer(
-        vk::PipelineRasterizationStateCreateFlags {},
-        VK_FALSE,
-        VK_FALSE,
-        vk::PolygonMode::eFill,
-        vk::CullModeFlagBits::eBack,
-        vk::FrontFace::eCounterClockwise,
-        VK_FALSE,
-        0.0f,
-        0.0f,
-        0.0f,
-        1.0F);
-
-    vk::PipelineMultisampleStateCreateInfo multisampling(
-        vk::PipelineMultisampleStateCreateFlags {},
-        vk::SampleCountFlagBits::e1,
-        VK_FALSE);
-
-    vk::PipelineDepthStencilStateCreateInfo depthStencil {
-        {},
-        true,
-        true,
-        vk::CompareOp::eLess,
-        false,
-        false,
-    };
-
-    m_dynamicStateEnables = {vk::DynamicState::eViewport, vk::DynamicState::eScissor };
-    m_pipelineDynamicStateCreateInfo = vk::PipelineDynamicStateCreateInfo{ {}, m_dynamicStateEnables};
-
-    vk::PipelineColorBlendAttachmentState colorBlendAttachment(
-        VK_FALSE,
-        vk::BlendFactor::eZero,
-        vk::BlendFactor::eZero,
-        vk::BlendOp::eAdd,
-        vk::BlendFactor::eZero,
-        vk::BlendFactor::eZero,
-        vk::BlendOp::eAdd,
-        vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA);
-
-    vk::PipelineColorBlendStateCreateInfo colorBlending(
-        vk::PipelineColorBlendStateCreateFlags {},
-        VK_FALSE,
-        vk::LogicOp::eCopy,
-        colorBlendAttachment,
-        { 0.0f, 0.0f, 0.0f, 0.0f });
-
-    vk::PipelineLayoutCreateInfo pipelineLayoutInfo(
-        vk::PipelineLayoutCreateFlags {},
-        m_descriptorSetLayout);
-
-    m_pipelineLayout
-		= m_renderer->getLogicalDevice().createPipelineLayout(pipelineLayoutInfo);
-
-    vk::GraphicsPipelineCreateInfo pipelineInfo(
-        vk::PipelineCreateFlags {},
-        shaderStages,
-        &vertexInputInfo,
-        &inputAssembly,
-        {},
-        &viewportState,
-        &rasterizer,
-        &multisampling,
-        &depthStencil,
-        &colorBlending,
-        &m_pipelineDynamicStateCreateInfo,
-        m_pipelineLayout,
-        m_renderer->getRenderPass()
-	);
-
-    m_pipelineCache
-		= m_renderer->getLogicalDevice().createPipelineCache(vk::PipelineCacheCreateInfo()
-		);
-	m_graphicsPipeline = m_renderer->getLogicalDevice()
-							 .createGraphicsPipeline(m_pipelineCache, pipelineInfo)
-							 .value;
-
-
-    //Note VkShaderModule is passed into pipline and are not longer available trought object they are used to create
-    //If ther are used later, then they must not be destroyed
-	m_renderer->getLogicalDevice().destroy(fragShaderModule);
-	m_renderer->getLogicalDevice().destroy(vertShaderModule);
 }
 
 void VulkanWindow::createFramebuffers()
@@ -376,21 +137,6 @@ void VulkanWindow::createFramebuffers()
     }
 }
 
-void VulkanWindow::createCommandPool()
-{
-	QueueFamilyIndices queueFamilyIndices = QueueFamilyIndices::findQueueFamilies(
-		m_renderer->getPhysicalDevice(), m_renderer->getSurface()
-	);
-
-    //TODO This is a graphic commandPoll
-    vk::CommandPoolCreateInfo poolInfo(
-        vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
-        queueFamilyIndices.graphicsFamily.value()
-    );
-
-    m_commandPool = m_renderer->getLogicalDevice().createCommandPool(poolInfo);
-}
-
 void VulkanWindow::loadModel()
 {
 
@@ -411,11 +157,13 @@ void VulkanWindow::loadModel()
 		m_renderer->getLogicalDevice(), swapChainExtent, m_renderer->getRenderPass()
 	);
 	m_line.createLineVertexBuffer(
-		m_renderer->getPhysicalDevice(), m_renderer->getLogicalDevice(), m_commandPool,
+		m_renderer->getPhysicalDevice(), m_renderer->getLogicalDevice(),
+		m_renderer->getCommandPool(),
 		m_renderer->getGraphicsQueue()
 	);
 	m_line.createLineIndexBuffer(
-		m_renderer->getPhysicalDevice(), m_renderer->getLogicalDevice(), m_commandPool,
+		m_renderer->getPhysicalDevice(), m_renderer->getLogicalDevice(),
+		m_renderer->getCommandPool(),
 		m_renderer->getGraphicsQueue()
 	);
 }
@@ -516,7 +264,8 @@ void VulkanWindow::createBuffer(vk::DeviceSize size,
 void VulkanWindow::copyBuffer(vk::Buffer srcBuffer, vk::Buffer dstBuffer, vk::DeviceSize size)
 {
 
-    vk::CommandBufferAllocateInfo allocInfo { m_commandPool, vk::CommandBufferLevel::ePrimary, 1 };
+    vk::CommandBufferAllocateInfo allocInfo { m_renderer->getCommandPool(),
+											  vk::CommandBufferLevel::ePrimary, 1 };
 
     auto commandBuffer = m_renderer->getLogicalDevice().allocateCommandBuffers(allocInfo);
 
@@ -537,7 +286,9 @@ void VulkanWindow::copyBuffer(vk::Buffer srcBuffer, vk::Buffer dstBuffer, vk::De
 	); //TODO GraphicQueue should copy buffers?
 	m_renderer->getGraphicsQueue().waitIdle();
 
-    m_renderer->getLogicalDevice().freeCommandBuffers(m_commandPool, commandBuffer);
+    m_renderer->getLogicalDevice().freeCommandBuffers(
+		m_renderer->getCommandPool(), commandBuffer
+	);
 }
 
 void VulkanWindow::createIndexBuffer()
@@ -596,7 +347,8 @@ void VulkanWindow::createDescriptorPool()
 
 void VulkanWindow::createCommandBuffers()
 {
-    vk::CommandBufferAllocateInfo allocInfo(m_commandPool, vk::CommandBufferLevel::ePrimary,
+	vk::CommandBufferAllocateInfo allocInfo(
+		m_renderer->getCommandPool(), vk::CommandBufferLevel::ePrimary,
         static_cast<uint32_t>(m_swapChainFramebuffers.size()));
 
     m_commandBuffers = m_renderer->getLogicalDevice().allocateCommandBuffers(allocInfo);
@@ -690,14 +442,17 @@ void VulkanWindow::recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_
     commandBuffer.setScissor(0, 1, &scissor);
 
 
-    commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_graphicsPipeline);
+    commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_renderer->getGraphicsPipeline());
 
     vk::Buffer vertexBuffers[] = { m_vertexBuffer };
     vk::DeviceSize offsets[] = { 0 };
     commandBuffer.bindVertexBuffers(0, 1, vertexBuffers, offsets);
     commandBuffer.bindIndexBuffer(m_indexBuffer, 0, vk::IndexType::eUint32);
 
-    commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, m_pipelineLayout, 0,
+    commandBuffer.bindDescriptorSets(
+		vk::PipelineBindPoint::eGraphics,
+        m_renderer->getPipelineLayout(),
+        0,
         m_descriptorSets[currentFrame], {});
 
     commandBuffer.drawIndexed(static_cast<uint32_t>(m_indices.size()), 1, 0, 0, 0);
@@ -934,7 +689,7 @@ void VulkanWindow::update()
 
 void VulkanWindow::createDescriptorSets()
 {
-    std::vector<vk::DescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, m_descriptorSetLayout);
+    std::vector<vk::DescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, m_renderer->getDescriptorSetLayout());
     vk::DescriptorSetAllocateInfo allocInfo {
         m_descriptorPool,
         layouts
@@ -1065,8 +820,7 @@ void VulkanWindow::createImage(uint32_t width, uint32_t height, vk::Format forma
 vk::CommandBuffer VulkanWindow::beginSingleTimeCommands()
 {
 
-    vk::CommandBufferAllocateInfo allocInfo {
-        m_commandPool,
+    vk::CommandBufferAllocateInfo allocInfo { m_renderer->getCommandPool(),
         vk::CommandBufferLevel::ePrimary,
         1
     };
@@ -1093,7 +847,9 @@ void VulkanWindow::endSingleTimeCommands(vk::CommandBuffer commandBuffer)
     m_renderer->getGraphicsQueue().submit(submitInfo);
 	m_renderer->getGraphicsQueue().waitIdle();
 
-    m_renderer->getLogicalDevice().freeCommandBuffers(m_commandPool, commandBuffer);
+    m_renderer->getLogicalDevice().freeCommandBuffers(
+		m_renderer->getCommandPool(), commandBuffer
+	);
 }
 
 void VulkanWindow::transitionImageLayout(vk::Image image, vk::Format format, vk::ImageLayout oldLayout,
