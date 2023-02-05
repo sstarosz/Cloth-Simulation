@@ -8,7 +8,7 @@
 #include "PhysicalDevice.hpp"
 #include "LogicalDevice.hpp"
 #include "SwapChain.hpp"
-#include "RenderPass.hpp"
+#include "RenderPass/RenderPass.hpp"
 #include "Pipeline/GraphicsPipeline.hpp"
 #include "CommandBuffers/CommandPool.hpp"
 #include <optional>

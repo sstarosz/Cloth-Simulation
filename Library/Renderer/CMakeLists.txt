@@ -16,10 +16,13 @@ set(SOURCES
 	"SwapChainSupport.cpp"
 	"Instance.cpp" "LogicalDevice.cpp"
 	"SwapChain.cpp"
-	"RenderPass.cpp"
+	"RenderPass/RenderPass.cpp"
 	"Pipeline/GraphicsPipeline.cpp"
 	"Shaders/Shader.cpp"
-	"CommandBuffers/CommandPool.cpp")
+	"CommandBuffers/CommandPool.cpp"
+	"VulkanImages/ImageMenager.cpp"
+	"Memory/MemoryManager.cpp"
+	"Framebuffer.cpp")
 
 set(HEADERS
 	"Config.hpp"
@@ -33,10 +36,13 @@ set(HEADERS
 	"SwapChainSupport.hpp"
 	"Instance.hpp" "LogicalDevice.hpp"
 	"SwapChain.hpp"
-	"RenderPass.hpp"
+	"RenderPass/RenderPass.hpp"
 	"Pipeline/GraphicsPipeline.hpp"
 	"Shaders/Shader.hpp"
-	"CommandBuffers/CommandPool.hpp")
+	"CommandBuffers/CommandPool.hpp"
+	"VulkanImages/ImageMenager.hpp"
+	"Memory/MemoryManager.hpp"
+	"Framebuffer.cpp")
 
 
 

@@ -16,10 +16,14 @@ void RenderPass::initialize()
 {
 
 	vk::AttachmentDescription colorAttachment {
-		vk::AttachmentDescriptionFlags(), m_surfaceFormat,
-		vk::SampleCountFlagBits::e1,      vk::AttachmentLoadOp::eClear,
-		vk::AttachmentStoreOp::eStore,    vk::AttachmentLoadOp::eDontCare,
-		vk::AttachmentStoreOp::eDontCare, vk::ImageLayout::eUndefined,
+		vk::AttachmentDescriptionFlags(),
+		m_surfaceFormat,
+		vk::SampleCountFlagBits::e1, 
+		vk::AttachmentLoadOp::eClear,
+		vk::AttachmentStoreOp::eStore,
+		vk::AttachmentLoadOp::eDontCare,
+		vk::AttachmentStoreOp::eDontCare,
+		vk::ImageLayout::eUndefined,
 		vk::ImageLayout::ePresentSrcKHR
 	};
 
@@ -62,6 +66,9 @@ void RenderPass::initialize()
 
 	std::array<vk::AttachmentDescription, 2> attachments{ colorAttachment, depthAttachment };
 
+
+	//attachment [0] -> color
+	//atachment  [1] -> depth
 	vk::RenderPassCreateInfo renderPassInfo { vk::RenderPassCreateFlags(),
 											attachments,
 											subpass,

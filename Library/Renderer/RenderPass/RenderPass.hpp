@@ -21,17 +21,18 @@ class RenderPass
 		void releaseResources();
 
 		const vk::RenderPass& getRenderPass() const;
-
-	private:
 		vk::Format findDepthFormat() const;
 		vk::Format findSupportedFormat(const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features) const;
 
+	private:
 		const vk::PhysicalDevice& m_physicalDevice;
 		const vk::Format& m_surfaceFormat;
 		const vk::Device& m_device;
 
 
 		vk::RenderPass m_renderPass;
+
+        vk::ImageView m_depthImageView;
 };
 
 
