@@ -11,6 +11,9 @@
 #include "RenderPass/RenderPass.hpp"
 #include "Pipeline/GraphicsPipeline.hpp"
 #include "CommandBuffers/CommandPool.hpp"
+#include "VulkanImages/ImageMenager.hpp"
+#include "Memory/MemoryManager.hpp"
+#include "Framebuffer.hpp"
 #include <optional>
 
 namespace st::renderer
@@ -55,6 +58,7 @@ public:
 	const vk::DescriptorSetLayout& getDescriptorSetLayout() const;
 	const vk::CommandPool& getCommandPool() const;
 
+	const std::vector<vk::Framebuffer> getSwapchainFramebuffersBuffers() const;
 		
 private:
 	const StInstance& m_instance;
@@ -65,6 +69,11 @@ private:
 	RenderPass m_renderPass;
 	GraphicsPipeline m_graphicPipeline;
 	CommandPool m_commandPool;
+
+	MemoryManager m_memoryManager;
+	ImageMenager m_imageManager;
+	Framebuffer m_framebuffer;
+
 };
 
 }

@@ -49,8 +49,6 @@ void VulkanWindow::initialize()
 
 
 
-    createDepthResources();
-    createFramebuffers();
     createTextureImage();
     createTextureImageView();
     createTextureSampler();
@@ -111,31 +109,7 @@ void VulkanWindow::createQtInstance(vk::Instance instance)
     setVulkanInstance(&inst);
 }
 
-void VulkanWindow::createFramebuffers()
-{
-	auto swapchainImageViews = m_renderer->getSwapChainImagesViews();
-	m_swapChainFramebuffers.reserve(swapchainImageViews.size());
 
-    for (const auto& swapChainImageView : swapchainImageViews)
-	{
-        std::array<vk::ImageView, 2> attachments = {
-            swapChainImageView,
-            m_depthImageView
-        };
-
-        vk::FramebufferCreateInfo framebufferInfo(
-            vk::FramebufferCreateFlags {},
-            m_renderer->getRenderPass(),
-            attachments,
-			m_renderer->getSwapchainExtend2D().width,
-			m_renderer->getSwapchainExtend2D().height,
-            1);
-
-        m_swapChainFramebuffers.emplace_back(
-			m_renderer->getLogicalDevice().createFramebuffer(framebufferInfo)
-		);
-    }
-}
 
 void VulkanWindow::loadModel()
 {
@@ -349,7 +323,8 @@ void VulkanWindow::createCommandBuffers()
 {
 	vk::CommandBufferAllocateInfo allocInfo(
 		m_renderer->getCommandPool(), vk::CommandBufferLevel::ePrimary,
-        static_cast<uint32_t>(m_swapChainFramebuffers.size()));
+		static_cast<uint32_t>(m_renderer->getSwapchainFramebuffersBuffers().size())
+	);
 
     m_commandBuffers = m_renderer->getLogicalDevice().allocateCommandBuffers(allocInfo);
 }
@@ -415,11 +390,11 @@ void VulkanWindow::recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_
     clearValues[1].setDepthStencil(depthClean);
 
 
+    const auto swapchainFramebuffers = m_renderer->getSwapchainFramebuffersBuffers();
     //Draw primitive
 	vk::Extent2D swapChainExtent = m_renderer->getSwapchainExtend2D();
 	vk::RenderPassBeginInfo renderPassInfo(
-		m_renderer->getRenderPass(),
-                                           m_swapChainFramebuffers[imageIndex],
+		m_renderer->getRenderPass(), swapchainFramebuffers[imageIndex],
                                            vk::Rect2D((0, 0), swapChainExtent),
                                            clearValues);
 
@@ -654,16 +629,6 @@ void VulkanWindow::exposeEvent(QExposeEvent* /*unused*/)
 void VulkanWindow::cleanupSwapChain()
 {
 
-    m_renderer->getLogicalDevice().destroyImageView(m_depthImageView);
-    m_renderer->getLogicalDevice().destroyImage(m_depthImage);
-    m_renderer->getLogicalDevice().freeMemory(m_depthImageMemory);
-
-    for (auto& framebuffer : m_swapChainFramebuffers) {
-		m_renderer->getLogicalDevice().destroy(framebuffer);
-    }
-    m_swapChainFramebuffers.clear();
-
-
 }
 
 void VulkanWindow::recreateSwapChain()
@@ -672,13 +637,10 @@ void VulkanWindow::recreateSwapChain()
     {
 		m_renderer->getLogicalDevice().waitIdle();
 
-        cleanupSwapChain();
 		m_renderer->recreateSwapChain(
 			static_cast<uint64_t>(this->size().width()),
 			static_cast<uint64_t>(this->size().height())
 		);
-        createDepthResources();
-        createFramebuffers();
     }
 }
 
@@ -989,26 +951,6 @@ void VulkanWindow::createTextureSampler()
     };
 
     m_textureSampler = m_renderer->getLogicalDevice().createSampler(sampleInfo);
-}
-
-void VulkanWindow::createDepthResources()
-{
-    vk::Format depthFormat = findDepthFormat();
-
-    vk::Extent2D swapChainExtent = m_renderer->getSwapchainExtend2D();
-
-    createImage(
-		        swapChainExtent.width,
-                swapChainExtent.height,
-                depthFormat,
-                vk::ImageTiling::eOptimal,
-                vk::ImageUsageFlagBits::eDepthStencilAttachment,
-                vk::MemoryPropertyFlagBits::eDeviceLocal,
-                m_depthImage,
-                m_depthImageMemory);
-
-    m_depthImageView = createImageView(m_depthImage, depthFormat, vk::ImageAspectFlagBits::eDepth);
-
 }
 
 vk::Format VulkanWindow::findSupportedFormat(const std::vector<vk::Format>& candidates, vk::ImageTiling tiling,

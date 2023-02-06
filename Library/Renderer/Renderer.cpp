@@ -13,7 +13,10 @@ m_logicalDevice(m_instance.getInstance(), m_physicalDevice.getPhysicalDevice(), 
 m_swapChain(m_physicalDevice.getPhysicalDevice(), m_surface.getSurface(),m_logicalDevice.getDevice()),
 m_renderPass(m_physicalDevice.getPhysicalDevice(), m_swapChain.getSwapChainImageFormat(), m_logicalDevice.getDevice()),
 m_graphicPipeline(m_physicalDevice.getPhysicalDevice(), m_logicalDevice.getDevice(), m_renderPass.getRenderPass()),
-m_commandPool(m_logicalDevice.getDevice(), m_physicalDevice.getPhysicalDevice(),m_surface.getSurface())
+m_commandPool(m_logicalDevice.getDevice(), m_physicalDevice.getPhysicalDevice(),m_surface.getSurface()),
+m_memoryManager(m_physicalDevice.getPhysicalDevice()),
+m_imageManager(m_logicalDevice.getDevice(), m_memoryManager),
+m_framebuffer(m_logicalDevice.getDevice(), m_swapChain, m_renderPass, m_imageManager)
 {
 }
 
@@ -26,11 +29,13 @@ void Renderer::initialize()
 	m_renderPass.initialize();
 	m_graphicPipeline.initialize();
 	m_commandPool.initialize();
+	m_framebuffer.initialize();
 }
 
 void Renderer::releaseResources() 
 {
 	//Reverse order then intialization
+	m_framebuffer.releaseResources();
 	m_commandPool.releaseResources();
 	m_graphicPipeline.releaseResources();
 	m_renderPass.releaseResources();
@@ -52,7 +57,9 @@ void Renderer::updateSwapChain(uint64_t width, uint64_t height)
 
 void Renderer::recreateSwapChain(uint64_t width, uint64_t height)
 {
+	m_framebuffer.releaseResources();
 	m_swapChain.recreateSwapChain(width, height);
+	m_framebuffer.initialize();
 }
 
 const vk::SurfaceKHR& Renderer::getSurface() const
@@ -129,6 +136,11 @@ const vk::DescriptorSetLayout& Renderer::getDescriptorSetLayout() const
 const vk::CommandPool& Renderer::getCommandPool() const
 {
 	 return m_commandPool.getCommandPool();
+}
+
+const std::vector<vk::Framebuffer> Renderer::getSwapchainFramebuffersBuffers() const
+{
+	 return m_framebuffer.getSwapchainFramebuffersBuffers();
 }
 
 }

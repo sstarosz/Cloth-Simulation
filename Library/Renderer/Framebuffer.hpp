@@ -23,7 +23,7 @@ class Framebuffer
 		void releaseResources();
 
 
-
+		const std::vector<vk::Framebuffer> getSwapchainFramebuffersBuffers() const;
 
 	private:
 		const vk::Device& m_device;
@@ -31,7 +31,7 @@ class Framebuffer
 		const RenderPass& m_renderPass;
 		const ImageMenager& m_imageMenager;
 
-		std::vector<vk::Framebuffer> m_swapChainFramebuffers;
+		std::vector<vk::Framebuffer> m_swapchainFramebuffers;
 
 		//DepthBuffer
 		vk::Image m_depthImage;

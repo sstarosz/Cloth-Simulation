@@ -11,14 +11,14 @@ ImageMenager::ImageMenager(const vk::Device& device, const MemoryManager& memory
 	{ 
 	}
 
-	vk::ImageView ImageMenager::createImage(uint32_t width,
+	void ImageMenager::createImage(uint32_t width,
 											uint32_t height,
 											vk::Format format,
 											vk::ImageTiling tiling,
 											vk::ImageUsageFlags usage,
 											vk::MemoryPropertyFlags properties,
 											vk::Image& image,
-											vk::DeviceMemory& imageMemory)
+											vk::DeviceMemory& imageMemory) const
 	{
 		vk::ImageCreateInfo imageInfo {
 			{},
@@ -47,6 +47,24 @@ ImageMenager::ImageMenager(const vk::Device& device, const MemoryManager& memory
 		imageMemory = m_device.allocateMemory(allocInfo);
 
 		m_device.bindImageMemory(image, imageMemory, 0);
+	}
+
+
+	vk::ImageView ImageMenager::createImageView(vk::Image image,
+												vk::Format format,
+												vk::ImageAspectFlags aspectFlags) const
+	{
+		vk::ImageViewCreateInfo viewInfo {
+			{},
+            image,
+			vk::ImageViewType::e2D,
+			format,
+			{},
+            { aspectFlags, 0, 1, 0, 1 },
+            {}
+		};
+
+		return m_device.createImageView(viewInfo);
 	}
 
 }

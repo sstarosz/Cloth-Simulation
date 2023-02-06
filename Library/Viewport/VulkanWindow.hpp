@@ -58,19 +58,7 @@ namespace st::viewport
 		std::unique_ptr<renderer::Surface> m_surface;
 		std::unique_ptr<renderer::Renderer> m_renderer;
 
-		//vk::RenderPass m_renderPass;
 
-		//vk::DescriptorSetLayout m_descriptorSetLayout;
-		//vk::PipelineLayout m_pipelineLayout;
-		//vk::PipelineCache m_pipelineCache;
-		//std::vector<vk::DynamicState> m_dynamicStateEnables;
-		//vk::PipelineDynamicStateCreateInfo m_pipelineDynamicStateCreateInfo;
-		//
-		//vk::Pipeline m_graphicsPipeline;
-
-		std::vector<vk::Framebuffer> m_swapChainFramebuffers;
-
-		//vk::CommandPool m_commandPool;
 
 		vk::Buffer m_vertexBuffer;
 		vk::DeviceMemory m_vertexBufferMemory;
@@ -94,10 +82,6 @@ namespace st::viewport
         vk::ImageView m_textureImageView;
         vk::Sampler m_textureSampler;
 
-		vk::Image m_depthImage;
-        vk::DeviceMemory m_depthImageMemory;
-        vk::ImageView m_depthImageView;
-
 		const static uint32_t MAX_FRAMES_IN_FLIGHT = 2;
 
 
@@ -112,7 +96,7 @@ namespace st::viewport
 		//	{ { -0.5f, 0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } },
 
 		//	{ { -0.5f, -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f } },
-		//	{ { 0.5f, -0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } },
+		//	{ { 0.5f, -0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } }m_swapChainFramebuffers,
 		//	{ { 0.5f, 0.5f, -0.5f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f } },
 		//	{ { -0.5f, 0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f } }
 		//};
@@ -152,9 +136,6 @@ namespace st::viewport
 
 		/*Init*/
 		void createQtInstance(vk::Instance instance);
-        //void createCommandPool();
-        void createDepthResources();
-        void createFramebuffers();
         void createTextureImage();
         void createTextureImageView();
         void createTextureSampler();

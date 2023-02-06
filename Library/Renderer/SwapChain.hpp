@@ -4,7 +4,6 @@
 #include <vulkan/vulkan.hpp>
 #include <vector>
 
-
 namespace st::renderer {
 
 
@@ -29,7 +28,6 @@ public:
 	const std::vector<vk::Image>& getSwapChainImages() const;
 
 	const std::vector<vk::ImageView>& getSwapChainImagesViews() const;
-
 
 private:
 	vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats) const;

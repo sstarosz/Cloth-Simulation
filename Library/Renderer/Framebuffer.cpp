@@ -1,7 +1,8 @@
 #include "Framebuffer.hpp"
 
 
-namespace st::renderer{
+namespace st::renderer 
+{
 
 	Framebuffer::Framebuffer(const vk::Device& device,
 							 const SwapChain& swapChain,
@@ -19,7 +20,7 @@ namespace st::renderer{
 		createDepthResources();
 
 		auto swapchainImageViews = m_swapChain.getSwapChainImagesViews();
-		m_swapChainFramebuffers.reserve(swapchainImageViews.size());
+		m_swapchainFramebuffers.reserve(swapchainImageViews.size());
 
 		for (const auto& swapChainImageView : swapchainImageViews)
 		{
@@ -34,10 +35,31 @@ namespace st::renderer{
 				1
 			};
 
-			m_swapChainFramebuffers.emplace_back(m_device.createFramebuffer(framebufferInfo));
+			m_swapchainFramebuffers.emplace_back(
+				m_device.createFramebuffer(framebufferInfo)
+			);
 		}
 
 	}
+	void Framebuffer::releaseResources()
+	{
+		m_device.destroyImageView(m_depthImageView);
+		m_device.destroyImage(m_depthImage);
+		m_device.freeMemory(m_depthImageMemory);
+
+		
+		for (auto& framebuffer : m_swapchainFramebuffers)
+		{
+			m_device.destroy(framebuffer);
+		}
+		m_swapchainFramebuffers.clear();
+	}
+
+	const std::vector<vk::Framebuffer> Framebuffer::getSwapchainFramebuffersBuffers() const
+	{
+		return m_swapchainFramebuffers;
+	}
+
 	void Framebuffer::createDepthResources()
 	{ 
 		vk::Format depthFormat = m_renderPass.findDepthFormat();
@@ -50,7 +72,9 @@ namespace st::renderer{
 			vk::MemoryPropertyFlagBits::eDeviceLocal, m_depthImage, m_depthImageMemory
 		);
 
-		m_depthImageView = createImageView(m_depthImage, depthFormat, vk::ImageAspectFlagBits::eDepth);
+		m_depthImageView = m_imageMenager.createImageView(
+			m_depthImage, depthFormat, vk::ImageAspectFlagBits::eDepth
+		);
 	}
 
 
