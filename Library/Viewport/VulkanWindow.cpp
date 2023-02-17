@@ -11,8 +11,8 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+//#define STB_IMAGE_IMPLEMENTATION
+//#include <stb_image.h>
 #include "IO/ImporterProxy.hpp"
 
 #include <span>
@@ -49,9 +49,9 @@ void VulkanWindow::initialize()
 
 
 
-    createTextureImage();
-    createTextureImageView();
-    createTextureSampler();
+    //createTextureImage();
+    //createTextureImageView();
+    //createTextureSampler();
     createUniformBuffers();
 	loadModel();
     createVertexBuffer();
@@ -75,11 +75,11 @@ void VulkanWindow::releaseResources()
 
     m_renderer->getLogicalDevice().destroyDescriptorPool(m_descriptorPool);
 
-    m_renderer->getLogicalDevice().destroySampler(m_textureSampler);
-    m_renderer->getLogicalDevice().destroyImageView(m_textureImageView);
-
-    m_renderer->getLogicalDevice().destroyImage(m_textureImage);
-    m_renderer->getLogicalDevice().freeMemory(m_textureImageMemory);
+    //m_renderer->getLogicalDevice().destroySampler(m_textureSampler);
+    //m_renderer->getLogicalDevice().destroyImageView(m_textureImageView);
+    //
+    //m_renderer->getLogicalDevice().destroyImage(m_textureImage);
+    //m_renderer->getLogicalDevice().freeMemory(m_textureImageMemory);
 
     m_renderer->getLogicalDevice().destroyBuffer(m_indexBuffer);
 	m_renderer->getLogicalDevice().freeMemory(m_indexBufferMemory);
@@ -457,8 +457,6 @@ void VulkanWindow::recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_
 
 
     commandBuffer.end();
-
-
 }
 
 void VulkanWindow::drawFrame()
@@ -646,7 +644,9 @@ void VulkanWindow::recreateSwapChain()
 
 void VulkanWindow::update()
 {
-    drawFrame();
+    //drawFrame();
+	m_renderer->renderFrame();
+	requestUpdate();
 }
 
 void VulkanWindow::createDescriptorSets()
@@ -659,94 +659,94 @@ void VulkanWindow::createDescriptorSets()
 
     m_descriptorSets = m_renderer->getLogicalDevice().allocateDescriptorSets(allocInfo);
 
-    for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
-        vk::DescriptorBufferInfo bufferInfo {
-            m_uniformBuffers.at(i),
-            0,
-            sizeof(UniformBufferObject)
-        };
-
-        vk::DescriptorImageInfo imageInfo {
-            m_textureSampler,
-            m_textureImageView,
-            vk::ImageLayout::eShaderReadOnlyOptimal
-        };
-
-        std::array<vk::WriteDescriptorSet, 2> descriptorWrites {
-            vk::WriteDescriptorSet {
-                m_descriptorSets.at(i),
-                0,
-                0,
-                vk::DescriptorType::eUniformBuffer,
-                {},
-                bufferInfo,
-                {} },
-            vk::WriteDescriptorSet {
-                m_descriptorSets.at(i),
-                1,
-                0,
-                vk::DescriptorType::eCombinedImageSampler,
-                imageInfo,
-                {},
-                {} }
-        };
-
-        m_renderer->getLogicalDevice().updateDescriptorSets(descriptorWrites, {});
-    }
+    //for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
+    //    vk::DescriptorBufferInfo bufferInfo {
+    //        m_uniformBuffers.at(i),
+    //        0,
+    //        sizeof(UniformBufferObject)
+    //    };
+    //
+    //    vk::DescriptorImageInfo imageInfo {
+    //        m_textureSampler,
+    //        m_textureImageView,
+    //        vk::ImageLayout::eShaderReadOnlyOptimal
+    //    };
+    //
+    //    std::array<vk::WriteDescriptorSet, 2> descriptorWrites {
+    //        vk::WriteDescriptorSet {
+    //            m_descriptorSets.at(i),
+    //            0,
+    //            0,
+    //            vk::DescriptorType::eUniformBuffer,
+    //            {},
+    //            bufferInfo,
+    //            {} },
+    //        vk::WriteDescriptorSet {
+    //            m_descriptorSets.at(i),
+    //            1,
+    //            0,
+    //            vk::DescriptorType::eCombinedImageSampler,
+    //            imageInfo,
+    //            {},
+    //            {} }
+    //    };
+    //
+    //    m_renderer->getLogicalDevice().updateDescriptorSets(descriptorWrites, {});
+    //}
 }
 
-void VulkanWindow::createTextureImage()
-{
-    int texWidth = 0;
-    int texHeight = 0;
-    int texChannels = 0;
-
-    stbi_uc* pixels = stbi_load("../Assets/Textures/texture2.jpg", &texWidth,
-        &texHeight, &texChannels, STBI_rgb_alpha);
-
-    vk::DeviceSize imageSize = texWidth * texHeight * 4;
-
-    if (!pixels) {
-        throw std::runtime_error("Failed to load texture image!");
-    }
-
-    vk::Buffer stagingBuffer;
-    vk::DeviceMemory stagingBufferMemory;
-
-    createBuffer(imageSize,
-        vk::BufferUsageFlagBits::eTransferSrc,
-        vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-        stagingBuffer, stagingBufferMemory);
-
-    void* data
-		= m_renderer->getLogicalDevice().mapMemory(stagingBufferMemory, 0, imageSize);
-    memcpy(data, pixels, static_cast<size_t>(imageSize));
-	m_renderer->getLogicalDevice().unmapMemory(stagingBufferMemory);
-
-    stbi_image_free(pixels);
-
-    createImage(texWidth, texHeight, vk::Format::eR8G8B8A8Srgb, vk::ImageTiling::eOptimal,
-        vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled,
-        vk::MemoryPropertyFlagBits::eDeviceLocal, m_textureImage, m_textureImageMemory);
-
-    transitionImageLayout(m_textureImage,
-        vk::Format::eR8G8B8A8Srgb,
-        vk::ImageLayout::eUndefined,
-        vk::ImageLayout::eTransferDstOptimal);
-    copyBufferToImage(
-        stagingBuffer,
-        m_textureImage,
-        static_cast<uint32_t>(texWidth),
-        static_cast<uint32_t>(texHeight));
-
-    transitionImageLayout(m_textureImage,
-        vk::Format::eR8G8B8A8Srgb,
-        vk::ImageLayout::eTransferDstOptimal,
-        vk::ImageLayout::eShaderReadOnlyOptimal);
-
-    m_renderer->getLogicalDevice().destroyBuffer(stagingBuffer);
-    m_renderer->getLogicalDevice().freeMemory(stagingBufferMemory);
-}
+//void VulkanWindow::createTextureImage()
+//{
+//    int texWidth = 0;
+//    int texHeight = 0;
+//    int texChannels = 0;
+//
+//    stbi_uc* pixels = stbi_load("../Assets/Textures/texture2.jpg", &texWidth,
+//        &texHeight, &texChannels, STBI_rgb_alpha);
+//
+//    vk::DeviceSize imageSize = texWidth * texHeight * 4;
+//
+//    if (!pixels) {
+//        throw std::runtime_error("Failed to load texture image!");
+//    }
+//
+//    vk::Buffer stagingBuffer;
+//    vk::DeviceMemory stagingBufferMemory;
+//
+//    createBuffer(imageSize,
+//        vk::BufferUsageFlagBits::eTransferSrc,
+//        vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+//        stagingBuffer, stagingBufferMemory);
+//
+//    void* data = m_renderer->getLogicalDevice().mapMemory(stagingBufferMemory, 0, imageSize);
+//    memcpy(data, pixels, static_cast<size_t>(imageSize));
+//	m_renderer->getLogicalDevice().unmapMemory(stagingBufferMemory);
+//
+//    stbi_image_free(pixels);
+//
+//    createImage(texWidth, texHeight, vk::Format::eR8G8B8A8Srgb, vk::ImageTiling::eOptimal,
+//        vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled,
+//        vk::MemoryPropertyFlagBits::eDeviceLocal, m_textureImage, m_textureImageMemory);
+//
+//    transitionImageLayout(m_textureImage,
+//        vk::Format::eR8G8B8A8Srgb,
+//        vk::ImageLayout::eUndefined,
+//        vk::ImageLayout::eTransferDstOptimal);
+//
+//    copyBufferToImage(
+//        stagingBuffer,
+//        m_textureImage,
+//        static_cast<uint32_t>(texWidth),
+//        static_cast<uint32_t>(texHeight));
+//
+//    transitionImageLayout(m_textureImage,
+//        vk::Format::eR8G8B8A8Srgb,
+//        vk::ImageLayout::eTransferDstOptimal,
+//        vk::ImageLayout::eShaderReadOnlyOptimal);
+//
+//    m_renderer->getLogicalDevice().destroyBuffer(stagingBuffer);
+//    m_renderer->getLogicalDevice().freeMemory(stagingBufferMemory);
+//}
 
 void VulkanWindow::createImage(uint32_t width, uint32_t height, vk::Format format, vk::ImageTiling tiling,
     vk::ImageUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Image& image,
@@ -899,11 +899,11 @@ void VulkanWindow::copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_
     endSingleTimeCommands(commandBuffer);
 }
 
-void VulkanWindow::createTextureImageView()
-{
-
-    m_textureImageView = createImageView(m_textureImage, vk::Format::eR8G8B8A8Srgb, vk::ImageAspectFlagBits::eColor);
-}
+//void VulkanWindow::createTextureImageView()
+//{
+//
+//    m_textureImageView = createImageView(m_textureImage, vk::Format::eR8G8B8A8Srgb, vk::ImageAspectFlagBits::eColor);
+//}
 
 vk::ImageView VulkanWindow::createImageView(vk::Image image, vk::Format format, vk::ImageAspectFlags aspectFlags)
 {
@@ -925,33 +925,33 @@ vk::ImageView VulkanWindow::createImageView(vk::Image image, vk::Format format, 
     return m_renderer->getLogicalDevice().createImageView(viewInfo);
 }
 
-void VulkanWindow::createTextureSampler()
-{
-
-    vk::PhysicalDeviceProperties properties
-		= m_renderer->getPhysicalDevice().getProperties();
-
-    vk::SamplerCreateInfo sampleInfo {
-        {},
-        vk::Filter::eLinear,
-        vk::Filter::eLinear,
-        vk::SamplerMipmapMode::eLinear,
-        vk::SamplerAddressMode::eRepeat,
-        vk::SamplerAddressMode::eRepeat,
-        vk::SamplerAddressMode::eRepeat,
-        0.0f,
-        false,
-        properties.limits.maxSamplerAnisotropy,
-        false,
-        vk::CompareOp::eAlways,
-        0.0f,
-        0.0f,
-        vk::BorderColor::eIntOpaqueBlack,
-        false,
-    };
-
-    m_textureSampler = m_renderer->getLogicalDevice().createSampler(sampleInfo);
-}
+//void VulkanWindow::createTextureSampler()
+//{
+//
+//    vk::PhysicalDeviceProperties properties
+//		= m_renderer->getPhysicalDevice().getProperties();
+//
+//    vk::SamplerCreateInfo sampleInfo {
+//        {},
+//        vk::Filter::eLinear,
+//        vk::Filter::eLinear,
+//        vk::SamplerMipmapMode::eLinear,
+//        vk::SamplerAddressMode::eRepeat,
+//        vk::SamplerAddressMode::eRepeat,
+//        vk::SamplerAddressMode::eRepeat,
+//        0.0f,
+//        false,
+//        properties.limits.maxSamplerAnisotropy,
+//        false,
+//        vk::CompareOp::eAlways,
+//        0.0f,
+//        0.0f,
+//        vk::BorderColor::eIntOpaqueBlack,
+//        false,
+//    };
+//
+//    m_textureSampler = m_renderer->getLogicalDevice().createSampler(sampleInfo);
+//}
 
 vk::Format VulkanWindow::findSupportedFormat(const std::vector<vk::Format>& candidates, vk::ImageTiling tiling,
     vk::FormatFeatureFlags features)

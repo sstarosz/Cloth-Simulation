@@ -3,7 +3,12 @@ project(Renderer
 		DESCRIPTION "Vulkan Renderer"
 		LANGUAGES CXX)
 
+find_package(stb REQUIRED CONFIG)
+
+
+
 configure_file(Config.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/Config.hpp @ONLY)
+
 
 set(SOURCES
 	"DebugMessenger/DebugMessenger.cpp"
@@ -22,7 +27,8 @@ set(SOURCES
 	"CommandBuffers/CommandPool.cpp"
 	"VulkanImages/ImageMenager.cpp"
 	"Memory/MemoryManager.cpp"
-	"Framebuffer.cpp")
+	"Framebuffer.cpp"
+	"Camera.cpp")
 
 set(HEADERS
 	"Config.hpp"
@@ -42,7 +48,8 @@ set(HEADERS
 	"CommandBuffers/CommandPool.hpp"
 	"VulkanImages/ImageMenager.hpp"
 	"Memory/MemoryManager.hpp"
-	"Framebuffer.cpp")
+	"Framebuffer.hpp"
+	"Camera.hpp")
 
 
 
@@ -58,5 +65,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE ${Compiler_Flags})
 target_link_libraries(${PROJECT_NAME} 
 						PUBLIC 
 							Geometry
+							IO
 							Vulkan::Vulkan
+							stb::stb
 					)

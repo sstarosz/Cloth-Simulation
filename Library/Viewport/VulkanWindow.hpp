@@ -35,6 +35,7 @@ namespace st::viewport
 		void releaseResources();
 
 	protected:
+		//TO-DO - Change expose event as vulkan init
 		void exposeEvent(QExposeEvent*) override;
 		void resizeEvent(QResizeEvent*) override;
 		bool event(QEvent* ev) override;
@@ -44,10 +45,11 @@ namespace st::viewport
 
 	private:
 		void mousePressEvent(QMouseEvent* event) override;
-		void mouseReleaseEvent(QMouseEvent* event) override;
+		void mouseReleaseEvent(QMouseEvent* eventvoverride);
 		void mouseMoveEvent(QMouseEvent* event) override;
 		void keyPressEvent(QKeyEvent* event) override;
 		void keyReleaseEvent(QKeyEvent* event) override;
+
 
 
 		Camera m_camera;
@@ -77,10 +79,10 @@ namespace st::viewport
 		std::vector<vk::Semaphore> m_renderFinishedSemaphores;
 		std::vector<vk::Fence> m_inFlightFences;
 
-		vk::Image m_textureImage;
-        vk::DeviceMemory m_textureImageMemory;
-        vk::ImageView m_textureImageView;
-        vk::Sampler m_textureSampler;
+		//vk::Image m_textureImage;
+        //vk::DeviceMemory m_textureImageMemory;
+        //vk::ImageView m_textureImageView;
+        //vk::Sampler m_textureSampler;
 
 		const static uint32_t MAX_FRAMES_IN_FLIGHT = 2;
 
@@ -136,9 +138,9 @@ namespace st::viewport
 
 		/*Init*/
 		void createQtInstance(vk::Instance instance);
-        void createTextureImage();
-        void createTextureImageView();
-        void createTextureSampler();
+        //void createTextureImage();
+        //void createTextureImageView();
+        //void createTextureSampler();
         void loadModel();
         void createVertexBuffer();
         void createIndexBuffer();

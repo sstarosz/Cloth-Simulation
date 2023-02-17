@@ -32,7 +32,6 @@ set(HEADERS
 
 
 find_package(glm REQUIRED CONFIG)
-find_package(stb REQUIRED CONFIG)
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
@@ -52,5 +51,4 @@ target_link_libraries(${PROJECT_NAME}
 						Qt6::Gui
 						Qt6::Widgets
 						glm::glm
-						stb::stb
 					)

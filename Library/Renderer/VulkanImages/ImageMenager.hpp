@@ -13,7 +13,11 @@ class ImageMenager
 {
 
 	public:
-		ImageMenager(const vk::Device& device, const MemoryManager& memoryMenager);
+		ImageMenager(const vk::Device& device,
+			const vk::CommandPool& commandPool,
+			const vk::Queue& queue,
+			const MemoryManager& memoryMenager);
+
 
 		void initialize();
 		void releaseResources();
@@ -32,8 +36,21 @@ class ImageMenager
 									  vk::Format format,
 									  vk::ImageAspectFlags aspectFlags) const;
 
+		void transitionImageLayout(vk::Image image,
+			                       vk::Format format,
+			                       vk::ImageLayout oldLayout,
+			                       vk::ImageLayout newLayout);
+
+        void copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height);
+
+
 	private:
+		vk::CommandBuffer beginSingleTimeCommands();
+		void endSingleTimeCommands(vk::CommandBuffer commandBuffer);
+
 		const vk::Device& m_device;
+		const vk::CommandPool& m_commandPool;
+		const vk::Queue& m_queue;
 		const MemoryManager& m_memoryManager;
 
 
