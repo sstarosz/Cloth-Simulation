@@ -14,24 +14,18 @@ configure_file(Config.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/Config.hpp @ONLY)
 set(SOURCES
 	"ViewportWidget.cpp"
 	"VulkanWindow.cpp"
-	"QueueFamily.cpp"
-	"SwapChainSupport.cpp" 
 	"Shader.cpp"
 	"Line.cpp"
-	"Camera.cpp")
+	)
 
 set(HEADERS
 	"ViewportWidget.hpp"
 	"VulkanWindow.hpp"
 	"Config.hpp"
-	"QueueFamily.hpp"
-	"SwapChainSupport.hpp"
 	"Shader.hpp"
 	"Line.hpp"
-	"Camera.hpp")
+	)
 
-
-find_package(glm REQUIRED CONFIG)
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
@@ -43,12 +37,9 @@ target_compile_options(${PROJECT_NAME} PRIVATE ${Compiler_Flags})
 
 target_link_libraries(${PROJECT_NAME} 
 						PUBLIC
-						Geometry
-						IO
 						Renderer
 						Vulkan::Vulkan
 						Qt6::Core
 						Qt6::Gui
 						Qt6::Widgets
-						glm::glm
 					)

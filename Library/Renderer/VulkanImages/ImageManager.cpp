@@ -1,11 +1,11 @@
-#include "ImageMenager.hpp"
+#include "ImageManager.hpp"
 
 
 
 namespace st::renderer
 {
 
-ImageMenager::ImageMenager(
+ImageManager::ImageManager(
 	const vk::Device& device, const vk::CommandPool& commandPool,
 	const vk::Queue& queue, const MemoryManager& memoryMenager):
 	m_device(device),
@@ -15,7 +15,7 @@ ImageMenager::ImageMenager(
 	{ 
 	}
 
-	void ImageMenager::createImage(uint32_t width,
+	void ImageManager::createImage(uint32_t width,
 								   uint32_t height,
 								   vk::Format format,
 								   vk::ImageTiling tiling,
@@ -24,6 +24,7 @@ ImageMenager::ImageMenager(
 								   vk::Image& image,
 								   vk::DeviceMemory& imageMemory) const
 	{
+
 		vk::ImageCreateInfo imageInfo {
 			{},
 			vk::ImageType::e2D,
@@ -54,7 +55,7 @@ ImageMenager::ImageMenager(
 	}
 
 
-	vk::ImageView ImageMenager::createImageView(vk::Image image,
+	vk::ImageView ImageManager::createImageView(vk::Image image,
 												vk::Format format,
 												vk::ImageAspectFlags aspectFlags) const
 	{
@@ -72,7 +73,7 @@ ImageMenager::ImageMenager(
 	}
 
 
-	void ImageMenager::transitionImageLayout(vk::Image image,
+	void ImageManager::transitionImageLayout(vk::Image image,
 		                                     vk::Format format,
 		                                     vk::ImageLayout oldLayout,
 		                                     vk::ImageLayout newLayout)
@@ -130,7 +131,7 @@ ImageMenager::ImageMenager(
 	}
 
 
-	void ImageMenager::copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height)
+	void ImageManager::copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height)
 	{
 		vk::CommandBuffer commandBuffer = beginSingleTimeCommands();
 
@@ -149,7 +150,7 @@ ImageMenager::ImageMenager(
 	}
 
 
-	vk::CommandBuffer ImageMenager::beginSingleTimeCommands()
+	vk::CommandBuffer ImageManager::beginSingleTimeCommands()
 	{
 
 		vk::CommandBufferAllocateInfo allocInfo { m_commandPool, vk::CommandBufferLevel::ePrimary, 1 };
@@ -165,7 +166,7 @@ ImageMenager::ImageMenager(
 	}
 
 
-	void ImageMenager::endSingleTimeCommands(vk::CommandBuffer commandBuffer)
+	void ImageManager::endSingleTimeCommands(vk::CommandBuffer commandBuffer)
 	{
 		commandBuffer.end();
 

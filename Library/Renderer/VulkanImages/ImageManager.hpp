@@ -9,11 +9,11 @@
 
 namespace st::renderer {
 
-class ImageMenager
+class ImageManager
 {
 
 	public:
-		ImageMenager(const vk::Device& device,
+		ImageManager(const vk::Device& device,
 			const vk::CommandPool& commandPool,
 			const vk::Queue& queue,
 			const MemoryManager& memoryMenager);

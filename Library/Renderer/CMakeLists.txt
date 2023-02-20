@@ -25,7 +25,7 @@ set(SOURCES
 	"Pipeline/GraphicsPipeline.cpp"
 	"Shaders/Shader.cpp"
 	"CommandBuffers/CommandPool.cpp"
-	"VulkanImages/ImageMenager.cpp"
+	"VulkanImages/ImageManager.cpp"
 	"Memory/MemoryManager.cpp"
 	"Framebuffer.cpp"
 	"Camera.cpp")
@@ -46,7 +46,7 @@ set(HEADERS
 	"Pipeline/GraphicsPipeline.hpp"
 	"Shaders/Shader.hpp"
 	"CommandBuffers/CommandPool.hpp"
-	"VulkanImages/ImageMenager.hpp"
+	"VulkanImages/ImageManager.hpp"
 	"Memory/MemoryManager.hpp"
 	"Framebuffer.hpp"
 	"Camera.hpp")

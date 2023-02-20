@@ -1,14 +1,16 @@
 #include "MemoryManager.hpp"
 
-namespace st::renderer 
+namespace st::renderer
 {
-MemoryManager::MemoryManager(const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const vk::CommandPool& commandPool, const vk::Queue& queue):
-	m_physicalDevice(physicalDevice),
-	m_device(device),
-	m_commandPool(commandPool),
-	m_queue(queue)
-	{
-	}
+	MemoryManager::MemoryManager(const vk::PhysicalDevice& physicalDevice,
+								 const vk::Device& device,
+								 const vk::CommandPool& commandPool,
+								 const vk::Queue& queue):
+		m_physicalDevice(physicalDevice),
+		m_device(device),
+		m_commandPool(commandPool),
+		m_queue(queue)
+	{ }
 
 
 	uint32_t MemoryManager::findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) const
@@ -17,8 +19,7 @@ MemoryManager::MemoryManager(const vk::PhysicalDevice& physicalDevice, const vk:
 
 		for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
 		{
-			if ((typeFilter & (1 << i)) &&
-				(memProperties.memoryTypes[i].propertyFlags & properties) == properties)
+			if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
 			{
 				return i;
 			}
@@ -28,10 +29,11 @@ MemoryManager::MemoryManager(const vk::PhysicalDevice& physicalDevice, const vk:
 	}
 
 
-
-	void MemoryManager::createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage,
-		                             vk::MemoryPropertyFlags properties, vk::Buffer& buffer,
-		                             vk::DeviceMemory& bufferMemory)
+	void MemoryManager::createBuffer(vk::DeviceSize size,
+									 vk::BufferUsageFlags usage,
+									 vk::MemoryPropertyFlags properties,
+									 vk::Buffer& buffer,
+									 vk::DeviceMemory& bufferMemory)
 	{
 
 		vk::BufferCreateInfo bufferInfo { {}, size, usage, vk::SharingMode::eExclusive };
@@ -40,26 +42,23 @@ MemoryManager::MemoryManager(const vk::PhysicalDevice& physicalDevice, const vk:
 
 		vk::MemoryRequirements memoryRequirements = m_device.getBufferMemoryRequirements(buffer);
 
-		vk::MemoryAllocateInfo allocInfo {
-			memoryRequirements.size,
-			findMemoryType(memoryRequirements.memoryTypeBits, properties)
-		};
+		vk::MemoryAllocateInfo allocInfo { memoryRequirements.size,
+										   findMemoryType(memoryRequirements.memoryTypeBits,
+										   properties) };
 
 		bufferMemory = m_device.allocateMemory(allocInfo);
+
 
 		m_device.bindBufferMemory(buffer, bufferMemory, 0);
 	}
 
 	void MemoryManager::copyBuffer(vk::Buffer srcBuffer, vk::Buffer dstBuffer, vk::DeviceSize size)
 	{
-		vk::CommandBufferAllocateInfo allocInfo { m_commandPool,
-												  vk::CommandBufferLevel::ePrimary, 1 };
+		vk::CommandBufferAllocateInfo allocInfo { m_commandPool, vk::CommandBufferLevel::ePrimary, 1 };
 
 		auto commandBuffer = m_device.allocateCommandBuffers(allocInfo);
 
-		vk::CommandBufferBeginInfo beginInfo {
-			vk::CommandBufferUsageFlagBits::eOneTimeSubmit
-		};
+		vk::CommandBufferBeginInfo beginInfo { vk::CommandBufferUsageFlagBits::eOneTimeSubmit };
 
 		commandBuffer.at(0).begin(beginInfo);
 
@@ -71,9 +70,7 @@ MemoryManager::MemoryManager(const vk::PhysicalDevice& physicalDevice, const vk:
 
 		vk::SubmitInfo submitInfo { {}, {}, commandBuffer };
 
-		m_queue.submit(
-			1, &submitInfo, {}
-		); //TODO GraphicQueue should copy buffers?
+		m_queue.submit(1, &submitInfo, {}); //TODO GraphicQueue should copy buffers?
 		m_queue.waitIdle();
 
 		m_device.freeCommandBuffers(m_commandPool, commandBuffer);

@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWIDNOW_H
+#ifndef MAINWINDOW_MAINWINDOW_HPP
+#define MAINWINDOW_MAINWIDNOW_HPP
 
 #include <QMainWindow>
 
@@ -9,15 +9,18 @@ class NavigationBar;
 class QMenu;
 
 
-namespace st {
+namespace st 
+{
 
-namespace viewport {
-class ViewportWidget;
+namespace viewport 
+{
+	class ViewportWidget;
 }
 
-namespace ui::gui {
-class SettingsView;
-class TransformationView;
+namespace ui::gui
+{
+	class SettingsView;
+	class TransformationView;
 }
 
 
@@ -50,4 +53,4 @@ class MainWindow : public QMainWindow
 };
 
 }
-#endif // !MAINWINDOW_H
+#endif // !MAINWINDOW_MAINWINDOW_HPP

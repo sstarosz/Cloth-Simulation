@@ -7,13 +7,12 @@ namespace st::renderer
 	Framebuffer::Framebuffer(const vk::Device& device,
 							 const SwapChain& swapChain,
 							 const RenderPass& renderPass,
-							 const ImageMenager& imageMenager):
-	m_device(device),
-	m_swapChain(swapChain),
-	m_renderPass(renderPass),
-	m_imageMenager(imageMenager)
-	{
-	}
+							 const ImageManager& imageMenager):
+		m_device(device),
+		m_swapChain(swapChain),
+		m_renderPass(renderPass),
+		m_imageMenager(imageMenager)
+	{ }
 
 	void Framebuffer::initialize()
 	{ 
@@ -35,12 +34,11 @@ namespace st::renderer
 				1
 			};
 
-			m_swapchainFramebuffers.emplace_back(
-				m_device.createFramebuffer(framebufferInfo)
-			);
+			m_swapchainFramebuffers.emplace_back(m_device.createFramebuffer(framebufferInfo));
 		}
 
 	}
+
 	void Framebuffer::releaseResources()
 	{
 		m_device.destroyImageView(m_depthImageView);
@@ -66,15 +64,16 @@ namespace st::renderer
 
 		vk::Extent2D swapChainExtent = m_swapChain.getSwapchainExtend2D();
 
-		m_imageMenager.createImage(
-			swapChainExtent.width, swapChainExtent.height, depthFormat,
-			vk::ImageTiling::eOptimal, vk::ImageUsageFlagBits::eDepthStencilAttachment,
-			vk::MemoryPropertyFlagBits::eDeviceLocal, m_depthImage, m_depthImageMemory
-		);
+		m_imageMenager.createImage(swapChainExtent.width,
+								   swapChainExtent.height,
+								   depthFormat,
+								   vk::ImageTiling::eOptimal,
+								   vk::ImageUsageFlagBits::eDepthStencilAttachment,
+								   vk::MemoryPropertyFlagBits::eDeviceLocal,
+								   m_depthImage,
+								   m_depthImageMemory);
 
-		m_depthImageView = m_imageMenager.createImageView(
-			m_depthImage, depthFormat, vk::ImageAspectFlagBits::eDepth
-		);
+		m_depthImageView = m_imageMenager.createImageView(m_depthImage, depthFormat, vk::ImageAspectFlagBits::eDepth);
 	}
 
 

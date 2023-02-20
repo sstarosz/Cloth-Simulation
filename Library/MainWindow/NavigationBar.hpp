@@ -1,10 +1,12 @@
-#ifndef NAVIGATIONBAR_HPP
-#define NAVIGATIONBAR_HPP
+#ifndef MAINWINDOW_NAVIGATIONBAR_HPP
+#define MAINWINDOW_NAVIGATIONBAR_HPP
 
 #include<QtWidgets/QListView>
 
 #include <QtWidgets/QStyledItemDelegate>
 
+
+namespace st {
 /*
 struct NavigationBarItem
 {
@@ -19,14 +21,17 @@ struct NavigationBarItem
 
 class NavigationBarItemDelegate : public QStyledItemDelegate
 {
-    Q_OBJECT
-public:
-    explicit NavigationBarItemDelegate(QObject* parent = nullptr);
+		Q_OBJECT
+	public:
+		explicit NavigationBarItemDelegate(QObject* parent = nullptr);
 
-protected:
-    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
-    QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
-   
+	protected:
+		void paint(
+			QPainter* painter, const QStyleOptionViewItem& option,
+			const QModelIndex& index
+		) const override;
+		QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index)
+			const override;
 };
 
 
@@ -47,14 +52,15 @@ public:
 
 class NavigationBar : public QListView
 {
-	Q_OBJECT
-public:
-	NavigationBar();
-	explicit NavigationBar(QWidget* parent = nullptr);
+		Q_OBJECT
+	public:
+		NavigationBar();
+		explicit NavigationBar(QWidget* parent = nullptr);
 
-private:
-    NavigationBarItemDelegate* delegate;
+	private:
+		NavigationBarItemDelegate* delegate;
 };
 
+}
 
 #endif // !NAVIGATIONBAR_HPP

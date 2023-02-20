@@ -12,7 +12,7 @@
 #include "Pipeline/GraphicsPipeline.hpp"
 #include "CommandBuffers/CommandPool.hpp"
 #include "IO/ImporterProxy.hpp"
-#include "VulkanImages/ImageMenager.hpp"
+#include "VulkanImages/ImageManager.hpp"
 #include "Memory/MemoryManager.hpp"
 #include <Geometry/Vertex.hpp>
 #include <Geometry/Matrix4x4.hpp>
@@ -46,6 +46,12 @@ public:
 	void recreateSwapChain(uint64_t width, uint64_t height);
 
 
+	//Add primitives to renderer
+	//gird
+	//gizmo
+	//
+
+
 
 	//TODO - What to do it with this?
 	void createVertexBuffer();
@@ -68,27 +74,10 @@ public:
 
 
 
-	//TODO - Delete after refactor
-	const vk::SurfaceKHR& getSurface() const;
-	const vk::PhysicalDevice& getPhysicalDevice() const;
-	const vk::Device& getLogicalDevice() const;
-	const vk::Queue& getGraphicsQueue() const;
-	const vk::Queue& getPresentationQueue() const;
+	void mousePressEvent(int64_t x, int64_t y, Camera::Actions action);
+	void mouseMoveEvent(int64_t x, int64_t y);
+	void mouseReleaseEvent(int64_t x, int64_t y);
 
-
-	const vk::SwapchainKHR& getSwapchain() const;
-	const vk::Extent2D& getSwapchainExtend2D() const;
-	const vk::Format& getSwapChainImageFormat() const;
-	const std::vector<vk::Image>& getSwapChainImages() const;
-	const std::vector<vk::ImageView>& getSwapChainImagesViews() const;
-
-	const vk::RenderPass& getRenderPass() const;
-	const vk::Pipeline& getGraphicsPipeline() const;
-	const vk::PipelineLayout& getPipelineLayout() const;
-	const vk::DescriptorSetLayout& getDescriptorSetLayout() const;
-	const vk::CommandPool& getCommandPool() const;
-
-	const std::vector<vk::Framebuffer> getSwapchainFramebuffersBuffers() const;
 		
 private:
 	const StInstance& m_instance;
@@ -101,7 +90,7 @@ private:
 	CommandPool m_commandPool;
 
 	MemoryManager m_memoryManager;
-	ImageMenager m_imageManager;
+	ImageManager m_imageManager;
 	Framebuffer m_framebuffer;
 
 

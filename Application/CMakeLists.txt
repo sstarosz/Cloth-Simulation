@@ -21,6 +21,7 @@ target_link_libraries(${PROJECT_NAME}
         MainWindow
         )
 
+
 #Ship Qt dynamic library
 if(WIN32)
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")

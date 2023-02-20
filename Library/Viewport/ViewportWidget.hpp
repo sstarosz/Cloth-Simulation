@@ -16,8 +16,8 @@ class ViewportWidget : public QWidget
 
 		void init();
 
-protected:
-	void closeEvent(QCloseEvent* event) override;
+	protected:
+		void closeEvent(QCloseEvent* event) override;
 
 
 	private:

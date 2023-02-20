@@ -5,7 +5,7 @@
 
 #include "SwapChain.hpp"
 #include "RenderPass/RenderPass.hpp"
-#include "VulkanImages/ImageMenager.hpp"
+#include "VulkanImages/ImageManager.hpp"
 #include <vector>
 
 namespace st::renderer {
@@ -17,7 +17,8 @@ class Framebuffer
 		Framebuffer(const vk::Device& device,
 					const SwapChain& swapChain,
 					const RenderPass& renderPass,
-					const ImageMenager& imageMenager);
+					const ImageManager& imageMenager
+		);
 
 		void initialize();
 		void releaseResources();
@@ -29,7 +30,7 @@ class Framebuffer
 		const vk::Device& m_device;
 		const SwapChain& m_swapChain;
 		const RenderPass& m_renderPass;
-		const ImageMenager& m_imageMenager;
+		const ImageManager& m_imageMenager;
 
 		std::vector<vk::Framebuffer> m_swapchainFramebuffers;
 

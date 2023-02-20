@@ -88,9 +88,6 @@ void MainWindow::createStatusBar()
 
 void MainWindow::createMainWindow()
 {
-    //QWidget* centralWidget = new QWidget();
-
-
 
     viewportWidget = new viewport::ViewportWidget();
     setCentralWidget(viewportWidget);
