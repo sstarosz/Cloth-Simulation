@@ -7,7 +7,7 @@
 
 namespace st::renderer
 {
-std::vector<const char*> Extensions::getEnabledExtensions()
+	std::vector<const char*> Extensions::getEnabledExtensions()
 	{
 		std::vector<const char*> extensions;
 
@@ -28,5 +28,3 @@ std::vector<const char*> Extensions::getEnabledExtensions()
 		return extensions;
 	}
 }
-
-

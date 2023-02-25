@@ -8,18 +8,17 @@
 #include <QWindow>
 #include <QVulkanInstance>
 #include <memory>
-#include "Line.hpp"
 
 
 #include "Renderer/Instance.hpp"
 #include "Renderer/Surface.hpp"
 #include "Renderer/Renderer.hpp"
 
-namespace st::viewport 
+namespace st::viewport
 {
 	class VulkanWindow : public QWindow
 	{
-	Q_OBJECT
+		Q_OBJECT
 
 	public:
 		VulkanWindow();
@@ -45,28 +44,24 @@ namespace st::viewport
 		void keyReleaseEvent(QKeyEvent* event) override;
 
 
-
 		QVulkanInstance inst;
 		std::unique_ptr<renderer::StInstance> m_instance;
 		std::unique_ptr<renderer::Surface> m_surface;
 		std::unique_ptr<renderer::Renderer> m_renderer;
 
 
-		Line m_line;
-
-		#ifdef NDEBUG
-				const bool enableValidationLayers = false;
-		#else
-				const bool enableValidationLayers = true;
-		#endif
+#ifdef NDEBUG
+		const bool enableValidationLayers = false;
+#else
+		const bool enableValidationLayers = true;
+#endif
 
 		bool isInitialised = false;
 
 		/*Init*/
 		void createQtInstance(vk::Instance instance);
 		void recreateSwapChain();
-
-};
+	};
 
 } //!namespace st::viewport
 #endif // !VULKANWINDOW_HPP

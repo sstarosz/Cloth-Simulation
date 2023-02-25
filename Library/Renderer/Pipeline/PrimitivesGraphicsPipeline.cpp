@@ -1,23 +1,25 @@
-#include "GraphicsPipeline.hpp"
+#include "PrimitivesGraphicsPipeline.hpp"
 
 #include "Renderer/Shaders/Shader.hpp"
-#include "Geometry/Vertex.hpp"
+#include "Geometry/Line.hpp"
 
 namespace st::renderer
 {
 
-	GraphicsPipeline::GraphicsPipeline(const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const vk::RenderPass& renderPass):
+	PrimitivesGraphicsPipeline::PrimitivesGraphicsPipeline(const vk::PhysicalDevice& physicalDevice,
+														   const vk::Device& device,
+														   const vk::RenderPass& renderPass):
 		m_physicalDevice(physicalDevice),
 		m_device(device),
 		m_renderPass(renderPass)
 	{ }
 
-	void GraphicsPipeline::initialize()
+	void PrimitivesGraphicsPipeline::initialize()
 	{
 		createDescriptorSetLayout();
 
-		auto vertShaderCode = Shader::readFile("../Assets/Shaders/vert.spv");
-		auto fragShaderCode = Shader::readFile("../Assets/Shaders/frag.spv");
+		auto vertShaderCode = Shader::readFile("../Assets/Shaders/line_vert.spv");
+		auto fragShaderCode = Shader::readFile("../Assets/Shaders/line_frag.spv");
 
 
 		vk::ShaderModule vertShaderModule = Shader::createShaderModule(m_device, vertShaderCode);
@@ -31,12 +33,12 @@ namespace st::renderer
 		std::vector<vk::PipelineShaderStageCreateInfo> shaderStages { vertShaderStageInfo, fragShaderStageInfo };
 
 
-		auto bindingDescription = geometry::Vertex::getBindingDescription();
-		auto attributeDescriptions = geometry::Vertex::getAttributeDescriptions();
+		auto bindingDescription = geometry::Line::getBindingDescription();
+		auto attributeDescriptions = geometry::Line::getAttributeDescriptions();
 
 		vk::PipelineVertexInputStateCreateInfo vertexInputInfo { {}, bindingDescription, attributeDescriptions };
 
-		vk::PipelineInputAssemblyStateCreateInfo inputAssembly { vk::PipelineInputAssemblyStateCreateFlags {}, vk::PrimitiveTopology::eTriangleList, VK_FALSE };
+		vk::PipelineInputAssemblyStateCreateInfo inputAssembly { vk::PipelineInputAssemblyStateCreateFlags {}, vk::PrimitiveTopology::eLineList, VK_FALSE };
 
 
 		vk::PipelineViewportStateCreateInfo viewportState { vk::PipelineViewportStateCreateFlags {}, 1, {}, 1, {} };
@@ -45,7 +47,7 @@ namespace st::renderer
 															  VK_FALSE,
 															  VK_FALSE,
 															  vk::PolygonMode::eFill,
-															  vk::CullModeFlagBits::eBack,
+															  vk::CullModeFlagBits::eNone,
 															  vk::FrontFace::eCounterClockwise,
 															  VK_FALSE,
 															  0.0f,
@@ -101,46 +103,45 @@ namespace st::renderer
 
 
 		m_pipelineCache = m_device.createPipelineCache(vk::PipelineCacheCreateInfo());
-		m_graphicsPipeline = m_device.createGraphicsPipeline(m_pipelineCache, pipelineInfo).value;
+		m_primitivesGraphicsPipeline = m_device.createGraphicsPipeline(m_pipelineCache, pipelineInfo).value;
 
 
-		//Note VkShaderModule is passed into pipline and are not longer available trought object they are used to create
-		//If ther are used later, then they must not be destroyed
+		//Note VkShaderModule is passed into pipeline and are not longer available thought object they are used to create
+		//If there are used later, then they must not be destroyed
 		m_device.destroy(fragShaderModule);
 		m_device.destroy(vertShaderModule);
 	}
 
-	void GraphicsPipeline::releaseResources()
+	void PrimitivesGraphicsPipeline::releaseResources()
 	{
 		m_device.destroyDescriptorSetLayout(m_descriptorSetLayout);
 
 		m_device.destroyPipelineCache(m_pipelineCache);
-		m_device.destroyPipeline(m_graphicsPipeline);
+		m_device.destroyPipeline(m_primitivesGraphicsPipeline);
 		m_device.destroyPipelineLayout(m_pipelineLayout);
 	}
 
-	const vk::Pipeline& GraphicsPipeline::getGraphicsPipeline() const
+	const vk::Pipeline& PrimitivesGraphicsPipeline::getGraphicsPipeline() const
 	{
-		return m_graphicsPipeline;
+		return m_primitivesGraphicsPipeline;
 	}
 
-	const vk::PipelineLayout& GraphicsPipeline::getPipelineLayout() const
+	const vk::PipelineLayout& PrimitivesGraphicsPipeline::getPipelineLayout() const
 	{
 		return m_pipelineLayout;
 	}
 
-	const vk::DescriptorSetLayout& GraphicsPipeline::getDescriptorSetLayout() const
+	const vk::DescriptorSetLayout& PrimitivesGraphicsPipeline::getDescriptorSetLayout() const
 	{
 		return m_descriptorSetLayout;
 	}
 
-	void GraphicsPipeline::createDescriptorSetLayout()
+	void PrimitivesGraphicsPipeline::createDescriptorSetLayout()
 	{
 		vk::DescriptorSetLayoutBinding uboLayoutBinding { 0, vk::DescriptorType::eUniformBuffer, 1, vk::ShaderStageFlagBits::eVertex };
 
-		vk::DescriptorSetLayoutBinding samplerLayoutBinding { 1, vk::DescriptorType::eCombinedImageSampler, 1, vk::ShaderStageFlagBits::eFragment };
 
-		std::array<vk::DescriptorSetLayoutBinding, 2> bindings { uboLayoutBinding, samplerLayoutBinding };
+		std::array<vk::DescriptorSetLayoutBinding, 1> bindings { uboLayoutBinding };
 		vk::DescriptorSetLayoutCreateInfo layoutInfo { {}, bindings };
 
 		m_descriptorSetLayout = m_device.createDescriptorSetLayout(layoutInfo);

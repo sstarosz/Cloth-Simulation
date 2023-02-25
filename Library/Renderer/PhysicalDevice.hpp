@@ -4,11 +4,11 @@
 #include <vulkan/vulkan.hpp>
 
 
-namespace st::renderer {
-
-
-class PhysicalDevice
+namespace st::renderer
 {
+
+	class PhysicalDevice
+	{
 	public:
 		PhysicalDevice(const vk::Instance& instance, const vk::SurfaceKHR& surface);
 
@@ -24,14 +24,14 @@ class PhysicalDevice
 		bool checkDeviceExtensionSupport(const vk::PhysicalDevice& device);
 
 
-		const vk::Instance&   m_instance;
+		const vk::Instance& m_instance;
 		const vk::SurfaceKHR& m_surface;
 
 
 		vk::PhysicalDevice m_physicalDevice;
 
-		constexpr static std::array m_deviceExtensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-};
+		constexpr static std::array m_deviceExtensions { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	};
 
 
 }

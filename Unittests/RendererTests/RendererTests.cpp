@@ -4,22 +4,20 @@
 #include <Renderer/Renderer.hpp>
 
 
-namespace st::renderer::unittests {
-class RendererTests : public testing::Test
+namespace st::renderer::unittests
 {
+	class RendererTests : public testing::Test
+	{
 
-public:
-	RendererTests() { }
-
-};
-
+	public:
+		RendererTests() { }
+	};
 
 
- TEST(RendererTests, VulkanInstanceInitialization)
-{
-	 //Renderer renderer;
-	 //renderer.initialize();
-
-}
+	TEST_F(RendererTests, VulkanInstanceInitialization)
+	{
+		//Renderer renderer;
+		//renderer.initialize();
+	}
 
 }

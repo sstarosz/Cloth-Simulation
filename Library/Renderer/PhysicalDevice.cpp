@@ -5,15 +5,10 @@
 #include <set>
 #include <string>
 
-namespace st::renderer 
+namespace st::renderer
 {
 
-	PhysicalDevice::PhysicalDevice(const vk::Instance& instance,
-								  const vk::SurfaceKHR& surface):
-	m_instance(instance),
-	m_surface(surface)
-	{
-	}
+	PhysicalDevice::PhysicalDevice(const vk::Instance& instance, const vk::SurfaceKHR& surface): m_instance(instance), m_surface(surface) { }
 
 	void PhysicalDevice::initialize()
 	{

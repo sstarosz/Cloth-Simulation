@@ -2,30 +2,21 @@
 #include "Renderer/QueueFamily.hpp"
 
 
-namespace st::renderer 
+namespace st::renderer
 {
 
-	CommandPool::CommandPool(
-	const vk::Device& device,
-	const vk::PhysicalDevice& physicalDevice,
-	const vk::SurfaceKHR& surface
-):
-	m_device(device),
-	m_physicalDevice(physicalDevice),
-	m_surfac(surface)
-	{ 
-	}
+	CommandPool::CommandPool(const vk::Device& device, const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface):
+		m_device(device),
+		m_physicalDevice(physicalDevice),
+		m_surface(surface)
+	{ }
 
-	void CommandPool::initialize() 
-	{ 
-		QueueFamilyIndices queueFamilyIndices = QueueFamilyIndices::findQueueFamilies(m_physicalDevice, m_surfac);
+	void CommandPool::initialize()
+	{
+		QueueFamilyIndices queueFamilyIndices = QueueFamilyIndices::findQueueFamilies(m_physicalDevice, m_surface);
 
 		//TODO This is a graphic commandPoll
-		vk::CommandPoolCreateInfo poolInfo
-		{
-			vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
-			queueFamilyIndices.graphicsFamily.value()
-		};
+		vk::CommandPoolCreateInfo poolInfo { vk::CommandPoolCreateFlagBits::eResetCommandBuffer, queueFamilyIndices.graphicsFamily.value() };
 
 		m_commandPool = m_device.createCommandPool(poolInfo);
 	}
@@ -41,4 +32,4 @@ namespace st::renderer
 	}
 
 
-	}
+}

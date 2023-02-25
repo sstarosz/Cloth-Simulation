@@ -1,11 +1,11 @@
 #include "ValidationLayers.hpp"
 
 
-namespace st::renderer {
+namespace st::renderer
+{
 
 	std::vector<const char*> ValidationLayer::getValidationLayers()
 	{
-
 
 		std::vector<const char*> validationLayers { "VK_LAYER_KHRONOS_validation" };
 

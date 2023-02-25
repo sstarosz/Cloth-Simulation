@@ -24,6 +24,8 @@ find_package(Qt6 CONFIG REQUIRED
                         Widgets
                         CoreTools)
 
+find_package(Stb REQUIRED)
+
 
 
 #Windeployqt for coping qt dll liblary on windows

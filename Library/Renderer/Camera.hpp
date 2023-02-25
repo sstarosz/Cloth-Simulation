@@ -11,59 +11,57 @@
 
 namespace st::renderer
 {
-    class Camera
-    {
-    public:
-        enum class Actions : uint64_t
-        {
-            NoAction,
-            Orbit,
-            Zoom,
-            Pan
-        };
 
-        Camera();
+	class Camera
+	{
+	public:
+		enum class Actions : uint64_t
+		{
+			NoAction,
+			Orbit,
+			Zoom,
+			Pan
+		};
 
-        void mousePressEvent(int64_t x, int64_t y, Actions action);
-        void mouseMove(int64_t x, int64_t y);
-        void releaseMouseClick();
+		Camera();
 
-
-        void update();
-
-        geometry::Matrix4x4 lookAt(const geometry::Vector3& eye, const geometry::Vector3& center, const geometry::Vector3& up);
-        void orbit(float dx, float dy);
-        void pan(float dx, float dy);
-        void  dolly(float dx, float dy);
-        geometry::Vector3 orbitTest(float dx, float dy);
+		void mousePressEvent(int64_t x, int64_t y, Actions action);
+		void mouseMove(int64_t x, int64_t y);
+		void releaseMouseClick();
 
 
+		void update();
 
-        geometry::Matrix4x4 getViewMatrix() const;
-        geometry::Matrix4x4 getProjectionMatrix(float fovy, float aspect, float nearPlane, float farPlane) const;
-
-
-    private:
-
-        Actions m_currentState;
-
-        geometry::Vector3 m_eye;
-        geometry::Vector3 m_center;
-        geometry::Vector3 m_up;
-
-        geometry::Matrix4x4 m_matrix;
-
-        float m_fov = 60.0f;
+		geometry::Matrix4x4 lookAt(const geometry::Vector3& eye, const geometry::Vector3& center, const geometry::Vector3& up);
+		void orbit(float dx, float dy);
+		void pan(float dx, float dy);
+		void dolly(float dx, float dy);
+		geometry::Vector3 orbitTest(float dx, float dy);
 
 
-        float m_mouseClickX;
-        float m_mouseClickY;
+		geometry::Matrix4x4 getViewMatrix() const;
+		geometry::Matrix4x4 getProjectionMatrix(float fovy, float aspect, float nearPlane, float farPlane) const;
 
-        
-        uint64_t m_cameraHeight;
-        uint64_t m_cameraWidth;
 
-    };
+	private:
+		Actions m_currentState;
+
+		geometry::Vector3 m_eye;
+		geometry::Vector3 m_center;
+		geometry::Vector3 m_up;
+
+		geometry::Matrix4x4 m_matrix;
+
+		float m_fov = 60.0f;
+
+
+		float m_mouseClickX;
+		float m_mouseClickY;
+
+
+		uint64_t m_cameraHeight;
+		uint64_t m_cameraWidth;
+	};
 
 
 };

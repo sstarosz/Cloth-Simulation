@@ -5,16 +5,14 @@
 #include <vector>
 
 
-namespace st::renderer {
-
-
-class RenderPass
+namespace st::renderer
 {
-	public:
-		RenderPass(const vk::PhysicalDevice& physicalDevice,
-				   const vk::Format& surfaceFormat,
-				   const vk::Device& device);
 
+
+	class RenderPass
+	{
+	public:
+		RenderPass(const vk::PhysicalDevice& physicalDevice, const vk::Format& surfaceFormat, const vk::Device& device);
 
 
 		void initialize();
@@ -32,8 +30,8 @@ class RenderPass
 
 		vk::RenderPass m_renderPass;
 
-        vk::ImageView m_depthImageView;
-};
+		vk::ImageView m_depthImageView;
+	};
 
 
 }

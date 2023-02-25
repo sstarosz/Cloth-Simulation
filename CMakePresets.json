@@ -1,8 +1,8 @@
 {
-  "version": 3,
+  "version": 5,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 20,
+    "minor": 24,
     "patch": 0
   },
   "configurePresets": [
@@ -15,9 +15,10 @@
       "installDir": "${sourceDir}/out/install/${presetName}"
     },
     {
-      "name": "Windowx-x64-Debug-MSVC",
-      "displayName": "Windows x64 Debug MSVC",
+      "name": "Windowx-x64-MSVC",
+      "displayName": "Windows x64 MSVC",
       "description": "Sets Ninja generator, build and install directory",
+      "toolchainFile": "${sourceDir}/../vcpkg/scripts/buildsystems/vcpkg.cmake",
       "inherits": [
         "base"
       ],
@@ -26,10 +27,9 @@
         "strategy": "external"
       },
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_C_COMPILER": "cl",
         "CMAKE_CXX_COMPILER": "cl",
-        "CMAKE_PREFIX_PATH": "C:/Qt/6.3.0/msvc2019_64/;${sourceDir}/Conan;${sourceDir}/CMake;"
+        "CMAKE_PREFIX_PATH": "C:/Qt/6.3.0/msvc2019_64/;${sourceDir}/CMake;"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
@@ -40,7 +40,7 @@
           "disableExternalAnalysis": true,
           "enableMicrosoftCodeAnalysis": true,
           "enableClangTidyCodeAnalysis": true,
-          "clangTidyChecks": "-header-filer=.* -checks=-*,clang-analyzer-*,-clang-analyzer-cplusplus*"
+          "clangTidyChecks": "-header-filer=.* -checks=*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,performance-*,portability-*,readability-*"
         }
       }
     },
@@ -83,9 +83,19 @@
       "inheritConfigureEnvironment": true
     },
     {
-      "name": "Windows-Verbose-Debug-Build",
-      "description": "Windows x64 Debug Build with Msys2 Makefile generator",
-      "configurePreset": "Windowx-x64-Debug-MSVC",
+      "name": "Windows-Debug-Build",
+      "description": "Windows x64 Debug Build",
+      "configurePreset": "Windowx-x64-MSVC",
+      "configuration": "Debug",
+      "inherits": "Core-Build",
+      "jobs": 8,
+      "verbose": true
+    },
+    {
+      "name": "Windows-Release-Build",
+      "description": "Windows x64 Release Build",
+      "configurePreset": "Windowx-x64-MSVC",
+      "configuration": "Debug",
       "inherits": "Core-Build",
       "jobs": 8,
       "verbose": true
@@ -107,13 +117,14 @@
       "configurePreset": "base",
       "hidden": true,
       "output": {
-        "outputOnFailure": true
+        "outputOnFailure": true,
+        "verbosity": "verbose"
       }
     },
     {
-      "name": "Windows-Unittest",
-      "displayName": "Windows Unittests",
-      "configurePreset": "Windowx-x64-Debug-MSVC",
+      "name": "Windows-Unittests",
+      "displayName": "Windows Unit Tests",
+      "configurePreset": "Windowx-x64-MSVC",
       "inherits": "Core-Test"
     },
     {

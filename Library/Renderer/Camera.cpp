@@ -5,8 +5,8 @@ namespace st::renderer
 {
 	Camera::Camera():
 		m_currentState(Camera::Actions::NoAction),
-		m_eye(0.0F,0.0F,2.0F),
-		m_center(0.0F,0.0F,0.0F),
+		m_eye(0.0F, 0.0F, 2.0F),
+		m_center(0.0F, 0.0F, 0.0F),
 		m_up(0.0F, 1.0F, 0.0F),
 		m_matrix(),
 		m_mouseClickX(0.0F),
@@ -83,7 +83,7 @@ namespace st::renderer
 		Vector3 position = m_eye;
 
 		// Get the length of sight
-		Vector3 centerToEye{ position - origin };
+		Vector3 centerToEye { position - origin };
 		float radius = Vector3::lenght(centerToEye);
 		centerToEye = Vector3::normalize(centerToEye);
 
@@ -105,7 +105,7 @@ namespace st::renderer
 
 		// Apply the (X) rotation to the eye-center vector
 		vect_temp = rotX * Vector4(centerToEye, 0.0F);
-		Vector3 vectRot{ vect_temp.X, vect_temp.Y, vect_temp.Z };
+		Vector3 vectRot { vect_temp.X, vect_temp.Y, vect_temp.Z };
 
 		if (sign(vectRot.X) == sign(centerToEye.X))
 		{
@@ -122,7 +122,7 @@ namespace st::renderer
 	{
 		using namespace geometry;
 		Vector3 z = m_center - m_eye;
-		const float lenght =Vector3::lenght(z);
+		const float lenght = Vector3::lenght(z);
 
 		if (lenght < 0.000001F)
 		{
@@ -141,7 +141,6 @@ namespace st::renderer
 		z *= factor;
 
 		m_eye = m_eye + z;
-
 	}
 
 
@@ -150,7 +149,7 @@ namespace st::renderer
 		using namespace geometry;
 
 		Vector3 z(m_eye - m_center);
-		float         length = static_cast<float>(Vector3::lenght(z)) / 0.785f;  // 45 degrees
+		float length = static_cast<float>(Vector3::lenght(z)) / 0.785f; // 45 degrees
 		z = Vector3::normalize(z);
 		Vector3 x = Vector3::crossProduct(m_up, z);
 		x = Vector3::normalize(x);
@@ -162,7 +161,6 @@ namespace st::renderer
 		m_eye = m_eye + x + y;
 		m_center = m_center + x + y;
 	}
-
 
 
 	geometry::Vector3 Camera::orbitTest(float dx, float dy)
@@ -183,7 +181,7 @@ namespace st::renderer
 		Vector3 position = m_eye;
 
 		// Get the length of sight
-		Vector3 centerToEye{ position - origin };
+		Vector3 centerToEye { position - origin };
 		float radius = Vector3::lenght(centerToEye);
 		centerToEye = Vector3::normalize(centerToEye);
 
@@ -205,7 +203,7 @@ namespace st::renderer
 
 		// Apply the (X) rotation to the eye-center vector
 		vect_temp = rotX * Vector4(centerToEye, 0.0F);
-		Vector3 vectRot{ vect_temp.X, vect_temp.Y, vect_temp.Z };
+		Vector3 vectRot { vect_temp.X, vect_temp.Y, vect_temp.Z };
 
 		if (sign(vectRot.X) == sign(centerToEye.X))
 		{
@@ -260,19 +258,19 @@ namespace st::renderer
 		y = Vector3::normalize(y);
 
 
-		result[0] =  x.X;
-		result[1] =  x.Y;
-		result[2] =  x.Z;
+		result[0] = x.X;
+		result[1] = x.Y;
+		result[2] = x.Z;
 		result[3] = -x.X * eye.X - x.Y * eye.Y - x.Z * eye.Z;
 
-		result[4] =  y.X;
-		result[5] =  y.Y;
-		result[6] =  y.Z;
+		result[4] = y.X;
+		result[5] = y.Y;
+		result[6] = y.Z;
 		result[7] = -y.X * eye.X - y.Y * eye.Y - y.Z * eye.Z;
 
-		result[8]  =  z.X;
-		result[9]  =  z.Y;
-		result[10] =  z.Z;
+		result[8] = z.X;
+		result[9] = z.Y;
+		result[10] = z.Z;
 		result[11] = -z.X * eye.X - z.Y * eye.Y - z.Z * eye.Z;
 
 
@@ -288,8 +286,8 @@ namespace st::renderer
 	{
 		geometry::Matrix4x4 result;
 
-		float      f = farPlane;
-		float      n = nearPlane;
+		float f = farPlane;
+		float n = nearPlane;
 
 		const float t = n * std::tan(fovy * (std::numbers::pi_v<float> / 180.0F) * 0.5F);
 		const float b = -t;
@@ -316,14 +314,11 @@ namespace st::renderer
 		result[11] = (f * n) / (n - f);
 
 		//Fourth row
-		result[12] =  0.0F;
-		result[13] =  0.0F;
+		result[12] = 0.0F;
+		result[13] = 0.0F;
 		result[14] = -1.0F;
-		result[15] =  0.0F;
+		result[15] = 0.0F;
 
 		return result;
 	}
 }
-
-
-

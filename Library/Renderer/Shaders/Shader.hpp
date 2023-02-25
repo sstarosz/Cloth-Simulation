@@ -7,15 +7,14 @@
 
 namespace st::renderer
 {
-    class Shader
-    {
+	class Shader
+	{
 
-    public:
-        static std::vector<char> readFile(const std::string& filename);
+	public:
+		static std::vector<char> readFile(const std::string& filename);
 
-        static vk::ShaderModule createShaderModule(const vk::Device& device, const std::vector<char>& code);
-
-    };
+		static vk::ShaderModule createShaderModule(const vk::Device& device, const std::vector<char>& code);
+	};
 
 
 };

@@ -1,15 +1,10 @@
 #include "Surface.hpp"
 
 
-
-namespace st::renderer 
+namespace st::renderer
 {
 
-	Surface::Surface(const vk::SurfaceKHR surface):
-	m_surface(surface)
-	{ 
-
-	}
+	Surface::Surface(const vk::SurfaceKHR surface): m_surface(surface) { }
 
 
 	const vk::SurfaceKHR& Surface::getSurface() const
@@ -17,8 +12,5 @@ namespace st::renderer
 		return m_surface;
 	}
 
-	
 
 }
-	
-	

@@ -8,17 +8,14 @@
 #include "VulkanImages/ImageManager.hpp"
 #include <vector>
 
-namespace st::renderer {
-
-class Framebuffer
+namespace st::renderer
 {
 
+	class Framebuffer
+	{
+
 	public:
-		Framebuffer(const vk::Device& device,
-					const SwapChain& swapChain,
-					const RenderPass& renderPass,
-					const ImageManager& imageMenager
-		);
+		Framebuffer(const vk::Device& device, const SwapChain& swapChain, const RenderPass& renderPass, const ImageManager& imageMenager);
 
 		void initialize();
 		void releaseResources();
@@ -40,7 +37,7 @@ class Framebuffer
 		vk::ImageView m_depthImageView;
 
 		void createDepthResources();
-};
+	};
 
 
 };

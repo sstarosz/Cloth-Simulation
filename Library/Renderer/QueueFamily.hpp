@@ -5,24 +5,23 @@
 
 namespace vk
 {
-    class PhysicalDevice;
-    class SurfaceKHR;
+	class PhysicalDevice;
+	class SurfaceKHR;
 }
 
 namespace st::renderer
 {
 
-    struct QueueFamilyIndices {
-        std::optional<uint32_t> graphicsFamily;
-        std::optional<uint32_t> presentFamily;
+	struct QueueFamilyIndices
+	{
+		std::optional<uint32_t> graphicsFamily;
+		std::optional<uint32_t> presentFamily;
 
-        [[nodiscard]] bool isComplete() const;
+		[[nodiscard]] bool isComplete() const;
 
 
-
-
-        static QueueFamilyIndices findQueueFamilies(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface);
-    }; 
+		static QueueFamilyIndices findQueueFamilies(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface);
+	};
 
 
 }

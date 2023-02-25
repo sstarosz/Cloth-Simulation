@@ -14,16 +14,12 @@ configure_file(Config.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/Config.hpp @ONLY)
 set(SOURCES
 	"ViewportWidget.cpp"
 	"VulkanWindow.cpp"
-	"Shader.cpp"
-	"Line.cpp"
 	)
 
 set(HEADERS
 	"ViewportWidget.hpp"
 	"VulkanWindow.hpp"
 	"Config.hpp"
-	"Shader.hpp"
-	"Line.hpp"
 	)
 
 

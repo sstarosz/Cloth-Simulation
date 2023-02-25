@@ -15,21 +15,12 @@ namespace st::renderer
 		m_physicalDevice(m_instance.getInstance(), surface.getSurface()),
 		m_logicalDevice(m_instance.getInstance(), m_physicalDevice.getPhysicalDevice(), m_surface.getSurface()),
 		m_swapChain(m_physicalDevice.getPhysicalDevice(), m_surface.getSurface(), m_logicalDevice.getDevice()),
-		m_renderPass(m_physicalDevice.getPhysicalDevice(),
-					 m_swapChain.getSwapChainImageFormat(),
-					 m_logicalDevice.getDevice()),
-		m_graphicPipeline(m_physicalDevice.getPhysicalDevice(),
-						  m_logicalDevice.getDevice(),
-						  m_renderPass.getRenderPass()),
+		m_renderPass(m_physicalDevice.getPhysicalDevice(), m_swapChain.getSwapChainImageFormat(), m_logicalDevice.getDevice()),
+		m_graphicPipeline(m_physicalDevice.getPhysicalDevice(), m_logicalDevice.getDevice(), m_renderPass.getRenderPass()),
+		m_primitivesGraphicPipeline(m_physicalDevice.getPhysicalDevice(), m_logicalDevice.getDevice(), m_renderPass.getRenderPass()),
 		m_commandPool(m_logicalDevice.getDevice(), m_physicalDevice.getPhysicalDevice(), m_surface.getSurface()),
-		m_memoryManager(m_physicalDevice.getPhysicalDevice(),
-						m_logicalDevice.getDevice(),
-						m_commandPool.getCommandPool(),
-						m_logicalDevice.getGraphiceQueue()),
-		m_imageManager(m_logicalDevice.getDevice(),
-					   m_commandPool.getCommandPool(),
-					   m_logicalDevice.getGraphiceQueue(),
-					   m_memoryManager),
+		m_memoryManager(m_physicalDevice.getPhysicalDevice(), m_logicalDevice.getDevice(), m_commandPool.getCommandPool(), m_logicalDevice.getGraphiceQueue()),
+		m_imageManager(m_logicalDevice.getDevice(), m_commandPool.getCommandPool(), m_logicalDevice.getGraphiceQueue(), m_memoryManager),
 		m_framebuffer(m_logicalDevice.getDevice(), m_swapChain, m_renderPass, m_imageManager)
 	{ }
 
@@ -41,6 +32,7 @@ namespace st::renderer
 		m_swapChain.initialize();
 		m_renderPass.initialize();
 		m_graphicPipeline.initialize();
+		m_primitivesGraphicPipeline.initialize();
 		m_commandPool.initialize();
 		m_framebuffer.initialize();
 
@@ -83,7 +75,7 @@ namespace st::renderer
 		m_logicalDevice.getDevice().freeMemory(m_vertexBufferMemory);
 
 
-		//Reverse order then intialization
+		//Reverse order then initialization
 		m_framebuffer.releaseResources();
 		m_commandPool.releaseResources();
 		m_graphicPipeline.releaseResources();
@@ -101,7 +93,7 @@ namespace st::renderer
 	//read event?
 	//events from qt as signals so is not needed?
 
-	//symualate
+	//simulate
 	//render
 
 	//}
@@ -109,18 +101,14 @@ namespace st::renderer
 	void Renderer::renderFrame()
 	{
 
-		auto resultFence
-			= m_logicalDevice.getDevice().waitForFences(m_inFlightFences.at(currentFrame), VK_TRUE, UINT64_MAX);
+		auto resultFence = m_logicalDevice.getDevice().waitForFences(m_inFlightFences.at(currentFrame), VK_TRUE, UINT64_MAX);
 		if (resultFence != vk::Result::eSuccess)
 		{
 			//std::cout << "syf" << std::endl;
 		}
 
-		auto [result, imageIndex]
-			= m_logicalDevice.getDevice().acquireNextImageKHR(m_swapChain.getSwapchain(),
-															  UINT64_MAX,
-															  m_imageAvailableSemaphores[currentFrame],
-															  VK_NULL_HANDLE);
+		auto [result, imageIndex] =
+			m_logicalDevice.getDevice().acquireNextImageKHR(m_swapChain.getSwapchain(), UINT64_MAX, m_imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE);
 
 		updateGeometry();
 		updateUniformBuffer(currentFrame);
@@ -143,9 +131,7 @@ namespace st::renderer
 		m_logicalDevice.getGraphiceQueue().submit(submitInfo, m_inFlightFences[currentFrame]);
 
 
-		vk::PresentInfoKHR presentInfo(m_renderFinishedSemaphores[currentFrame],
-									   m_swapChain.getSwapchain(),
-									   imageIndex);
+		vk::PresentInfoKHR presentInfo(m_renderFinishedSemaphores[currentFrame], m_swapChain.getSwapchain(), imageIndex);
 
 		try
 		{
@@ -197,32 +183,72 @@ namespace st::renderer
 	{
 
 		vk::DeviceSize bufferSize = sizeof(m_vertices[0]) * m_vertices.size();
+		//vk::DeviceSize lineBufferSize = sizeof(m_lines[0]) * m_lines.size();
 
 
 		if (!isBufferInitialized)
 		{
 
-			//TODO - Alocate more space
+			//TODO - Allocate more space
 			m_memoryManager.createBuffer(bufferSize,
 										 vk::BufferUsageFlagBits::eVertexBuffer,
-										 vk::MemoryPropertyFlagBits::eHostVisible
-											 | vk::MemoryPropertyFlagBits::eHostCoherent,
+										 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
 										 m_vertexBuffer,
 										 m_vertexBufferMemory);
 
+			//m_memoryManager.createBuffer(lineBufferSize,
+			//							 vk::BufferUsageFlagBits::eVertexBuffer,
+			//							 vk::MemoryPropertyFlagBits::eHostVisible
+			//								 | vk::MemoryPropertyFlagBits::eHostCoherent,
+			//							 m_lineVertexBuffer,
+			//							 m_lineVertexBufferMemory);
+			//
 			isBufferInitialized = true;
 		}
 
 
-		std::span<std::byte> data { static_cast<std::byte*>(
-										m_logicalDevice.getDevice().mapMemory(m_vertexBufferMemory, 0, bufferSize)),
-									bufferSize };
+		std::span<std::byte> data { static_cast<std::byte*>(m_logicalDevice.getDevice().mapMemory(m_vertexBufferMemory, 0, bufferSize)), bufferSize };
+		//std::span<std::byte> lineData { static_cast<std::byte*>(m_logicalDevice.getDevice().mapMemory(m_lineVertexBufferMemory, 0, lineBufferSize)),lineBufferSize};
 
-		//TODO multpiple memcpy per object
-		std::memcpy(data.data(),
-					m_vertices.data(),
-					static_cast<size_t>(bufferSize)); //vertices should fullfil trival object specyfication?
+		//TODO multiple memcpy per object
+		std::memcpy(data.data(), m_vertices.data(),
+					static_cast<size_t>(bufferSize)); //vertices should fulfill trivial object specification?
+
+		//std::memcpy(lineData.data(),
+		//			m_lines.data(),
+		//			static_cast<size_t>(lineBufferSize));
+
+
 		m_logicalDevice.getDevice().unmapMemory(m_vertexBufferMemory);
+		//m_logicalDevice.getDevice().unmapMemory(m_lineVertexBufferMemory);
+
+
+		vk::DeviceSize lineBufferSize = sizeof(m_lines[0]) * m_lines.size();
+
+		vk::Buffer lineStagingBuffer;
+		vk::DeviceMemory lineStagingBufferMemory;
+
+
+		m_memoryManager.createBuffer(lineBufferSize,
+									 vk::BufferUsageFlagBits::eTransferSrc,
+									 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+									 lineStagingBuffer,
+									 lineStagingBufferMemory);
+
+		void* lineData = m_logicalDevice.getDevice().mapMemory(lineStagingBufferMemory, 0, lineBufferSize);
+		memcpy(lineData, m_lines.data(), (size_t)lineBufferSize); //vertices should fullfil trival object specyfication?
+		m_logicalDevice.getDevice().unmapMemory(lineStagingBufferMemory);
+
+		m_memoryManager.createBuffer(lineBufferSize,
+									 vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer,
+									 vk::MemoryPropertyFlagBits::eDeviceLocal,
+									 m_lineVertexBuffer,
+									 m_lineVertexBufferMemory);
+
+		m_memoryManager.copyBuffer(lineStagingBuffer, m_lineVertexBuffer, lineBufferSize);
+
+		m_logicalDevice.getDevice().destroyBuffer(lineStagingBuffer);
+		m_logicalDevice.getDevice().freeMemory(lineStagingBufferMemory);
 	}
 
 	void Renderer::createIndexBuffer()
@@ -233,8 +259,7 @@ namespace st::renderer
 		vk::DeviceMemory stagingBufferMemory;
 		m_memoryManager.createBuffer(bufferSize,
 									 vk::BufferUsageFlagBits::eTransferSrc,
-									 vk::MemoryPropertyFlagBits::eHostVisible
-										 | vk::MemoryPropertyFlagBits::eHostCoherent,
+									 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
 									 stagingBuffer,
 									 stagingBufferMemory);
 
@@ -252,6 +277,33 @@ namespace st::renderer
 
 		m_logicalDevice.getDevice().destroyBuffer(stagingBuffer);
 		m_logicalDevice.getDevice().freeMemory(stagingBufferMemory);
+
+
+		//---------------------------------Line-------------------------------------------------------
+		vk::DeviceSize lineBufferSize = sizeof(m_linesIndices[0]) * m_linesIndices.size();
+
+		vk::Buffer lineStagingBuffer;
+		vk::DeviceMemory lineStagingBufferMemory;
+		m_memoryManager.createBuffer(lineBufferSize,
+									 vk::BufferUsageFlagBits::eTransferSrc,
+									 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+									 lineStagingBuffer,
+									 lineStagingBufferMemory);
+
+		void* lineData = m_logicalDevice.getDevice().mapMemory(lineStagingBufferMemory, 0, lineBufferSize);
+		memcpy(lineData, m_linesIndices.data(), (size_t)lineBufferSize);
+		m_logicalDevice.getDevice().unmapMemory(lineStagingBufferMemory);
+
+		m_memoryManager.createBuffer(lineBufferSize,
+									 vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer,
+									 vk::MemoryPropertyFlagBits::eDeviceLocal,
+									 m_lineIndexBuffer,
+									 m_lineIndexBufferMemory);
+
+		m_memoryManager.copyBuffer(lineStagingBuffer, m_lineIndexBuffer, lineBufferSize);
+
+		m_logicalDevice.getDevice().destroyBuffer(lineStagingBuffer);
+		m_logicalDevice.getDevice().freeMemory(lineStagingBufferMemory);
 	}
 
 	void Renderer::createUniformBuffers()
@@ -266,8 +318,7 @@ namespace st::renderer
 		{
 			m_memoryManager.createBuffer(bufferSize,
 										 vk::BufferUsageFlagBits::eUniformBuffer,
-										 vk::MemoryPropertyFlagBits::eHostVisible
-											 | vk::MemoryPropertyFlagBits::eHostCoherent,
+										 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
 										 m_uniformBuffers[i],
 										 m_uniformBuffersMemory[i]);
 		}
@@ -277,8 +328,7 @@ namespace st::renderer
 	{
 		vk::CommandBufferAllocateInfo allocInfo { m_commandPool.getCommandPool(),
 												  vk::CommandBufferLevel::ePrimary,
-												  static_cast<uint32_t>(
-													  m_framebuffer.getSwapchainFramebuffersBuffers().size()) };
+												  static_cast<uint32_t>(m_framebuffer.getSwapchainFramebuffersBuffers().size()) };
 
 		m_commandBuffers = m_logicalDevice.getDevice().allocateCommandBuffers(allocInfo);
 	}
@@ -298,11 +348,10 @@ namespace st::renderer
 		ubo.view = m_camera.getViewMatrix();
 		ubo.view.convertToColumnMajor();
 
-		ubo.proj = m_camera.getProjectionMatrix(
-			45.0F,
-			(m_swapChain.getSwapchainExtend2D().width / static_cast<float>(m_swapChain.getSwapchainExtend2D().height)),
-			0.1F,
-			100.0F);
+		ubo.proj = m_camera.getProjectionMatrix(45.0F,
+												(m_swapChain.getSwapchainExtend2D().width / static_cast<float>(m_swapChain.getSwapchainExtend2D().height)),
+												0.1F,
+												100.0F);
 		ubo.proj.convertToColumnMajor();
 
 
@@ -319,54 +368,60 @@ namespace st::renderer
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 		{
-			m_imageAvailableSemaphores.emplace_back(
-				m_logicalDevice.getDevice().createSemaphore(vk::SemaphoreCreateInfo {}));
-			m_renderFinishedSemaphores.emplace_back(
-				m_logicalDevice.getDevice().createSemaphore(vk::SemaphoreCreateInfo {}));
-			m_inFlightFences.emplace_back(
-				m_logicalDevice.getDevice().createFence(vk::FenceCreateInfo { vk::FenceCreateFlagBits::eSignaled }));
+			m_imageAvailableSemaphores.emplace_back(m_logicalDevice.getDevice().createSemaphore(vk::SemaphoreCreateInfo {}));
+			m_renderFinishedSemaphores.emplace_back(m_logicalDevice.getDevice().createSemaphore(vk::SemaphoreCreateInfo {}));
+			m_inFlightFences.emplace_back(m_logicalDevice.getDevice().createFence(vk::FenceCreateInfo { vk::FenceCreateFlagBits::eSignaled }));
 		}
 	}
 
 	void Renderer::createDescriptorPool()
 	{
-		vk::DescriptorPoolSize poolSize { vk::DescriptorType::eUniformBuffer,
-										  static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT) };
+		vk::DescriptorPoolSize poolSize { vk::DescriptorType::eUniformBuffer, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT) };
 
 		vk::DescriptorPoolCreateInfo poolInfo { {}, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT), poolSize };
 
 		m_descriptorPool = m_logicalDevice.getDevice().createDescriptorPool(poolInfo);
+
+
+		//Create Line Pool
+		vk::DescriptorPoolSize linePoolSize { vk::DescriptorType::eUniformBuffer, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT) };
+
+		vk::DescriptorPoolCreateInfo linePoolInfo { {}, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT), linePoolSize };
+
+		m_lineDescriptorPool = m_logicalDevice.getDevice().createDescriptorPool(linePoolInfo);
 	}
 
 	void Renderer::createDescriptorSets()
 	{
-		std::vector<vk::DescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, m_graphicPipeline.getDescriptorSetLayout());
-		vk::DescriptorSetAllocateInfo allocInfo { m_descriptorPool, layouts };
+		std::vector<vk::DescriptorSetLayout> graphicLayouts(MAX_FRAMES_IN_FLIGHT, m_graphicPipeline.getDescriptorSetLayout());
+		std::vector<vk::DescriptorSetLayout> primitiveLayouts(MAX_FRAMES_IN_FLIGHT, m_primitivesGraphicPipeline.getDescriptorSetLayout());
 
-		m_descriptorSets = m_logicalDevice.getDevice().allocateDescriptorSets(allocInfo);
+		vk::DescriptorSetAllocateInfo graphicAllocInfo { m_descriptorPool, graphicLayouts };
+		vk::DescriptorSetAllocateInfo primitiveAllocInfo { m_lineDescriptorPool, primitiveLayouts };
+
+
+		m_descriptorSets = m_logicalDevice.getDevice().allocateDescriptorSets(graphicAllocInfo);
+		m_lineDescriptorSets = m_logicalDevice.getDevice().allocateDescriptorSets(primitiveAllocInfo);
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 		{
 			vk::DescriptorBufferInfo bufferInfo { m_uniformBuffers.at(i), 0, sizeof(UniformBufferObject) };
 
-			vk::DescriptorImageInfo imageInfo { m_textureSampler,
-												m_textureImageView,
-												vk::ImageLayout::eShaderReadOnlyOptimal };
 
-			std::array<vk::WriteDescriptorSet, 2> descriptorWrites {
-				vk::WriteDescriptorSet {m_descriptorSets.at(i),
-                                        0, 0,
-                                        vk::DescriptorType::eUniformBuffer,
-                                        {},
-                                        bufferInfo,    {}},
-				vk::WriteDescriptorSet { m_descriptorSets.at(i),
-                                        1, 0,
-                                        vk::DescriptorType::eCombinedImageSampler,
-                                        imageInfo, {},
-                                        {}               }
+			vk::DescriptorImageInfo imageInfo { m_textureSampler, m_textureImageView, vk::ImageLayout::eShaderReadOnlyOptimal };
+
+			std::array<vk::WriteDescriptorSet, 2> graphicDescriptorWrites {
+				vk::WriteDescriptorSet { m_descriptorSets.at(i),  0, 0, vk::DescriptorType::eUniformBuffer, {}, bufferInfo, {}},
+				vk::WriteDescriptorSet { m_descriptorSets.at(i), 1, 0, vk::DescriptorType::eCombinedImageSampler, imageInfo, {}, {}}
 			};
 
-			m_logicalDevice.getDevice().updateDescriptorSets(descriptorWrites, {});
+			std::array<vk::WriteDescriptorSet, 1> primitivesDescriptorWrites {
+				vk::WriteDescriptorSet {m_lineDescriptorSets.at(i), 0, 0, vk::DescriptorType::eUniformBuffer, {}, bufferInfo, {}}
+			};
+
+
+			m_logicalDevice.getDevice().updateDescriptorSets(graphicDescriptorWrites, {});
+			m_logicalDevice.getDevice().updateDescriptorSets(primitivesDescriptorWrites, {});
 		}
 	}
 
@@ -376,8 +431,7 @@ namespace st::renderer
 		int texHeight = 0;
 		int texChannels = 0;
 
-		stbi_uc* pixels
-			= stbi_load("../Assets/Textures/texture2.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+		stbi_uc* pixels = stbi_load("../Assets/Textures/texture2.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
 		vk::DeviceSize imageSize = texWidth * texHeight * 4;
 
@@ -391,8 +445,7 @@ namespace st::renderer
 
 		m_memoryManager.createBuffer(imageSize,
 									 vk::BufferUsageFlagBits::eTransferSrc,
-									 vk::MemoryPropertyFlagBits::eHostVisible
-										 | vk::MemoryPropertyFlagBits::eHostCoherent,
+									 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
 									 stagingBuffer,
 									 stagingBufferMemory);
 
@@ -411,15 +464,9 @@ namespace st::renderer
 								   m_textureImage,
 								   m_textureImageMemory);
 
-		m_imageManager.transitionImageLayout(m_textureImage,
-											 vk::Format::eR8G8B8A8Srgb,
-											 vk::ImageLayout::eUndefined,
-											 vk::ImageLayout::eTransferDstOptimal);
+		m_imageManager.transitionImageLayout(m_textureImage, vk::Format::eR8G8B8A8Srgb, vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal);
 
-		m_imageManager.copyBufferToImage(stagingBuffer,
-										 m_textureImage,
-										 static_cast<uint32_t>(texWidth),
-										 static_cast<uint32_t>(texHeight));
+		m_imageManager.copyBufferToImage(stagingBuffer, m_textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 
 		m_imageManager.transitionImageLayout(m_textureImage,
 											 vk::Format::eR8G8B8A8Srgb,
@@ -432,9 +479,7 @@ namespace st::renderer
 
 	void Renderer::createTextureImageView()
 	{
-		m_textureImageView = m_imageManager.createImageView(m_textureImage,
-															vk::Format::eR8G8B8A8Srgb,
-															vk::ImageAspectFlagBits::eColor);
+		m_textureImageView = m_imageManager.createImageView(m_textureImage, vk::Format::eR8G8B8A8Srgb, vk::ImageAspectFlagBits::eColor);
 	}
 
 	void Renderer::createTextureSampler()
@@ -519,10 +564,7 @@ namespace st::renderer
 
 		commandBuffer.beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
 
-		vk::Viewport viewport {
-			0.0F, 0.0F, static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height),
-			0.0F, 1.0F
-		};
+		vk::Viewport viewport { 0.0F, 0.0F, static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 0.0F, 1.0F };
 
 		vk::Rect2D scissor {
 			{0, 0},
@@ -539,13 +581,28 @@ namespace st::renderer
 		commandBuffer.bindVertexBuffers(0, 1, vertexBuffers, offsets);
 		commandBuffer.bindIndexBuffer(m_indexBuffer, 0, vk::IndexType::eUint32);
 
-		commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics,
-										 m_graphicPipeline.getPipelineLayout(),
-										 0,
-										 m_descriptorSets[currentFrame],
-										 {});
+		commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, m_graphicPipeline.getPipelineLayout(), 0, m_descriptorSets[currentFrame], {});
 
 		commandBuffer.drawIndexed(static_cast<uint32_t>(m_indices.size()), 1, 0, 0, 0);
+
+
+		//-------------------Line----------------------------------
+
+		//Bind Line pipeline
+		commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_primitivesGraphicPipeline.getGraphicsPipeline());
+		//
+		//Bind Vertex Buffer from line
+		std::array<vk::Buffer, 1> lineVertexBuffers { m_lineVertexBuffer };
+		std::array<vk::DeviceSize, 1> lineVertexBuffersoffsets { 0 };
+
+		commandBuffer.bindVertexBuffers(0, lineVertexBuffers, lineVertexBuffersoffsets);
+		commandBuffer.bindIndexBuffer(m_lineIndexBuffer, 0, vk::IndexType::eUint32);
+		commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics,
+										 m_primitivesGraphicPipeline.getPipelineLayout(),
+										 0,
+										 m_lineDescriptorSets[currentFrame],
+										 {});
+		commandBuffer.drawIndexed(static_cast<uint32_t>(m_linesIndices.size()), 1, 0, 0, 0);
 
 
 		commandBuffer.endRenderPass();

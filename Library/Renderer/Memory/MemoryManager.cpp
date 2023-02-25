@@ -29,11 +29,8 @@ namespace st::renderer
 	}
 
 
-	void MemoryManager::createBuffer(vk::DeviceSize size,
-									 vk::BufferUsageFlags usage,
-									 vk::MemoryPropertyFlags properties,
-									 vk::Buffer& buffer,
-									 vk::DeviceMemory& bufferMemory)
+	void MemoryManager::createBuffer(
+		vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& buffer, vk::DeviceMemory& bufferMemory)
 	{
 
 		vk::BufferCreateInfo bufferInfo { {}, size, usage, vk::SharingMode::eExclusive };
@@ -42,9 +39,7 @@ namespace st::renderer
 
 		vk::MemoryRequirements memoryRequirements = m_device.getBufferMemoryRequirements(buffer);
 
-		vk::MemoryAllocateInfo allocInfo { memoryRequirements.size,
-										   findMemoryType(memoryRequirements.memoryTypeBits,
-										   properties) };
+		vk::MemoryAllocateInfo allocInfo { memoryRequirements.size, findMemoryType(memoryRequirements.memoryTypeBits, properties) };
 
 		bufferMemory = m_device.allocateMemory(allocInfo);
 

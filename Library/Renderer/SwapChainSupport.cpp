@@ -1,7 +1,7 @@
 #include "SwapChainSupport.hpp"
 
 
-namespace st::renderer 
+namespace st::renderer
 {
 
 	SwapChainSupportDetails SwapChainSupportDetails::querySwapChainSupport(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface)
@@ -16,4 +16,3 @@ namespace st::renderer
 	}
 
 }
-

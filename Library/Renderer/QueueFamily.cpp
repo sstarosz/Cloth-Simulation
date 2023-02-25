@@ -7,38 +7,42 @@
 
 namespace st::renderer
 {
-    bool QueueFamilyIndices::isComplete() const
-    {
-	    return graphicsFamily.has_value() && presentFamily.has_value();
-    }
+
+	bool QueueFamilyIndices::isComplete() const
+	{
+		return graphicsFamily.has_value() && presentFamily.has_value();
+	}
 
 	QueueFamilyIndices QueueFamilyIndices::findQueueFamilies(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface)
 	{
-        QueueFamilyIndices indices;
+		QueueFamilyIndices indices;
 
-        std::vector<vk::QueueFamilyProperties> queueFamilies = device.getQueueFamilyProperties();
+		std::vector<vk::QueueFamilyProperties> queueFamilies = device.getQueueFamilyProperties();
 
-        int i = 0;
-        for (const auto& queueFamily : queueFamilies) {
-            if (queueFamily.queueFlags & vk::QueueFlagBits::eGraphics) {
-                indices.graphicsFamily = i;
-            }
+		int i = 0;
+		for (const auto& queueFamily : queueFamilies)
+		{
+			if (queueFamily.queueFlags & vk::QueueFlagBits::eGraphics)
+			{
+				indices.graphicsFamily = i;
+			}
 
-            VkBool32 presentSupport = device.getSurfaceSupportKHR(i, surface);
+			VkBool32 presentSupport = device.getSurfaceSupportKHR(i, surface);
 
-            if (presentSupport) {
-                indices.presentFamily = i;
-            }
+			if (presentSupport)
+			{
+				indices.presentFamily = i;
+			}
 
-            if (indices.isComplete()) {
-                break;
-            }
+			if (indices.isComplete())
+			{
+				break;
+			}
 
-            i++;
-        }
+			i++;
+		}
 
-        return indices;
+		return indices;
 	}
 
 }
-

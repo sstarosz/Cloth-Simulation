@@ -1,13 +1,10 @@
 #include "Framebuffer.hpp"
 
 
-namespace st::renderer 
+namespace st::renderer
 {
 
-	Framebuffer::Framebuffer(const vk::Device& device,
-							 const SwapChain& swapChain,
-							 const RenderPass& renderPass,
-							 const ImageManager& imageMenager):
+	Framebuffer::Framebuffer(const vk::Device& device, const SwapChain& swapChain, const RenderPass& renderPass, const ImageManager& imageMenager):
 		m_device(device),
 		m_swapChain(swapChain),
 		m_renderPass(renderPass),
@@ -15,7 +12,7 @@ namespace st::renderer
 	{ }
 
 	void Framebuffer::initialize()
-	{ 
+	{
 		createDepthResources();
 
 		auto swapchainImageViews = m_swapChain.getSwapChainImagesViews();
@@ -23,20 +20,17 @@ namespace st::renderer
 
 		for (const auto& swapChainImageView : swapchainImageViews)
 		{
-			std::array<vk::ImageView, 2> attachments{ swapChainImageView, m_depthImageView };
+			std::array<vk::ImageView, 2> attachments { swapChainImageView, m_depthImageView };
 
-			vk::FramebufferCreateInfo framebufferInfo {
-				vk::FramebufferCreateFlags {},
-				m_renderPass.getRenderPass(),
-				attachments,
-				m_swapChain.getSwapchainExtend2D().width,
-				m_swapChain.getSwapchainExtend2D().height,
-				1
-			};
+			vk::FramebufferCreateInfo framebufferInfo { vk::FramebufferCreateFlags {},
+														m_renderPass.getRenderPass(),
+														attachments,
+														m_swapChain.getSwapchainExtend2D().width,
+														m_swapChain.getSwapchainExtend2D().height,
+														1 };
 
 			m_swapchainFramebuffers.emplace_back(m_device.createFramebuffer(framebufferInfo));
 		}
-
 	}
 
 	void Framebuffer::releaseResources()
@@ -45,7 +39,7 @@ namespace st::renderer
 		m_device.destroyImage(m_depthImage);
 		m_device.freeMemory(m_depthImageMemory);
 
-		
+
 		for (auto& framebuffer : m_swapchainFramebuffers)
 		{
 			m_device.destroy(framebuffer);
@@ -59,7 +53,7 @@ namespace st::renderer
 	}
 
 	void Framebuffer::createDepthResources()
-	{ 
+	{
 		vk::Format depthFormat = m_renderPass.findDepthFormat();
 
 		vk::Extent2D swapChainExtent = m_swapChain.getSwapchainExtend2D();
@@ -78,4 +72,3 @@ namespace st::renderer
 
 
 }
-

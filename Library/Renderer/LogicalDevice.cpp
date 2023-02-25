@@ -9,9 +9,7 @@
 namespace st::renderer
 {
 
-	LogicalDevice::LogicalDevice(const vk::Instance& instance,
-								 const vk::PhysicalDevice& physicalDevice,
-								 const vk::SurfaceKHR& surface):
+	LogicalDevice::LogicalDevice(const vk::Instance& instance, const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface):
 		m_instance(instance),
 		m_physicalDevice(physicalDevice),
 		m_surface(surface)
@@ -28,10 +26,7 @@ namespace st::renderer
 		float queuePriority = 1.0F;
 		for (const auto& queueFamily : uniqueQueueFamilies)
 		{
-			vk::DeviceQueueCreateInfo deviceQueueCreateInfo { vk::DeviceQueueCreateFlags {},
-															  queueFamily,
-															  1,
-															  &queuePriority };
+			vk::DeviceQueueCreateInfo deviceQueueCreateInfo { vk::DeviceQueueCreateFlags {}, queueFamily, 1, &queuePriority };
 
 			queueCreateInfos.push_back(deviceQueueCreateInfo);
 		}
@@ -39,11 +34,7 @@ namespace st::renderer
 		auto validationLayers = ValidationLayer::getValidationLayers();
 
 		vk::PhysicalDeviceFeatures deviceFeatures {};
-		vk::DeviceCreateInfo createInfo { vk::DeviceCreateFlags {},
-										  queueCreateInfos,
-										  validationLayers,
-										  m_deviceExtensions,
-										  &deviceFeatures };
+		vk::DeviceCreateInfo createInfo { vk::DeviceCreateFlags {}, queueCreateInfos, validationLayers, m_deviceExtensions, &deviceFeatures };
 
 
 		//TODO - Add calidation layers enabled disabled

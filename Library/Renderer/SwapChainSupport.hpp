@@ -6,8 +6,6 @@
 #include <vulkan/vulkan.hpp>
 
 
-
-
 namespace st::renderer
 {
 	struct SwapChainSupportDetails

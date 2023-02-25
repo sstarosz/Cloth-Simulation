@@ -3,16 +3,16 @@
 
 #include <vector>
 
-namespace st::renderer {
-
-/*TODO add validationLayer enable flags*/
-
-class Extensions
+namespace st::renderer
 {
-public:
-	static std::vector<const char*> getEnabledExtensions();
 
-};
+	/*TODO add validationLayer enable flags*/
+
+	class Extensions
+	{
+	public:
+		static std::vector<const char*> getEnabledExtensions();
+	};
 
 
 }

@@ -5,10 +5,11 @@
 #include <vulkan/vulkan.hpp>
 
 
-namespace st::renderer {
-
-class CommandPool
+namespace st::renderer
 {
+
+	class CommandPool
+	{
 
 	public:
 		CommandPool(const vk::Device& device, const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface);
@@ -21,10 +22,10 @@ class CommandPool
 	private:
 		const vk::Device& m_device;
 		const vk::PhysicalDevice& m_physicalDevice;
-		const vk::SurfaceKHR& m_surfac;
+		const vk::SurfaceKHR& m_surface;
 
 		vk::CommandPool m_commandPool;
-};
+	};
 
 
 };

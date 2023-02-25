@@ -18,3 +18,5 @@ static void ST_Point3DAdd(benchmark::State& state)
 }
 // Register the function as a benchmark
 BENCHMARK(ST_Point3DAdd);
+
+BENCHMARK_MAIN();

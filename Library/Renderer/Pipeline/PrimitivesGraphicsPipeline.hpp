@@ -1,5 +1,5 @@
-#ifndef RENDERER_PIPELINE_GRAPHICSPIPELINE_HPP
-#define RENDERER_PIPELINE_GRAPHICSPIPELINE_HPP
+#ifndef RENDERER_PIPELINE_PRIMITIVESGRAPHICSPIPELINE_HPP
+#define RENDERER_PIPELINE_PRIMITIVESGRAPHICSPIPELINE_HPP
 
 #include <vulkan/vulkan.hpp>
 #include <vector>
@@ -9,10 +9,10 @@ namespace st::renderer
 {
 
 
-	class GraphicsPipeline
+	class PrimitivesGraphicsPipeline
 	{
 	public:
-		GraphicsPipeline(const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const vk::RenderPass& renderPass);
+		PrimitivesGraphicsPipeline(const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const vk::RenderPass& renderPass);
 
 
 		void initialize();
@@ -32,7 +32,7 @@ namespace st::renderer
 		const vk::RenderPass& m_renderPass;
 
 
-		vk::Pipeline m_graphicsPipeline;
+		vk::Pipeline m_primitivesGraphicsPipeline;
 		vk::PipelineLayout m_pipelineLayout;
 		vk::PipelineCache m_pipelineCache;
 		std::vector<vk::DynamicState> m_dynamicStateEnables;

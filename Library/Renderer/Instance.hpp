@@ -6,29 +6,28 @@
 #include <vulkan/vulkan.hpp>
 
 
-namespace st::renderer {
-
-/*TODO Change it to ingletone?*/
-
-class StInstance
+namespace st::renderer
 {
-public:
-	StInstance();
 
-	void create();
+	/*TODO Change it to ingletone?*/
 
-	void destroy();
+	class StInstance
+	{
+	public:
+		StInstance();
+
+		void create();
+
+		void destroy();
 
 
-
-	const vk::Instance& getInstance() const;
-
+		const vk::Instance& getInstance() const;
 
 
-private:
-	vk::Instance m_instance;
-	DebugMessenger m_debugMessenger;
-};
+	private:
+		vk::Instance m_instance;
+		DebugMessenger m_debugMessenger;
+	};
 
 
 }

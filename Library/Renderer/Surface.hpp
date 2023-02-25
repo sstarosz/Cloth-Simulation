@@ -4,24 +4,20 @@
 #include <vulkan/vulkan.hpp>
 
 
-
-namespace st::renderer {
-
-
-
-class Surface
+namespace st::renderer
 {
-public:
-	Surface(const vk::SurfaceKHR surface);
+
+	class Surface
+	{
+	public:
+		Surface(const vk::SurfaceKHR surface);
 
 
+		const vk::SurfaceKHR& getSurface() const;
 
-	const vk::SurfaceKHR& getSurface() const;
-
-private:
-	const vk::SurfaceKHR m_surface;
-
-};
+	private:
+		const vk::SurfaceKHR m_surface;
+	};
 
 
 }

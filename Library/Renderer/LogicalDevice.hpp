@@ -5,15 +5,13 @@
 
 #include <array>
 
-namespace st::renderer {
-
-
-class LogicalDevice
+namespace st::renderer
 {
+
+	class LogicalDevice
+	{
 	public:
-		LogicalDevice(const vk::Instance& instance,
-					  const vk::PhysicalDevice& physicalDevice,
-					  const vk::SurfaceKHR& surface);
+		LogicalDevice(const vk::Instance& instance, const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface);
 
 		void initialize();
 		void releaseResources();
@@ -36,9 +34,8 @@ class LogicalDevice
 		vk::Queue m_graphicsQueue;
 		vk::Queue m_presentQueue;
 
-		constexpr static std::array m_deviceExtensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-};
-
+		constexpr static std::array m_deviceExtensions { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	};
 
 }
 

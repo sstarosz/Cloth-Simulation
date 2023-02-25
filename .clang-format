@@ -2,9 +2,10 @@
 ---
 AlignAfterOpenBracket: Align
 AlignArrayOfStructures: Left
-AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortFunctionsOnASingleLine: Empty
+AlignOperands: Align 
 AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortFunctionsOnASingleLine: Empty
 BasedOnStyle: WebKit
 BinPackArguments: false
 BinPackParameters: false
@@ -29,12 +30,16 @@ BraceWrapping:
   BeforeWhile: false
 BreakBeforeBraces: Custom
 BreakConstructorInitializers: AfterColon
-ColumnLimit: 120
+BreakBeforeBinaryOperators: None
+ExperimentalAutoDetectBinPacking: false
+ColumnLimit: 160
 Cpp11BracedListStyle: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
 IndentWidth: 4
 MaxEmptyLinesToKeep: 2
 NamespaceIndentation: All
-PackConstructorInitializers: Never
+PackConstructorInitializers: CurrentLine
+PenaltyBreakBeforeFirstCallParameter: 100
 PenaltyReturnTypeOnItsOwnLine: 80
 ReflowComments: false
 ReferenceAlignment: Left
