@@ -411,8 +411,8 @@ namespace st::renderer
 			vk::DescriptorImageInfo imageInfo { m_textureSampler, m_textureImageView, vk::ImageLayout::eShaderReadOnlyOptimal };
 
 			std::array<vk::WriteDescriptorSet, 2> graphicDescriptorWrites {
-				vk::WriteDescriptorSet { m_descriptorSets.at(i),  0, 0, vk::DescriptorType::eUniformBuffer, {}, bufferInfo, {}},
-				vk::WriteDescriptorSet { m_descriptorSets.at(i), 1, 0, vk::DescriptorType::eCombinedImageSampler, imageInfo, {}, {}}
+				vk::WriteDescriptorSet {m_descriptorSets.at(i),  0, 0, vk::DescriptorType::eUniformBuffer,        {},        bufferInfo, {}},
+				vk::WriteDescriptorSet { m_descriptorSets.at(i), 1, 0, vk::DescriptorType::eCombinedImageSampler, imageInfo, {},         {}}
 			};
 
 			std::array<vk::WriteDescriptorSet, 1> primitivesDescriptorWrites {

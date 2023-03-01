@@ -14,6 +14,8 @@
 #include "Renderer/Surface.hpp"
 #include "Renderer/Renderer.hpp"
 
+#include "Simulation/SimulationEngine.hpp"
+
 namespace st::viewport
 {
 	class VulkanWindow : public QWindow
@@ -49,6 +51,11 @@ namespace st::viewport
 		std::unique_ptr<renderer::Surface> m_surface;
 		std::unique_ptr<renderer::Renderer> m_renderer;
 
+
+		simulation::SimulationEngine m_simulationEngine;
+
+
+		  float deltaTime = 0.0f;
 
 #ifdef NDEBUG
 		const bool enableValidationLayers = false;

@@ -1,3 +1,6 @@
+cmake_minimum_required(VERSION 3.24)
+
+
 project(ViewPort3D
 		VERSION 0.0.1
 		DESCRIPTION "3D Viewport of aplication"
@@ -34,6 +37,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE ${Compiler_Flags})
 target_link_libraries(${PROJECT_NAME} 
 						PUBLIC
 						Renderer
+						Simulation
 						Vulkan::Vulkan
 						Qt6::Core
 						Qt6::Gui

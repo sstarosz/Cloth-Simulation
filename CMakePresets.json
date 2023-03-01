@@ -29,7 +29,7 @@
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl",
         "CMAKE_CXX_COMPILER": "cl",
-        "CMAKE_PREFIX_PATH": "C:/Qt/6.3.0/msvc2019_64/;${sourceDir}/CMake;"
+        "CMAKE_PREFIX_PATH": "C:/Qt/6.4.2/msvc2019_64/;${sourceDir}/CMake;"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
@@ -39,8 +39,7 @@
           "intelliSenseMode": "windows-msvc-x64",
           "disableExternalAnalysis": true,
           "enableMicrosoftCodeAnalysis": true,
-          "enableClangTidyCodeAnalysis": true,
-          "clangTidyChecks": "-header-filer=.* -checks=*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,performance-*,portability-*,readability-*"
+          "codeAnalysisRuleset": "AllRules"
         }
       }
     },

@@ -2,7 +2,7 @@
 
 #include <QMouseEvent>
 #include <QKeyEvent>
-
+#include <chrono>
 
 namespace st::viewport
 {
@@ -14,7 +14,7 @@ namespace st::viewport
 
 	void VulkanWindow::initialize()
 	{
-
+		m_simulationEngine.initialize();
 
 		m_instance->create();
 		createQtInstance(m_instance->getInstance());
@@ -150,7 +150,15 @@ namespace st::viewport
 
 	void VulkanWindow::update()
 	{
-		//simulate?
+		static auto previousTime = std::chrono::high_resolution_clock::now();
+
+		auto currentTime = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<float> elapsedTime = currentTime - previousTime;
+		previousTime = currentTime;
+		deltaTime = elapsedTime.count();
+
+		//simulation
+		m_simulationEngine.update(deltaTime);
 
 		//drawFrame();
 		m_renderer->renderFrame();

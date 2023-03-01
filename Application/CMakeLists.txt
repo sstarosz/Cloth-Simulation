@@ -1,6 +1,8 @@
-#Core Aplication
+cmake_minimum_required(VERSION 3.24)
+
 project(Cloth_Simulation_App 
         VERSION 0.0.1
+ 		DESCRIPTION "Main application which is the entry point of aplication" 
         LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
