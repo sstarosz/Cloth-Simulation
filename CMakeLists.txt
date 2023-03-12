@@ -10,7 +10,7 @@ project(Cloth_Simulation
 #Project option
 option(Build_Unit_Test  "Determine if build unit tests" ON)
 option(Build_Benchmarks "Determine if build benchmarks" ON)
-option(Asan_Enabled     "Build this target with AddressSanitizer" ON)
+option(Asan_Enabled     "Build this target with AddressSanitizer" OFF) #TODO
 
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -26,7 +26,7 @@ endif()
 if(Asan_Enabled)
     if(MSVC)
         #TODO - Enable santanizer  -fno-omit-frame-pointer
-        #list(APPEND Compiler_Flags "/fsanitize=address")
+        list(APPEND Compiler_Flags "/fsanitize=address")
     else()
         list(APPEND Compiler_Flags  "-fsanitize=address")
         list(APPEND Linker_Flags    "-fsanitize=address")

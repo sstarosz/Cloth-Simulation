@@ -17,6 +17,11 @@ namespace st::simulation
 		//Generate sphere
 
 		//Generate Plane(Cloth)
+
+
+		m_simulationParams.particleCountX = 1000;
+		m_simulationParams.particleCountY = 1000;
+
 	
 	}
 
@@ -26,6 +31,9 @@ namespace st::simulation
 		//For every particle
 		std::vector<Particle> particleIn;
 		std::vector<Particle> particleOut;
+
+
+
 
 		for (size_t idX = 0; idX < m_simulationParams.particleCountX; idX++)
 		{

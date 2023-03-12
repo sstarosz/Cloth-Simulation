@@ -34,6 +34,15 @@ namespace st::viewport
 
 
 		isInitialised = true;
+
+
+		//Model Menager
+		//// add spehere, static
+		//Load Sphere
+		//Load Plane (cloth)
+
+		//
+
 	}
 
 	void VulkanWindow::releaseResources()
