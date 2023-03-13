@@ -4,7 +4,11 @@ Cloth Simulation
 
 
 # How to build
-conan install .. -s build_type=Debug --build=missing
+Download C++ compiler used in your operating system
+Download Qt (Make sure that path to qt in CMakePresets.json is corresponding to your qt installation)
+Download vcpkg and put it folder above this project or put it in another folder and change CMakePresets.json toolchain path to your localization)
+
+
 
 
 # Progress (Current Status)
@@ -53,3 +57,12 @@ conan install .. -s build_type=Debug --build=missing
 
 # Validate format style
 cmake --build $(tmpDir)/format-validate-build --target run-validate
+
+
+
+
+## Visual studio and clang-tidy analysis
+
+CMakePresets sets visual studio and clang-tidy of analysis, but to really turning on clang tidy it is necessary to set clang ```CMAKE_CXX_CLANG_TIDY``` in CMakeLists.txt
+
+ClangTidy in CmakePresets.json works only when clang-cl is used as compiler

@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.24)
+
 project(Geometry
 		VERSION 0.0.1
 		DESCRIPTION "Library that hold the geometry"
@@ -12,7 +14,8 @@ set(SOURCES
 	"Object3D.cpp"
 	"Matrix4x4.cpp"
 	"Vector3.cpp"
-	"Vector4.cpp")
+	"Vector4.cpp"
+	"Line.cpp")
 
 set(HEADERS
 	"Math.hpp"
@@ -21,7 +24,8 @@ set(HEADERS
 	"Object3D.hpp"
 	"Matrix4x4.hpp"
 	"Vector3.hpp"
-	"Vector4.hpp")
+	"Vector4.hpp"
+	"Line.hpp")
 
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})

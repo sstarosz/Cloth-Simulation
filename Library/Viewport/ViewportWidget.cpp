@@ -3,34 +3,37 @@
 #include <QTimer>
 #include <QVBoxLayout>
 
-namespace st::viewport {
-ViewportWidget::ViewportWidget()
+namespace st::viewport
 {
 
-    auto* viewportLayout = new QVBoxLayout();
+	ViewportWidget::ViewportWidget()
+	{
 
-    /* Viewport Layout*/
-    vulkan_window = new VulkanWindow;
-    auto* vulkanContainer = QWidget::createWindowContainer(vulkan_window);
-    vulkanContainer->setFocusPolicy(Qt::StrongFocus);
-    vulkanContainer->setFocus();
-    //vulkanContainer->setMinimumSize(800, 800);
-    //vulkanContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+		auto* viewportLayout = new QVBoxLayout();
 
-    viewportLayout->addWidget(vulkanContainer);
+		/* Viewport Layout*/
+		vulkan_window = new VulkanWindow;
+		auto* vulkanContainer = QWidget::createWindowContainer(vulkan_window);
+		vulkanContainer->setFocusPolicy(Qt::StrongFocus);
+		vulkanContainer->setFocus();
+		//vulkanContainer->setMinimumSize(800, 800);
+		//vulkanContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    setLayout(viewportLayout);
+		viewportLayout->addWidget(vulkanContainer);
 
-    QTimer::singleShot(2, this, &ViewportWidget::init);
-}
+		setLayout(viewportLayout);
 
-void ViewportWidget::init()
-{
-    vulkan_window->initialize();
-}
-void ViewportWidget::closeEvent(QCloseEvent* event)
-{
-    vulkan_window->releaseResources();
-}
+		QTimer::singleShot(2, this, &ViewportWidget::init);
+	}
+
+	void ViewportWidget::init()
+	{
+		vulkan_window->initialize();
+	}
+
+	void ViewportWidget::closeEvent(QCloseEvent* event)
+	{
+		vulkan_window->releaseResources();
+	}
 
 } // namespace st::viewport

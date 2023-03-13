@@ -2,6 +2,7 @@
 
 #include <QPainter>
 
+namespace st {
 NavigationBar::NavigationBar():
 QListView()
 {
@@ -66,4 +67,6 @@ QSize NavigationBarItemDelegate::sizeHint(const QStyleOptionViewItem& option,
 										  const QModelIndex& index) const
 {
 	return QSize(100, 100);
+}
+
 }

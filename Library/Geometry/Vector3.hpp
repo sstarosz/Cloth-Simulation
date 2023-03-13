@@ -58,6 +58,8 @@ namespace st::geometry
 			return { X * Vec.X, Y * Vec.Y, Z * Vec.Z };
 	    }
 
+
+
 		constexpr Vector3 operator/(const Vector3& Vec) const
 		{
 			return { X / Vec.X, Y / Vec.Y, Z / Vec.Z };
@@ -95,6 +97,12 @@ namespace st::geometry
 			const float ms = 1.0F / Scale;
 			return { X * ms, Y * ms, Z * ms };
 		}
+
+        friend constexpr Vector3 operator*(float scalar, const Vector3& Vec)
+		{
+			return { scalar * Vec.X, scalar * Vec.Y, scalar * Vec.Z };
+		}
+
 
         //Negation
 		inline constexpr Vector3 operator-() const

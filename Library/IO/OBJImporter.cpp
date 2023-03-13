@@ -107,9 +107,9 @@ void ObjImporter::readFromFile(const std::filesystem::path& pathToObjFile)
         for (const auto& eleOfFace : std::views::split(face, ' '))
         {
           std::string vertex(eleOfFace.begin(), eleOfFace.end());
-          std::stringstream localStream(vertex);
+          std::stringstream faceLocalStream(vertex);
           //localStream.ignore(vertex.length(), ',');
-          localStream >> std::ws >> geoId >> separator >> texId >> separator >> norId;
+		  faceLocalStream >> std::ws >> geoId >> separator >> texId >> separator >> norId;
 
           //Obj file format index from 1 so we need to substrat 1 to indexing from 0
           faceIndexes.emplace_back(geoId - 1, texId - 1, norId - 1);

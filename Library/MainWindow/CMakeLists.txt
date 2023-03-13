@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.24)
+
 project(MainWindow
 		VERSION 0.0.1
 		DESCRIPTION "Main Window of Aplication"

@@ -6,9 +6,10 @@
 #include "VulkanWindow.hpp"
 
 
-namespace st::viewport {
-class ViewportWidget : public QWidget
+namespace st::viewport
 {
+	class ViewportWidget : public QWidget
+	{
 		Q_OBJECT
 
 	public:
@@ -16,13 +17,13 @@ class ViewportWidget : public QWidget
 
 		void init();
 
-protected:
-	void closeEvent(QCloseEvent* event) override;
+	protected:
+		void closeEvent(QCloseEvent* event) override;
 
 
 	private:
 		VulkanWindow* vulkan_window;
-};
+	};
 
 };
 
