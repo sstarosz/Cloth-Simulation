@@ -36,7 +36,9 @@ namespace st::viewport
 		isInitialised = true;
 
 
+
 		//Model Menager
+		// Model Menager addModel (GenerateSphere)
 		//// add spehere, static
 		//Load Sphere
 		//Load Plane (cloth)

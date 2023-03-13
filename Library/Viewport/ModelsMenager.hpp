@@ -2,25 +2,43 @@
 #define VIEWPORT_MODELSMENAGER_HPP
 
 #include <Geometry/Vector3.hpp>
+#include <Geometry/Vertex.hpp>
 
 namespace st::viewport
 {
+	using namespace geometry;
+
+
 	class Model
 	{
 
+		std::vector<Vector3> geometry;
 	};
+
 	
+	class ModelMetaData
+	{
+
+	};
+
+
 
 	class Sphere
 	{
 
 		public:
-		Sphere(geometry::Vector3 position, float radius, uint32_t subdivisionWidth, uint32_t subdivisionHeight);
+		Sphere(Vector3 position, float radius, uint32_t subdivisionWidth, uint32_t subdivisionHeight);
 
 
-		geometry::Vector3 position;
-		
+		//const Model& model;
+
+		std::vector<Vertex> m_geometry;
 	};
+
+
+
+
+
 
 
 	class ModelsMenager
@@ -40,6 +58,8 @@ namespace st::viewport
 
 	private:
 		// List of all models
+
+		//Medata
 	};
 
 };

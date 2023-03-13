@@ -26,7 +26,7 @@ endif()
 if(Asan_Enabled)
     if(MSVC)
         #TODO - Enable santanizer  -fno-omit-frame-pointer
-        list(APPEND Compiler_Flags "/fsanitize=address")
+        #list(APPEND Compiler_Flags "/fsanitize=address")
     else()
         list(APPEND Compiler_Flags  "-fsanitize=address")
         list(APPEND Linker_Flags    "-fsanitize=address")

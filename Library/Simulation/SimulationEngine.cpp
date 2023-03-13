@@ -19,8 +19,8 @@ namespace st::simulation
 		//Generate Plane(Cloth)
 
 
-		m_simulationParams.particleCountX = 1000;
-		m_simulationParams.particleCountY = 1000;
+		m_simulationParams.particleCountX = 99;
+		m_simulationParams.particleCountY = 99;
 
 	
 	}
@@ -29,8 +29,8 @@ namespace st::simulation
 	{
 
 		//For every particle
-		std::vector<Particle> particleIn;
-		std::vector<Particle> particleOut;
+		std::vector<Particle> particleIn(10000, Particle{{ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0F});
+		std::vector<Particle> particleOut(10000, Particle{{ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, 0.0F});
 
 
 
