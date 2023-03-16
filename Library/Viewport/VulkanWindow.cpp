@@ -50,6 +50,7 @@ namespace st::viewport
 	void VulkanWindow::releaseResources()
 	{
 		m_renderer->releaseResources();
+		isInitialised = false;
 	}
 
 	void VulkanWindow::createQtInstance(vk::Instance instance)
@@ -82,9 +83,11 @@ namespace st::viewport
 			break;
 
 		case QEvent::PlatformSurface:
-			// When windows is created or deleted
-			// d->releaseSwapChain();
-			//d->reset();
+			if (static_cast<QPlatformSurfaceEvent*>(event)->surfaceEventType() == QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed)
+			{
+				m_renderer->releaseResources();
+				isInitialised = false;
+			}
 			break;
 
 		default:

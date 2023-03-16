@@ -53,6 +53,8 @@ namespace st::renderer
 
 	void Renderer::releaseResources()
 	{
+		m_logicalDevice.getDevice().waitIdle();
+		m_swapChain.releaseResources();
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 		{
@@ -60,7 +62,16 @@ namespace st::renderer
 			m_logicalDevice.getDevice().freeMemory(m_uniformBuffersMemory[i]);
 		}
 
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+		{
+			m_logicalDevice.getDevice().destroySemaphore(m_renderFinishedSemaphores[i]);
+			m_logicalDevice.getDevice().destroySemaphore(m_imageAvailableSemaphores[i]);
+			m_logicalDevice.getDevice().destroyFence(m_inFlightFences[i]);
+		}
+
 		m_logicalDevice.getDevice().destroyDescriptorPool(m_descriptorPool);
+		m_logicalDevice.getDevice().destroyDescriptorPool(m_lineDescriptorPool);
+
 
 		m_logicalDevice.getDevice().destroySampler(m_textureSampler);
 		m_logicalDevice.getDevice().destroyImageView(m_textureImageView);
@@ -70,17 +81,20 @@ namespace st::renderer
 
 		m_logicalDevice.getDevice().destroyBuffer(m_indexBuffer);
 		m_logicalDevice.getDevice().freeMemory(m_indexBufferMemory);
+		m_logicalDevice.getDevice().destroyBuffer(m_lineIndexBuffer);
+		m_logicalDevice.getDevice().freeMemory(m_lineIndexBufferMemory);
 
 		m_logicalDevice.getDevice().destroyBuffer(m_vertexBuffer);
 		m_logicalDevice.getDevice().freeMemory(m_vertexBufferMemory);
-
+		m_logicalDevice.getDevice().destroyBuffer(m_lineVertexBuffer);
+		m_logicalDevice.getDevice().freeMemory(m_lineVertexBufferMemory);
 
 		//Reverse order then initialization
 		m_framebuffer.releaseResources();
 		m_commandPool.releaseResources();
 		m_graphicPipeline.releaseResources();
+		m_primitivesGraphicPipeline.releaseResources();
 		m_renderPass.releaseResources();
-		m_swapChain.releaseResources();
 		m_logicalDevice.releaseResources();
 		m_physicalDevice.releaseResources();
 	}
@@ -196,13 +210,37 @@ namespace st::renderer
 										 m_vertexBuffer,
 										 m_vertexBufferMemory);
 
-			//m_memoryManager.createBuffer(lineBufferSize,
-			//							 vk::BufferUsageFlagBits::eVertexBuffer,
-			//							 vk::MemoryPropertyFlagBits::eHostVisible
-			//								 | vk::MemoryPropertyFlagBits::eHostCoherent,
-			//							 m_lineVertexBuffer,
-			//							 m_lineVertexBufferMemory);
-			//
+
+			//Line
+			vk::DeviceSize lineBufferSize = sizeof(m_lines[0]) * m_lines.size();
+
+			vk::Buffer lineStagingBuffer;
+			vk::DeviceMemory lineStagingBufferMemory;
+
+
+			m_memoryManager.createBuffer(lineBufferSize,
+										 vk::BufferUsageFlagBits::eTransferSrc,
+										 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+										 lineStagingBuffer,
+										 lineStagingBufferMemory);
+
+			void* lineData = m_logicalDevice.getDevice().mapMemory(lineStagingBufferMemory, 0, lineBufferSize);
+			memcpy(lineData, m_lines.data(), (size_t)lineBufferSize); //vertices should fullfil trival object specyfication?
+			m_logicalDevice.getDevice().unmapMemory(lineStagingBufferMemory);
+
+			m_memoryManager.createBuffer(lineBufferSize,
+										 vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer,
+										 vk::MemoryPropertyFlagBits::eDeviceLocal,
+										 m_lineVertexBuffer,
+										 m_lineVertexBufferMemory);
+
+			m_memoryManager.copyBuffer(lineStagingBuffer, m_lineVertexBuffer, lineBufferSize);
+
+			m_logicalDevice.getDevice().destroyBuffer(lineStagingBuffer);
+			m_logicalDevice.getDevice().freeMemory(lineStagingBufferMemory);
+
+
+
 			isBufferInitialized = true;
 		}
 
@@ -214,41 +252,11 @@ namespace st::renderer
 		std::memcpy(data.data(), m_vertices.data(),
 					static_cast<size_t>(bufferSize)); //vertices should fulfill trivial object specification?
 
-		//std::memcpy(lineData.data(),
-		//			m_lines.data(),
-		//			static_cast<size_t>(lineBufferSize));
-
-
 		m_logicalDevice.getDevice().unmapMemory(m_vertexBufferMemory);
 		//m_logicalDevice.getDevice().unmapMemory(m_lineVertexBufferMemory);
 
 
-		vk::DeviceSize lineBufferSize = sizeof(m_lines[0]) * m_lines.size();
 
-		vk::Buffer lineStagingBuffer;
-		vk::DeviceMemory lineStagingBufferMemory;
-
-
-		m_memoryManager.createBuffer(lineBufferSize,
-									 vk::BufferUsageFlagBits::eTransferSrc,
-									 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-									 lineStagingBuffer,
-									 lineStagingBufferMemory);
-
-		void* lineData = m_logicalDevice.getDevice().mapMemory(lineStagingBufferMemory, 0, lineBufferSize);
-		memcpy(lineData, m_lines.data(), (size_t)lineBufferSize); //vertices should fullfil trival object specyfication?
-		m_logicalDevice.getDevice().unmapMemory(lineStagingBufferMemory);
-
-		m_memoryManager.createBuffer(lineBufferSize,
-									 vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer,
-									 vk::MemoryPropertyFlagBits::eDeviceLocal,
-									 m_lineVertexBuffer,
-									 m_lineVertexBufferMemory);
-
-		m_memoryManager.copyBuffer(lineStagingBuffer, m_lineVertexBuffer, lineBufferSize);
-
-		m_logicalDevice.getDevice().destroyBuffer(lineStagingBuffer);
-		m_logicalDevice.getDevice().freeMemory(lineStagingBufferMemory);
 	}
 
 	void Renderer::createIndexBuffer()
@@ -525,10 +533,10 @@ namespace st::renderer
 		static float time { 0.0F };
 
 
-		const float amplitude = 0.01F;
-		const float frequency = 0.1F;
+		constexpr float amplitude { 0.01F };
+		constexpr float frequency { 0.1F };
 		const float moveX = amplitude * std::cos(frequency * time);
-		std::cout << moveX << std::endl;
+		//std::cout << moveX << std::endl;
 
 		for (auto& vertex : m_vertices)
 		{

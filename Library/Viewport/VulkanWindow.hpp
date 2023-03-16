@@ -54,8 +54,7 @@ namespace st::viewport
 
 		simulation::SimulationEngine m_simulationEngine;
 
-
-		  float deltaTime = 0.0f;
+		float deltaTime = 0.0f;
 
 #ifdef NDEBUG
 		const bool enableValidationLayers = false;

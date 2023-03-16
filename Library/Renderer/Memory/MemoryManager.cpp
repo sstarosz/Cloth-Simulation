@@ -47,7 +47,7 @@ namespace st::renderer
 		m_device.bindBufferMemory(buffer, bufferMemory, 0);
 	}
 
-	void MemoryManager::copyBuffer(vk::Buffer srcBuffer, vk::Buffer dstBuffer, vk::DeviceSize size)
+	void MemoryManager::copyBuffer(const vk::Buffer& srcBuffer, vk::Buffer& dstBuffer, vk::DeviceSize size)
 	{
 		vk::CommandBufferAllocateInfo allocInfo { m_commandPool, vk::CommandBufferLevel::ePrimary, 1 };
 

@@ -17,10 +17,6 @@ namespace st::viewport
 
 		void init();
 
-	protected:
-		void closeEvent(QCloseEvent* event) override;
-
-
 	private:
 		VulkanWindow* vulkan_window;
 	};

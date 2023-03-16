@@ -61,12 +61,12 @@ namespace st::renderer
 	void SwapChain::releaseResources()
 	{
 
+
 		for (auto& imageView : m_swapChainImageViews)
 		{
-			m_device.destroy(imageView);
+			m_device.destroyImageView(imageView);
 		}
 		m_swapChainImageViews.clear();
-
 
 		m_device.destroySwapchainKHR(m_swapChain);
 	}
