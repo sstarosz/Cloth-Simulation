@@ -1,10 +1,9 @@
 #include "Renderer.hpp"
 #include "ValidationLayers.hpp"
 #include "Extensions.hpp"
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 #include <iostream>
 #include <chrono>
+
 
 namespace st::renderer
 {
@@ -37,12 +36,14 @@ namespace st::renderer
 		m_framebuffer.initialize();
 
 
-		createTextureImage();
-		createTextureImageView();
+		//createTextureImage();
+		//createTextureImageView();
 		createTextureSampler();
 
 		createUniformBuffers();
-		loadModel();
+		//loadModel();
+
+		//Initialize primitives (gizmo, grid, axis, etc)
 		createVertexBuffer();
 		createIndexBuffer();
 		createDescriptorPool();
@@ -60,19 +61,30 @@ namespace st::renderer
 			m_logicalDevice.getDevice().freeMemory(m_uniformBuffersMemory[i]);
 		}
 
-		m_logicalDevice.getDevice().destroyDescriptorPool(m_descriptorPool);
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+		{
+			m_logicalDevice.getDevice().destroySemaphore(m_renderFinishedSemaphores[i]);
+			m_logicalDevice.getDevice().destroySemaphore(m_imageAvailableSemaphores[i]);
+			m_logicalDevice.getDevice().destroyFence(m_inFlightFences[i]);
+		}
+
+		m_logicalDevice.getDevice().destroyDescriptorPool(m_primitiveDescriptorPool);
 
 		m_logicalDevice.getDevice().destroySampler(m_textureSampler);
-		m_logicalDevice.getDevice().destroyImageView(m_textureImageView);
+		//m_logicalDevice.getDevice().destroyImageView(m_textureImageView);
+		//
+		//m_logicalDevice.getDevice().destroyImage(m_textureImage);
+		//m_logicalDevice.getDevice().freeMemory(m_textureImageMemory);
 
-		m_logicalDevice.getDevice().destroyImage(m_textureImage);
-		m_logicalDevice.getDevice().freeMemory(m_textureImageMemory);
+		//m_logicalDevice.getDevice().destroyBuffer(m_indexBuffer);
+		//m_logicalDevice.getDevice().freeMemory(m_indexBufferMemory);
+		m_logicalDevice.getDevice().destroyBuffer(m_lineIndexBuffer);
+		m_logicalDevice.getDevice().freeMemory(m_lineIndexBufferMemory);
 
-		m_logicalDevice.getDevice().destroyBuffer(m_indexBuffer);
-		m_logicalDevice.getDevice().freeMemory(m_indexBufferMemory);
-
-		m_logicalDevice.getDevice().destroyBuffer(m_vertexBuffer);
-		m_logicalDevice.getDevice().freeMemory(m_vertexBufferMemory);
+		//m_logicalDevice.getDevice().destroyBuffer(m_vertexBuffer);
+		//.getDevice().freeMemory(m_vertexBufferMemory);
+		m_logicalDevice.getDevice().destroyBuffer(m_lineVertexBuffer);
+		m_logicalDevice.getDevice().freeMemory(m_lineVertexBufferMemory);
 
 
 		//Reverse order then initialization
@@ -85,18 +97,16 @@ namespace st::renderer
 		m_physicalDevice.releaseResources();
 	}
 
+	void Renderer::addResources(const Mesh& mesh) 
+	{ 
 
-	//void Renderer::mainLoop()
-	//{
+		//if model then
+		//create vertexBuffer
+			//if have texture
+				//create texture
 
-	//while(end)?
-	//read event?
-	//events from qt as signals so is not needed?
-
-	//simulate
-	//render
-
-	//}
+		addMesh(mesh);
+	}
 
 	void Renderer::renderFrame()
 	{
@@ -110,7 +120,7 @@ namespace st::renderer
 		auto [result, imageIndex] =
 			m_logicalDevice.getDevice().acquireNextImageKHR(m_swapChain.getSwapchain(), UINT64_MAX, m_imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE);
 
-		updateGeometry();
+		//updateGeometry();
 		updateUniformBuffer(currentFrame);
 
 
@@ -181,102 +191,70 @@ namespace st::renderer
 
 	void Renderer::createVertexBuffer()
 	{
-
-		vk::DeviceSize bufferSize = sizeof(m_vertices[0]) * m_vertices.size();
-		//vk::DeviceSize lineBufferSize = sizeof(m_lines[0]) * m_lines.size();
-
-
 		if (!isBufferInitialized)
 		{
+			vk::DeviceSize lineBufferSize = sizeof(m_lines[0]) * m_lines.size();
 
-			//TODO - Allocate more space
-			m_memoryManager.createBuffer(bufferSize,
-										 vk::BufferUsageFlagBits::eVertexBuffer,
+			vk::Buffer lineStagingBuffer;
+			vk::DeviceMemory lineStagingBufferMemory;
+
+
+			m_memoryManager.createBuffer(lineBufferSize,
+										 vk::BufferUsageFlagBits::eTransferSrc,
 										 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-										 m_vertexBuffer,
-										 m_vertexBufferMemory);
+										 lineStagingBuffer,
+										 lineStagingBufferMemory);
 
-			//m_memoryManager.createBuffer(lineBufferSize,
-			//							 vk::BufferUsageFlagBits::eVertexBuffer,
-			//							 vk::MemoryPropertyFlagBits::eHostVisible
-			//								 | vk::MemoryPropertyFlagBits::eHostCoherent,
-			//							 m_lineVertexBuffer,
-			//							 m_lineVertexBufferMemory);
-			//
+			void* lineData = m_logicalDevice.getDevice().mapMemory(lineStagingBufferMemory, 0, lineBufferSize);
+			memcpy(lineData, m_lines.data(), (size_t)lineBufferSize); //vertices should fullfil trival object specyfication?
+			m_logicalDevice.getDevice().unmapMemory(lineStagingBufferMemory);
+
+			m_memoryManager.createBuffer(lineBufferSize,
+										 vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer,
+										 vk::MemoryPropertyFlagBits::eDeviceLocal,
+										 m_lineVertexBuffer,
+										 m_lineVertexBufferMemory);
+
+			m_memoryManager.copyBuffer(lineStagingBuffer, m_lineVertexBuffer, lineBufferSize);
+
+			m_logicalDevice.getDevice().destroyBuffer(lineStagingBuffer);
+			m_logicalDevice.getDevice().freeMemory(lineStagingBufferMemory);
 			isBufferInitialized = true;
 		}
 
 
-		std::span<std::byte> data { static_cast<std::byte*>(m_logicalDevice.getDevice().mapMemory(m_vertexBufferMemory, 0, bufferSize)), bufferSize };
-		//std::span<std::byte> lineData { static_cast<std::byte*>(m_logicalDevice.getDevice().mapMemory(m_lineVertexBufferMemory, 0, lineBufferSize)),lineBufferSize};
-
-		//TODO multiple memcpy per object
-		std::memcpy(data.data(), m_vertices.data(),
-					static_cast<size_t>(bufferSize)); //vertices should fulfill trivial object specification?
-
-		//std::memcpy(lineData.data(),
-		//			m_lines.data(),
-		//			static_cast<size_t>(lineBufferSize));
 
 
-		m_logicalDevice.getDevice().unmapMemory(m_vertexBufferMemory);
-		//m_logicalDevice.getDevice().unmapMemory(m_lineVertexBufferMemory);
 
-
-		vk::DeviceSize lineBufferSize = sizeof(m_lines[0]) * m_lines.size();
-
-		vk::Buffer lineStagingBuffer;
-		vk::DeviceMemory lineStagingBufferMemory;
-
-
-		m_memoryManager.createBuffer(lineBufferSize,
-									 vk::BufferUsageFlagBits::eTransferSrc,
-									 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-									 lineStagingBuffer,
-									 lineStagingBufferMemory);
-
-		void* lineData = m_logicalDevice.getDevice().mapMemory(lineStagingBufferMemory, 0, lineBufferSize);
-		memcpy(lineData, m_lines.data(), (size_t)lineBufferSize); //vertices should fullfil trival object specyfication?
-		m_logicalDevice.getDevice().unmapMemory(lineStagingBufferMemory);
-
-		m_memoryManager.createBuffer(lineBufferSize,
-									 vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer,
-									 vk::MemoryPropertyFlagBits::eDeviceLocal,
-									 m_lineVertexBuffer,
-									 m_lineVertexBufferMemory);
-
-		m_memoryManager.copyBuffer(lineStagingBuffer, m_lineVertexBuffer, lineBufferSize);
-
-		m_logicalDevice.getDevice().destroyBuffer(lineStagingBuffer);
-		m_logicalDevice.getDevice().freeMemory(lineStagingBufferMemory);
+		
 	}
 
 	void Renderer::createIndexBuffer()
 	{
-		vk::DeviceSize bufferSize = sizeof(m_indices[0]) * m_indices.size();
-
-		vk::Buffer stagingBuffer;
-		vk::DeviceMemory stagingBufferMemory;
-		m_memoryManager.createBuffer(bufferSize,
-									 vk::BufferUsageFlagBits::eTransferSrc,
-									 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-									 stagingBuffer,
-									 stagingBufferMemory);
-
-		void* data = m_logicalDevice.getDevice().mapMemory(stagingBufferMemory, 0, bufferSize);
-		memcpy(data, m_indices.data(), (size_t)bufferSize);
-		m_logicalDevice.getDevice().unmapMemory(stagingBufferMemory);
-
-		m_memoryManager.createBuffer(bufferSize,
-									 vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer,
-									 vk::MemoryPropertyFlagBits::eDeviceLocal,
-									 m_indexBuffer,
-									 m_indexBufferMemory);
-
-		m_memoryManager.copyBuffer(stagingBuffer, m_indexBuffer, bufferSize);
-
-		m_logicalDevice.getDevice().destroyBuffer(stagingBuffer);
-		m_logicalDevice.getDevice().freeMemory(stagingBufferMemory);
+		//vk::DeviceSize bufferSize = sizeof(m_indices[0]) * m_indices.size();
+		//
+		//vk::Buffer stagingBuffer;
+		//vk::DeviceMemory stagingBufferMemory;
+		//m_memoryManager.createBuffer(bufferSize,
+		//							 vk::BufferUsageFlagBits::eTransferSrc,
+		//							 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+		//							 stagingBuffer,
+		//							 stagingBufferMemory);
+		//
+		//void* data = m_logicalDevice.getDevice().mapMemory(stagingBufferMemory, 0, bufferSize);
+		//memcpy(data, m_indices.data(), (size_t)bufferSize);
+		//m_logicalDevice.getDevice().unmapMemory(stagingBufferMemory);
+		//
+		//m_memoryManager.createBuffer(bufferSize,
+		//							 vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer,
+		//							 vk::MemoryPropertyFlagBits::eDeviceLocal,
+		//							 m_indexBuffer,
+		//							 m_indexBufferMemory);
+		//
+		//m_memoryManager.copyBuffer(stagingBuffer, m_indexBuffer, bufferSize);
+		//
+		//m_logicalDevice.getDevice().destroyBuffer(stagingBuffer);
+		//m_logicalDevice.getDevice().freeMemory(stagingBufferMemory);
 
 
 		//---------------------------------Line-------------------------------------------------------
@@ -309,7 +287,7 @@ namespace st::renderer
 	void Renderer::createUniformBuffers()
 	{
 
-		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+		const VkDeviceSize bufferSize = sizeof(UniformBufferObject);
 
 		m_uniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
 		m_uniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
@@ -376,114 +354,108 @@ namespace st::renderer
 
 	void Renderer::createDescriptorPool()
 	{
-		vk::DescriptorPoolSize poolSize { vk::DescriptorType::eUniformBuffer, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT) };
+		vk::DescriptorPoolSize poolsSize { vk::DescriptorType::eUniformBuffer, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT) };
+	
+		vk::DescriptorPoolCreateInfo poolInfo { {}, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT), poolsSize };
 
-		vk::DescriptorPoolCreateInfo poolInfo { {}, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT), poolSize };
-
-		m_descriptorPool = m_logicalDevice.getDevice().createDescriptorPool(poolInfo);
-
-
-		//Create Line Pool
-		vk::DescriptorPoolSize linePoolSize { vk::DescriptorType::eUniformBuffer, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT) };
-
-		vk::DescriptorPoolCreateInfo linePoolInfo { {}, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT), linePoolSize };
-
-		m_lineDescriptorPool = m_logicalDevice.getDevice().createDescriptorPool(linePoolInfo);
+		m_primitiveDescriptorPool = m_logicalDevice.getDevice().createDescriptorPool(poolInfo);
 	}
 
 	void Renderer::createDescriptorSets()
 	{
-		std::vector<vk::DescriptorSetLayout> graphicLayouts(MAX_FRAMES_IN_FLIGHT, m_graphicPipeline.getDescriptorSetLayout());
+		//std::vector<vk::DescriptorSetLayout> graphicLayouts(MAX_FRAMES_IN_FLIGHT, m_graphicPipeline.getDescriptorSetLayout());
 		std::vector<vk::DescriptorSetLayout> primitiveLayouts(MAX_FRAMES_IN_FLIGHT, m_primitivesGraphicPipeline.getDescriptorSetLayout());
+		//graphicLayouts.insert(graphicLayouts.end(), primitiveLayouts.begin(), primitiveLayouts.end());
 
-		vk::DescriptorSetAllocateInfo graphicAllocInfo { m_descriptorPool, graphicLayouts };
-		vk::DescriptorSetAllocateInfo primitiveAllocInfo { m_lineDescriptorPool, primitiveLayouts };
+		vk::DescriptorSetAllocateInfo graphicAllocInfo { m_primitiveDescriptorPool, primitiveLayouts };
 
 
-		m_descriptorSets = m_logicalDevice.getDevice().allocateDescriptorSets(graphicAllocInfo);
-		m_lineDescriptorSets = m_logicalDevice.getDevice().allocateDescriptorSets(primitiveAllocInfo);
+		m_primitiveDescriptorSets = m_logicalDevice.getDevice().allocateDescriptorSets(graphicAllocInfo);
+
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 		{
 			vk::DescriptorBufferInfo bufferInfo { m_uniformBuffers.at(i), 0, sizeof(UniformBufferObject) };
 
 
-			vk::DescriptorImageInfo imageInfo { m_textureSampler, m_textureImageView, vk::ImageLayout::eShaderReadOnlyOptimal };
-
-			std::array<vk::WriteDescriptorSet, 2> graphicDescriptorWrites {
-				vk::WriteDescriptorSet {m_descriptorSets.at(i),  0, 0, vk::DescriptorType::eUniformBuffer,        {},        bufferInfo, {}},
-				vk::WriteDescriptorSet { m_descriptorSets.at(i), 1, 0, vk::DescriptorType::eCombinedImageSampler, imageInfo, {},         {}}
-			};
+			//vk::DescriptorImageInfo imageInfo { m_textureSampler, m_textureImageView, vk::ImageLayout::eShaderReadOnlyOptimal };
+			//
+			//std::array<vk::WriteDescriptorSet, 2> graphicDescriptorWrites {
+			//	vk::WriteDescriptorSet { m_descriptorSets.at(i),  0, 0, vk::DescriptorType::eUniformBuffer,        {},        bufferInfo, {}},
+			//	vk::WriteDescriptorSet { m_descriptorSets.at(i),  1, 0, vk::DescriptorType::eCombinedImageSampler, imageInfo, {},         {}}
+			//};
 
 			std::array<vk::WriteDescriptorSet, 1> primitivesDescriptorWrites {
-				vk::WriteDescriptorSet {m_lineDescriptorSets.at(i), 0, 0, vk::DescriptorType::eUniformBuffer, {}, bufferInfo, {}}
+				vk::WriteDescriptorSet {m_primitiveDescriptorSets.at(i), 0, 0, vk::DescriptorType::eUniformBuffer, {}, bufferInfo, {}}
 			};
 
 
-			m_logicalDevice.getDevice().updateDescriptorSets(graphicDescriptorWrites, {});
+			//m_logicalDevice.getDevice().updateDescriptorSets(graphicDescriptorWrites, {});
 			m_logicalDevice.getDevice().updateDescriptorSets(primitivesDescriptorWrites, {});
+
 		}
 	}
 
 	void Renderer::createTextureImage()
 	{
-		int texWidth = 0;
-		int texHeight = 0;
-		int texChannels = 0;
-
-		stbi_uc* pixels = stbi_load("../Assets/Textures/texture2.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-
-		vk::DeviceSize imageSize = texWidth * texHeight * 4;
-
-		if (!pixels)
-		{
-			throw std::runtime_error("Failed to load texture image!");
-		}
-
-		vk::Buffer stagingBuffer;
-		vk::DeviceMemory stagingBufferMemory;
-
-		m_memoryManager.createBuffer(imageSize,
-									 vk::BufferUsageFlagBits::eTransferSrc,
-									 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-									 stagingBuffer,
-									 stagingBufferMemory);
-
-		void* data = m_logicalDevice.getDevice().mapMemory(stagingBufferMemory, 0, imageSize);
-		memcpy(data, pixels, static_cast<size_t>(imageSize));
-		m_logicalDevice.getDevice().unmapMemory(stagingBufferMemory);
-
-		stbi_image_free(pixels);
-
-		m_imageManager.createImage(texWidth,
-								   texHeight,
-								   vk::Format::eR8G8B8A8Srgb,
-								   vk::ImageTiling::eOptimal,
-								   vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled,
-								   vk::MemoryPropertyFlagBits::eDeviceLocal,
-								   m_textureImage,
-								   m_textureImageMemory);
-
-		m_imageManager.transitionImageLayout(m_textureImage, vk::Format::eR8G8B8A8Srgb, vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal);
-
-		m_imageManager.copyBufferToImage(stagingBuffer, m_textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
-
-		m_imageManager.transitionImageLayout(m_textureImage,
-											 vk::Format::eR8G8B8A8Srgb,
-											 vk::ImageLayout::eTransferDstOptimal,
-											 vk::ImageLayout::eShaderReadOnlyOptimal);
-
-		m_logicalDevice.getDevice().destroyBuffer(stagingBuffer);
-		m_logicalDevice.getDevice().freeMemory(stagingBufferMemory);
+		//int texWidth = 0;
+		//int texHeight = 0;
+		//int texChannels = 0;
+		//
+		//stbi_uc* pixels = stbi_load("../Assets/Textures/texture2.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+		//
+		//vk::DeviceSize imageSize = texWidth * texHeight * 4;
+		//
+		//if (!pixels)
+		//{
+		//	throw std::runtime_error("Failed to load texture image!");
+		//}
+		//
+		//vk::Buffer stagingBuffer;
+		//vk::DeviceMemory stagingBufferMemory;
+		//
+		//m_memoryManager.createBuffer(imageSize,
+		//							 vk::BufferUsageFlagBits::eTransferSrc,
+		//							 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+		//							 stagingBuffer,
+		//							 stagingBufferMemory);
+		//
+		//void* data = m_logicalDevice.getDevice().mapMemory(stagingBufferMemory, 0, imageSize);
+		//memcpy(data, pixels, static_cast<size_t>(imageSize));
+		//m_logicalDevice.getDevice().unmapMemory(stagingBufferMemory);
+		//
+		//stbi_image_free(pixels);
+		//
+		//m_imageManager.createImage(texWidth,
+		//						   texHeight,
+		//						   vk::Format::eR8G8B8A8Srgb,
+		//						   vk::ImageTiling::eOptimal,
+		//						   vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled,
+		//						   vk::MemoryPropertyFlagBits::eDeviceLocal,
+		//						   m_textureImage,
+		//						   m_textureImageMemory);
+		//
+		//m_imageManager.transitionImageLayout(m_textureImage, vk::Format::eR8G8B8A8Srgb, vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal);
+		//
+		//m_imageManager.copyBufferToImage(stagingBuffer, m_textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+		//
+		//m_imageManager.transitionImageLayout(m_textureImage,
+		//									 vk::Format::eR8G8B8A8Srgb,
+		//									 vk::ImageLayout::eTransferDstOptimal,
+		//									 vk::ImageLayout::eShaderReadOnlyOptimal);
+		//
+		//m_logicalDevice.getDevice().destroyBuffer(stagingBuffer);
+		//m_logicalDevice.getDevice().freeMemory(stagingBufferMemory);
 	}
 
 	void Renderer::createTextureImageView()
 	{
-		m_textureImageView = m_imageManager.createImageView(m_textureImage, vk::Format::eR8G8B8A8Srgb, vk::ImageAspectFlagBits::eColor);
+		//m_textureImageView = m_imageManager.createImageView(m_textureImage, vk::Format::eR8G8B8A8Srgb, vk::ImageAspectFlagBits::eColor);
 	}
 
 	void Renderer::createTextureSampler()
 	{
+		//Do we need multiple samplers?
 		vk::PhysicalDeviceProperties properties = m_physicalDevice.getPhysicalDevice().getProperties();
 
 		vk::SamplerCreateInfo sampleInfo {
@@ -515,8 +487,8 @@ namespace st::renderer
 		//to models and objects
 		io::ImporterProxy importerProxy;
 		importerProxy.readFile("../Assets/Models/Cube.obj");
-		m_vertices = importerProxy.getVertices();
-		m_indices = importerProxy.getIndices();
+		//m_vertices = importerProxy.getVertices();
+		//m_indices = importerProxy.getIndices();
 	}
 
 	void Renderer::updateGeometry()
@@ -530,10 +502,10 @@ namespace st::renderer
 		const float moveX = amplitude * std::cos(frequency * time);
 		std::cout << moveX << std::endl;
 
-		for (auto& vertex : m_vertices)
-		{
-			vertex.m_pos.x += moveX;
-		}
+		//for (auto& vertex : m_vertices)
+		//{
+		//	vertex.m_pos.x += moveX;
+		//}
 
 
 		time += 0.1F;
@@ -574,16 +546,19 @@ namespace st::renderer
 		commandBuffer.setScissor(0, 1, &scissor);
 
 
+
 		commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_graphicPipeline.getGraphicsPipeline());
+		for (const auto& renderableMesh : m_renderableMeshes)
+		{
+			vk::Buffer vertexBuffers[] = { renderableMesh.vertexBuffer };
+			vk::DeviceSize offsets[] = { 0 };
 
-		vk::Buffer vertexBuffers[] = { m_vertexBuffer };
-		vk::DeviceSize offsets[] = { 0 };
-		commandBuffer.bindVertexBuffers(0, 1, vertexBuffers, offsets);
-		commandBuffer.bindIndexBuffer(m_indexBuffer, 0, vk::IndexType::eUint32);
+			commandBuffer.bindVertexBuffers(0, 1, vertexBuffers, offsets);
+			commandBuffer.bindIndexBuffer(renderableMesh.indexBuffer, 0, vk::IndexType::eUint32);
 
-		commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, m_graphicPipeline.getPipelineLayout(), 0, m_descriptorSets[currentFrame], {});
-
-		commandBuffer.drawIndexed(static_cast<uint32_t>(m_indices.size()), 1, 0, 0, 0);
+			commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, m_graphicPipeline.getPipelineLayout(), 0, renderableMesh.descriptorSets[currentFrame], {});
+			commandBuffer.drawIndexed(renderableMesh.indicesSize, 1, 0, 0, 0);
+		}
 
 
 		//-------------------Line----------------------------------
@@ -600,7 +575,7 @@ namespace st::renderer
 		commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics,
 										 m_primitivesGraphicPipeline.getPipelineLayout(),
 										 0,
-										 m_lineDescriptorSets[currentFrame],
+										 m_primitiveDescriptorSets[currentFrame],
 										 {});
 		commandBuffer.drawIndexed(static_cast<uint32_t>(m_linesIndices.size()), 1, 0, 0, 0);
 
@@ -608,7 +583,6 @@ namespace st::renderer
 		commandBuffer.endRenderPass();
 		commandBuffer.end();
 	}
-
 
 	void Renderer::mousePressEvent(int64_t x, int64_t y, Camera::Actions action)
 	{
@@ -625,6 +599,171 @@ namespace st::renderer
 		m_camera.mouseMove(x, y);
 		m_camera.releaseMouseClick();
 	}
+
+
+
+
+
+
+
+	void Renderer::addMesh(Mesh mesh)
+	{ 
+		RenderableMesh renderableMesh;	//Result
+
+
+		/*Create Vertex Buffer for Mesh	*/
+		const vk::DeviceSize bufferSize = sizeof(mesh.vertices[0]) * mesh.vertices.size();
+
+		//TODO- check if i can add it to exisitng buffer.
+		m_memoryManager.createBuffer(bufferSize,
+									 vk::BufferUsageFlagBits::eVertexBuffer,
+									 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+									 renderableMesh.vertexBuffer,
+									 renderableMesh.vertexBufferMemory);
+
+		
+
+		renderableMesh.mappedVertexMemory = { static_cast<std::byte*>(m_logicalDevice.getDevice().mapMemory(renderableMesh.vertexBufferMemory, 0, bufferSize)),
+										bufferSize };
+
+		std::memcpy(renderableMesh.mappedVertexMemory.data(),
+					mesh.vertices.data(),
+					static_cast<size_t>(bufferSize)); //vertices should fulfill trivial object specification?
+
+
+
+		//TODO
+		//m_logicalDevice.getDevice().unmapMemory(renderableMesh.vertexBufferMemory);
+
+
+
+
+
+		/*Create Index Buffer for Mesh*/
+		renderableMesh.indicesSize = mesh.indices.size();
+		vk::DeviceSize indexbufferSize = sizeof(mesh.indices[0]) * mesh.indices.size();
+		
+		
+		m_memoryManager.createBuffer(indexbufferSize,
+									  vk::BufferUsageFlagBits::eIndexBuffer,
+									 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+									 renderableMesh.indexBuffer,
+									 renderableMesh.indexBufferMemory);
+		
+
+		renderableMesh.mappedIndexMemory = { static_cast<std::byte*>(m_logicalDevice.getDevice().mapMemory(renderableMesh.indexBufferMemory, 0, indexbufferSize)), indexbufferSize };
+		std::memcpy(renderableMesh.mappedIndexMemory.data(),
+					mesh.indices.data(),
+					static_cast<size_t>(indexbufferSize));
+
+
+		//If use texture
+		//createTextureImage();
+		/*Create Texture Image per Mesh		Create Texture Image View per Mesh*/
+		createTextureImage(mesh.texture.value(), renderableMesh.textureImage, renderableMesh.textureImageMemory);
+		createTextureImageView(renderableMesh.textureImage, renderableMesh.textureImageView);
+
+
+		/*Create Descriptor Pool*/
+		// Should be one for all object?
+		std::array<vk::DescriptorPoolSize, 2> poolsSize {
+			vk::DescriptorPoolSize {vk::DescriptorType::eUniformBuffer,         static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT)},
+			vk::DescriptorPoolSize { vk::DescriptorType::eCombinedImageSampler, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT)}
+		};
+
+
+		vk::DescriptorPoolCreateInfo poolInfo { {}, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT), poolsSize };
+		renderableMesh.descriptorPool = m_logicalDevice.getDevice().createDescriptorPool(poolInfo);
+
+
+
+		/*Create Descriptor Sets*/
+		std::vector<vk::DescriptorSetLayout> graphicLayouts(MAX_FRAMES_IN_FLIGHT, m_graphicPipeline.getDescriptorSetLayout());
+		vk::DescriptorSetAllocateInfo graphicAllocInfo { renderableMesh.descriptorPool, graphicLayouts };
+		renderableMesh.descriptorSets = m_logicalDevice.getDevice().allocateDescriptorSets(graphicAllocInfo);
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+		{
+			vk::DescriptorBufferInfo bufferInfo { m_uniformBuffers.at(i), 0, sizeof(UniformBufferObject) };
+			vk::DescriptorImageInfo imageInfo { m_textureSampler, renderableMesh.textureImageView, vk::ImageLayout::eShaderReadOnlyOptimal };
+
+
+			std::array<vk::WriteDescriptorSet, 2> graphicDescriptorWrites {
+				vk::WriteDescriptorSet { renderableMesh.descriptorSets.at(i), 0, 0, vk::DescriptorType::eUniformBuffer,        {},        bufferInfo, {}},
+				vk::WriteDescriptorSet { renderableMesh.descriptorSets.at(i), 1, 0, vk::DescriptorType::eCombinedImageSampler, imageInfo, {},         {}}
+			};
+
+			m_logicalDevice.getDevice().updateDescriptorSets(graphicDescriptorWrites, {});
+		}
+
+
+
+		m_renderableMeshes.emplace_back(renderableMesh);
+
+		//commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_graphicPipeline.getGraphicsPipeline());
+		//
+		//vk::Buffer vertexBuffers[] = { m_vertexBuffer };
+		//vk::DeviceSize offsets[] = { 0 };
+		//commandBuffer.bindVertexBuffers(0, 1, vertexBuffers, offsets);
+		//commandBuffer.bindIndexBuffer(m_indexBuffer, 0, vk::IndexType::eUint32);
+		//
+		//commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, m_graphicPipeline.getPipelineLayout(), 0, m_descriptorSets[currentFrame], {});
+		//
+		//commandBuffer.drawIndexed(static_cast<uint32_t>(m_indices.size()), 1, 0, 0, 0);
+
+	}
+
+
+	void Renderer::createTextureImage(Texture texture, vk::Image& textureImage, vk::DeviceMemory& textureImageMemory)
+	{
+
+		vk::DeviceSize imageSize = texture.textureWidth * texture.textureHeight * 4;
+
+
+
+		vk::Buffer stagingBuffer;
+		vk::DeviceMemory stagingBufferMemory;
+
+		m_memoryManager.createBuffer(imageSize,
+									 vk::BufferUsageFlagBits::eTransferSrc,
+									 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+									 stagingBuffer,
+									 stagingBufferMemory);
+
+		void* data = m_logicalDevice.getDevice().mapMemory(stagingBufferMemory, 0, imageSize);
+		memcpy(data, texture.pixels.data(), static_cast<size_t>(imageSize));
+		m_logicalDevice.getDevice().unmapMemory(stagingBufferMemory);
+
+
+		m_imageManager.createImage(texture.textureWidth,
+								   texture.textureHeight,
+								   vk::Format::eR8G8B8A8Srgb,
+								   vk::ImageTiling::eOptimal,
+								   vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled,
+								   vk::MemoryPropertyFlagBits::eDeviceLocal,
+								   textureImage,
+								   textureImageMemory);
+
+		m_imageManager.transitionImageLayout(textureImage, vk::Format::eR8G8B8A8Srgb, vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal);
+
+		m_imageManager.copyBufferToImage(stagingBuffer, textureImage, texture.textureWidth, texture.textureHeight);
+
+		m_imageManager.transitionImageLayout(textureImage,
+											 vk::Format::eR8G8B8A8Srgb,
+											 vk::ImageLayout::eTransferDstOptimal,
+											 vk::ImageLayout::eShaderReadOnlyOptimal);
+
+		m_logicalDevice.getDevice().destroyBuffer(stagingBuffer);
+		m_logicalDevice.getDevice().freeMemory(stagingBufferMemory);
+	
+	}
+
+	void Renderer::createTextureImageView(vk::Image& textureImage, vk::ImageView& textureImageView)
+	{ 
+		textureImageView = m_imageManager.createImageView(textureImage, vk::Format::eR8G8B8A8Srgb, vk::ImageAspectFlagBits::eColor);
+	}
+
+	
+
 
 
 }

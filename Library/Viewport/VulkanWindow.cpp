@@ -3,6 +3,11 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <chrono>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
+#include <span>
+
 
 namespace st::viewport
 {
@@ -43,7 +48,35 @@ namespace st::viewport
 		//Load Sphere
 		//Load Plane (cloth)
 
+		io::ImporterProxy importerProxy;
+		importerProxy.readFile("../Assets/Models/Cube.obj");
+
+
+		int texWidth = 0;
+		int texHeight = 0;
+		int texChannels = 0;
+
+		stbi_uc* pixels = stbi_load("../Assets/Textures/texture2.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+
+		std::span<std::byte> pixelsByte { reinterpret_cast<std::byte*>(pixels), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
+
+		renderer::Texture texture { 
+			texWidth,
+			texHeight, 
+			texChannels, 
+			pixelsByte
+		};
+
+		renderer::Mesh mesh {
+			importerProxy.getVertices(),
+			importerProxy.getIndices(),
+			texture
+		};
+
+
 		//
+		m_renderer->addResources(mesh);
 
 	}
 

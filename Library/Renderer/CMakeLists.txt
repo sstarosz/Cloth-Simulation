@@ -68,4 +68,3 @@ target_link_libraries(${PROJECT_NAME}
 							Vulkan::Vulkan
 					)
 
-target_include_directories(${PROJECT_NAME}  PRIVATE ${Stb_INCLUDE_DIR})

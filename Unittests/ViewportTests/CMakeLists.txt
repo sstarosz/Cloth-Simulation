@@ -1,9 +1,10 @@
-project(tests_ViewPort3D)
+project(tests_ViewPort)
 
-set(TEST_NAME ViewPort3DTests)
-set(TEST_LIBS ViewPort3D)
+set(TEST_NAME ViewPortTests)
+set(TEST_LIBS ViewPort)
 
 set(TEST_SOURCES
+    "ModelsMenager.cpp"
     "VulkanWindowTests.cpp"
 )
 

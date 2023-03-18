@@ -6,13 +6,19 @@
 
 namespace st::viewport
 {
+
 	ModelsMenager::ModelsMenager()
 	{
 
 	}
 
+	void ModelsMenager::addModel(Model& model)
+	{ 
+		m_models.emplace_back(std::make_unique<Model>(model));
+	}
 
-	Sphere::Sphere(geometry::Vector3 position, float radius, uint32_t widthSubdivisions, uint32_t heightSubdivisions)
+
+	Sphere::Sphere(geometry::Vector3 position, float radius, uint32_t widthSubdivisions, uint32_t heightSubdivisions): Model {}
 	{
 		using namespace std::numbers;
 		using namespace geometry;
