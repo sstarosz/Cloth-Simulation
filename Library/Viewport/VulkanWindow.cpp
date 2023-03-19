@@ -5,7 +5,6 @@
 #include <chrono>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-
 #include <span>
 
 
@@ -80,10 +79,6 @@ namespace st::viewport
 
 	}
 
-	void VulkanWindow::releaseResources()
-	{
-		m_renderer->releaseResources();
-	}
 
 	void VulkanWindow::createQtInstance(vk::Instance instance)
 	{
@@ -115,9 +110,10 @@ namespace st::viewport
 			break;
 
 		case QEvent::PlatformSurface:
-			// When windows is created or deleted
-			// d->releaseSwapChain();
-			//d->reset();
+			if (static_cast<QPlatformSurfaceEvent*>(event)->surfaceEventType() == QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed)
+			{
+				m_renderer->releaseResources();
+			}
 			break;
 
 		default:

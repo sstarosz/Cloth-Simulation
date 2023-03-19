@@ -49,7 +49,8 @@ set(HEADERS
 	"Memory/MemoryManager.hpp"
 	"Framebuffer.hpp"
 	"Camera.hpp"
-	"Pipeline/PrimitivesGraphicsPipeline.hpp")
+	"Pipeline/PrimitivesGraphicsPipeline.hpp"
+	"UniformBuffers.hpp")
 
 
 

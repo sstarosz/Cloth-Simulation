@@ -85,20 +85,11 @@ namespace st::renderer
 		//TODO - What to do it with this?
 		void createVertexBuffer();
 		void createIndexBuffer();
-		void createUniformBuffers();
 		void createCommandBuffers();
 		void createSyncObjects();
-		void createDescriptorPool();
-		void createDescriptorSets();
-		void createTextureImage();
-		void createTextureImageView();
-		void createTextureSampler();
-
-		void loadModel();
 
 
 		void updateUniformBuffer(uint32_t currentImage);
-		void updateGeometry();
 		void recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_t imageIndex);
 
 
@@ -114,12 +105,13 @@ namespace st::renderer
 		LogicalDevice m_logicalDevice;
 		SwapChain m_swapChain;
 		RenderPass m_renderPass;
+		MemoryManager m_memoryManager;
+		ImageManager m_imageManager;
 		GraphicsPipeline m_graphicPipeline;
 		PrimitivesGraphicsPipeline m_primitivesGraphicPipeline;
 		CommandPool m_commandPool;
 
-		MemoryManager m_memoryManager;
-		ImageManager m_imageManager;
+
 		Framebuffer m_framebuffer;
 
 
@@ -133,49 +125,12 @@ namespace st::renderer
 		std::vector<vk::Fence> m_inFlightFences;
 
 
-		//Geometry
-		//TO-DO class to hold geometry?
-		//std::vector<geometry::Vertex> m_vertices;
-		//std::vector<uint32_t> m_indices;
-
-		//vk::Buffer m_vertexBuffer;
-		//vk::DeviceMemory m_vertexBufferMemory;
-		//vk::Buffer m_indexBuffer;
-		//vk::DeviceMemory m_indexBufferMemory;
-
-
-		//Uniform buffers
-		struct UniformBufferObject
-		{
-			geometry::Matrix4x4 model;
-			geometry::Matrix4x4 view;
-			geometry::Matrix4x4 proj;
-		};
-
-		std::vector<vk::Buffer> m_uniformBuffers;
-		std::vector<vk::DeviceMemory> m_uniformBuffersMemory;
-
-
 		//Camera in Renderer or viewport?
 		Camera m_camera;
 
 
 		//Command buffers
 		std::vector<vk::CommandBuffer> m_commandBuffers;
-
-		//Descriptors Sets
-		//vk::DescriptorPool m_descriptorPool;
-		//std::vector<vk::DescriptorSet> m_descriptorSets;
-
-		vk::DescriptorPool m_primitiveDescriptorPool;
-		std::vector<vk::DescriptorSet> m_primitiveDescriptorSets;
-
-		////Images
-		//vk::Image m_textureImage;
-		//vk::DeviceMemory m_textureImageMemory;
-		//vk::ImageView m_textureImageView;
-		vk::Sampler m_textureSampler;
-
 
 		//Line
 		vk::Buffer m_lineVertexBuffer;
@@ -218,7 +173,6 @@ namespace st::renderer
 				std::span<std::byte> mappedVertexMemory;
 				std::span<std::byte> mappedIndexMemory;
 
-				vk::DescriptorPool descriptorPool;
 				std::vector<vk::DescriptorSet> descriptorSets;
 		};		
 

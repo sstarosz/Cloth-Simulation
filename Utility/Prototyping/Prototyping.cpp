@@ -3,22 +3,32 @@
 #include <string>
 
 
-class Boo
+
+
+class ResourcePool
 {
 public:
-		uint32_t idx;
-		std::string name;
+	ResourcePool(uint32_t poolSize) noexcept: m_poolSize(poolSize) 
+	{}
+
+
+	void allocateSet() const;
+
+
+	private:
+	uint32_t m_poolSize;
 };
 
-typedef struct Boo* myBoo;
+
 
 
 
 int main()
 {
-	myBoo b = {};
 
-	b->idx;
+	/*[2], [5], [6], [0], [4]*/
+
+
 
 	
 	return 0;
