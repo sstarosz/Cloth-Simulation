@@ -1,7 +1,7 @@
 #include "DebugMessenger.hpp"
 
 #include <iostream>
-
+#include <sstream>
 
 //TODO - check if this need to be in global namespace
 PFN_vkCreateDebugUtilsMessengerEXT pfnVkCreateDebugUtilsMessengerEXT;

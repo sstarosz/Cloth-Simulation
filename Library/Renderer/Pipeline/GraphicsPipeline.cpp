@@ -22,8 +22,8 @@ namespace st::renderer
 		createTextureSampler();
 		createUniformBuffers();
 		createDescriptorPool();
-		createDescriptorSetLayout();
-		createDescriptorSets();
+		createDescriptorSetLayout(); // must stay in pipline creation
+		//createDescriptorSets();
 
 		auto vertShaderCode = Shader::readFile("../Assets/Shaders/vert.spv");
 		auto fragShaderCode = Shader::readFile("../Assets/Shaders/frag.spv");
@@ -148,26 +148,12 @@ namespace st::renderer
 		return m_pipelineLayout;
 	}
 
-	const vk::DescriptorSet& GraphicsPipeline::getDescriptorSet(uint32_t currentFrame) const
-	{
-		return m_primitiveDescriptorSets.at(currentFrame);
-	}
-
 	const vk::DeviceMemory& GraphicsPipeline::getUniformBufferMemory(uint32_t currentFrame) const
 	{
 		return m_uniformBuffersMemory.at(currentFrame);
 	}
 
-
-	const std::vector<vk::DescriptorSet> GraphicsPipeline::createDescriptorSet() const
-	{
-		std::vector<vk::DescriptorSetLayout> graphicLayouts(MAX_FRAMES_IN_FLIGHT, m_descriptorSetLayout);
-		const vk::DescriptorSetAllocateInfo graphicAllocInfo { m_primitiveDescriptorPool, graphicLayouts };
-
-		return m_device.allocateDescriptorSets(graphicAllocInfo);
-	}
-
-	const void GraphicsPipeline::updateDescriptorSet(const vk::ImageView& imageView)
+	const void GraphicsPipeline::updateDescriptorSet(const std::vector<vk::DescriptorSet>& m_descriptorSets, const vk::ImageView& imageView)
 	{
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 		{
@@ -176,14 +162,13 @@ namespace st::renderer
 
 
 			std::array<vk::WriteDescriptorSet, 2> graphicDescriptorWrites {
-				vk::WriteDescriptorSet {m_primitiveDescriptorSets.at(i),  0, 0, vk::DescriptorType::eUniformBuffer,        {},        bufferInfo, {}},
-				vk::WriteDescriptorSet { m_primitiveDescriptorSets.at(i), 1, 0, vk::DescriptorType::eCombinedImageSampler, imageInfo, {},         {}}
+				vk::WriteDescriptorSet { m_descriptorSets.at(i),           0, 0, vk::DescriptorType::eUniformBuffer,        {},        bufferInfo, {}},
+				vk::WriteDescriptorSet { m_descriptorSets.at(i), 1, 0, vk::DescriptorType::eCombinedImageSampler, imageInfo, {},         {}}
 			};
 
 			m_device.updateDescriptorSets(graphicDescriptorWrites, {});
 		}
 	}
-
 
 	void GraphicsPipeline::createTextureSampler()
 	{
@@ -243,24 +228,22 @@ namespace st::renderer
 	void GraphicsPipeline::createDescriptorPool()
 	{
 
-
-
-
 		std::array<vk::DescriptorPoolSize, 2> poolsSize {
-			vk::DescriptorPoolSize { vk::DescriptorType::eUniformBuffer,         MAX_FRAMES_IN_FLIGHT},
-			vk::DescriptorPoolSize { vk::DescriptorType::eCombinedImageSampler, MAX_FRAMES_IN_FLIGHT}
+			vk::DescriptorPoolSize { vk::DescriptorType::eUniformBuffer,        MAX_FRAMES_IN_FLIGHT * 2},
+			vk::DescriptorPoolSize { vk::DescriptorType::eCombinedImageSampler, MAX_FRAMES_IN_FLIGHT * 2}
 		};
 
 
-		const vk::DescriptorPoolCreateInfo poolInfo { {}, MAX_FRAMES_IN_FLIGHT, poolsSize };
+		const vk::DescriptorPoolCreateInfo poolInfo { {}, MAX_FRAMES_IN_FLIGHT * 2, poolsSize };
 		m_primitiveDescriptorPool = m_device.createDescriptorPool(poolInfo);
 	}
 
-	void GraphicsPipeline::createDescriptorSets()
+	const std::vector<vk::DescriptorSet> GraphicsPipeline::createDescriptorSetPerMesh()
 	{
 		std::vector<vk::DescriptorSetLayout> graphicLayouts(MAX_FRAMES_IN_FLIGHT, m_descriptorSetLayout);
 		const vk::DescriptorSetAllocateInfo graphicAllocInfo { m_primitiveDescriptorPool, graphicLayouts };
-		m_primitiveDescriptorSets = m_device.allocateDescriptorSets(graphicAllocInfo);
+		return m_device.allocateDescriptorSets(graphicAllocInfo);
 	}
+
 
 }

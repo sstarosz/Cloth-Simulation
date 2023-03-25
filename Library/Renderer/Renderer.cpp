@@ -63,8 +63,6 @@ namespace st::renderer
 
 		for (auto& renderableMesh : m_renderableMeshes)
 		{
-			m_logicalDevice.getDevice().destroyDescriptorPool(renderableMesh.descriptorPool);
-
 			m_logicalDevice.getDevice().unmapMemory(renderableMesh.vertexBufferMemory);
 			m_logicalDevice.getDevice().unmapMemory(renderableMesh.indexBufferMemory);
 
@@ -336,7 +334,7 @@ namespace st::renderer
 			commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics,
 											 m_graphicPipeline.getPipelineLayout(),
 											 0,
-											 m_graphicPipeline.getDescriptorSet(currentFrame),
+											 renderableMesh.descriptorSets.at(currentFrame),
 											 {});
 			commandBuffer.drawIndexed(renderableMesh.indicesSize, 1, 0, 0, 0);
 		}
@@ -435,8 +433,9 @@ namespace st::renderer
 
 		/*Create Descriptor Pool*/
 		// Should be one for all object?
+		renderableMesh.descriptorSets = m_graphicPipeline.createDescriptorSetPerMesh();
 		//m_graphicPipeline.getDescriptorSet();
-		m_graphicPipeline.updateDescriptorSet(renderableMesh.textureImageView);
+		m_graphicPipeline.updateDescriptorSet(renderableMesh.descriptorSets, renderableMesh.textureImageView);
 		
 
 		m_renderableMeshes.emplace_back(renderableMesh);

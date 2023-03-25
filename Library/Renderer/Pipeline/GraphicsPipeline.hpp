@@ -24,11 +24,10 @@ namespace st::renderer
 
 		const vk::Pipeline& getGraphicsPipeline() const;
 		const vk::PipelineLayout& getPipelineLayout() const;
-		const vk::DescriptorSet& getDescriptorSet(uint32_t currentFrame) const;
 		const vk::DeviceMemory& getUniformBufferMemory(uint32_t currentFrame) const;
 
-		const std::vector<vk::DescriptorSet> createDescriptorSet() const;
-		const void updateDescriptorSet(const vk::ImageView& imageView);
+		const void updateDescriptorSet(const std::vector<vk::DescriptorSet>& m_descriptorSets, const vk::ImageView& imageView);
+		const std::vector<vk::DescriptorSet> createDescriptorSetPerMesh();
 
 	private:
 		void createTextureSampler();
@@ -52,7 +51,6 @@ namespace st::renderer
 
 
 		vk::DescriptorPool m_primitiveDescriptorPool;
-		std::vector<vk::DescriptorSet> m_primitiveDescriptorSets;
 		vk::DescriptorSetLayout m_descriptorSetLayout;
 
 		std::vector<vk::Buffer> m_uniformBuffers;

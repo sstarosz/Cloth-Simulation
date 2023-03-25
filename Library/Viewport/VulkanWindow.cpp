@@ -46,7 +46,7 @@ namespace st::viewport
 		//// add spehere, static
 		//Load Sphere
 		//Load Plane (cloth)
-
+		//First Mesh
 		io::ImporterProxy importerProxy;
 		importerProxy.readFile("../Assets/Models/Cube.obj");
 
@@ -73,9 +73,25 @@ namespace st::viewport
 			texture
 		};
 
-
-		//
 		m_renderer->addResources(mesh);
+
+
+
+		//Second Mesh
+		io::ImporterProxy importerProxy2;
+		importerProxy2.readFile("../Assets/Models/Sphere.obj");
+
+
+		stbi_uc* pixels2 = stbi_load("../Assets/Textures/texture.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+
+		std::span<std::byte> pixelsByte2 { reinterpret_cast<std::byte*>(pixels2), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
+
+		renderer::Texture texture2 { texWidth, texHeight, texChannels, pixelsByte2 };
+
+		renderer::Mesh mesh2 { importerProxy2.getVertices(), importerProxy2.getIndices(), texture2 };
+
+		m_renderer->addResources(mesh2);
 
 	}
 
