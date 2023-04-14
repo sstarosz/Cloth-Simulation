@@ -67,6 +67,9 @@ namespace st::viewport
 			pixelsByte
 		};
 
+
+
+
 		renderer::Mesh mesh {
 			importerProxy.getVertices(),
 			importerProxy.getIndices(),

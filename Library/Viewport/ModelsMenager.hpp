@@ -35,6 +35,17 @@ namespace st::viewport
 	};
 
 
+	class Plane : public Model
+	{
+
+	public:
+		Plane(Vector3 position, uint32_t width, uint32_t height, uint32_t subdivisionWidth, uint32_t subdivisionHeight);
+
+
+		//const Model& model;
+	};
+
+
 	enum class TextureType
 	{
 		eNone,
@@ -64,6 +75,8 @@ namespace st::viewport
 	};
 
 
+
+
 	class SimulateObjectMetaData
 	{ };
 
@@ -87,7 +100,7 @@ namespace st::viewport
 		//Add Geometry that contain only mesh data
 		void addGeometry();
 
-		void addResource();
+		void addResource() {};
 
 		void getModelsToRender() const;
 

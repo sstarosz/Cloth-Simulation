@@ -11,6 +11,9 @@ namespace st::geometry
     {
         float x;
         float y;
+
+		bool operator==(const vec2&) const = default;
+		auto operator<=>(const vec2&) const = default;
     };
 
     struct vec3
@@ -18,6 +21,9 @@ namespace st::geometry
         float x;
         float y;
         float z;
+
+        bool operator==(const vec3&) const = default;
+		auto operator<=>(const vec3&) const = default;
     };
 
     struct vec4
@@ -26,6 +32,9 @@ namespace st::geometry
         float y;
         float z;
         float w;
+
+        bool operator==(const vec4&) const = default;
+		auto operator<=>(const vec4&) const = default;
     };
 
     struct Vertex
@@ -39,6 +48,9 @@ namespace st::geometry
         static vk::VertexInputBindingDescription getBindingDescription();
 
         static std::array<vk::VertexInputAttributeDescription, 4> getAttributeDescriptions();
+
+        bool operator==(const Vertex&) const = default;
+        auto operator<=>(const Vertex&) const = default;
     };
 
     using Indices = uint32_t;

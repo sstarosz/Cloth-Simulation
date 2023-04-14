@@ -5,6 +5,7 @@ set(TEST_LIBS Geometry)
 
 set(TEST_SOURCES
     "Matrix4x4Tests.cpp"
+    "VertexTests.cpp"
 )
 
 include(BuildTests)
