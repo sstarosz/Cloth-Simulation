@@ -52,6 +52,7 @@ namespace st::viewport
 		std::unique_ptr<renderer::Renderer> m_renderer;
 
 
+		ModelsMenager m_modelMenager;
 		simulation::SimulationEngine m_simulationEngine;
 
 

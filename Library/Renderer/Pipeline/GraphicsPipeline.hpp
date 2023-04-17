@@ -34,8 +34,6 @@ namespace st::renderer
 		void createUniformBuffers();
 		void createDescriptorSetLayout();
 		void createDescriptorPool();
-		void createDescriptorSets();
-
 
 		const vk::PhysicalDevice& m_physicalDevice;
 		const vk::Device& m_device;

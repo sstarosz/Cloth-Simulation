@@ -71,37 +71,20 @@ namespace st::viewport
 
 
 
-	Plane::Plane(Vector3 position, uint32_t width, uint32_t height, uint32_t subdivisionWidth, uint32_t subdivisionHeight)
+	float roundFloat(const float value, uint32_t precision)  noexcept
+	{ 
+		return std::round(value * std::pow(10, precision)) / std::pow(10, precision);
+	}
+
+	Plane::Plane(Vector3 center, float width, float height, uint32_t subdivisionWidth, uint32_t subdivisionHeight)
 	{
 		if (subdivisionWidth == 0 || subdivisionHeight == 0)
 		{
 			throw std::runtime_error("Trying to generate Plane with 0 subdivision");
 		}
 
-
-		if (subdivisionWidth == 0 && subdivisionHeight == 0)
-		{
-
-			Vertex point0 
-			{
-				{ xPosition, xPosition, xPosition },
-				{
-                 uPosition, vPosition,
-				 },
-				{ 0.5f, 0.5f, 0.5f },
-				{ 0.0f, 0.0f, 0.0f }
-			};
-
-
-			return;
-		}
-
-		/*1,1 - 4*/
-		/*1, 2 - 6*/
-		/*2, 1 - 6*/
-		/*2, 2 - 8*/
-		/*2, 3 -   */
-		/*3, 3 - 9*/
+		m_geometry.reserve(static_cast<decltype(m_geometry)::size_type>((subdivisionWidth + 1) * (subdivisionHeight + 1)));
+		m_indices.reserve(static_cast<decltype(m_geometry)::size_type>((subdivisionWidth - 1) * (subdivisionHeight - 1) * 6));
 
 
 		/*UV - (0,0) - (1,1)*/
@@ -122,38 +105,55 @@ namespace st::viewport
 
 		/* start position -0.5, -0.5*/
 
-		float dx = width / static_cast<float>(subdivisionWidth);
-		float dz = height / static_cast<float>(subdivisionHeight);
+		const size_t precision = 3.0;
+
+		const float dx = width / static_cast<float>(subdivisionWidth);
+		const float dz = height / static_cast<float>(subdivisionHeight);
 
 
-		float startX = position.X - (width / 2.0f);
-		float startZ = position.Z - (height / 2.0f);
+		const float startX = center.X - (width / 2.0f);	   //-0.5
+		const float startZ = center.Z + (height / 2.0f);   //-0.5
 
+		const float uStartPosition{0.0f};
+		const float vStartPosition{0.0f};
 
-		for (size_t i = 0; i < subdivisionWidth; i++)
+		for (uint32_t i = 0; i <= subdivisionWidth; i++)
 		{
-			for (size_t j = 0; j < subdivisionHeight; j++)
+			for (uint32_t j = 0; j <= subdivisionHeight; j++)
 			{ 
 
+				const float positionX = roundFloat((startX + (dx * j)), precision);
+				const float positionY = roundFloat(center.Y, precision);
+				const float positionZ = roundFloat((startZ - (dz * i)), precision);
 
-				float xPosition { startX + (dx * j) };
-				float xPosition { position.Y };
-				float xPosition { startZ + (dz * i) };
-
-				//m_geometry.push_back { }
-				float uPosition = static_cast<float>(j) / static_cast<float>(subdivisionWidth - 1);
-				float vPosition = static_cast<float>(i) / static_cast<float>(subdivisionHeight - 1);
+				const float texPositionU = roundFloat((uStartPosition + dx * j), precision);
+				const float texPositionV = roundFloat((vStartPosition + dz * i), precision);
 
 
-				Vertex point0 {
-					{ xPosition, xPosition, xPosition },
-					{ uPosition, vPosition,},
+				m_geometry.emplace_back(Vertex{
+					{ positionX, positionY, positionZ },
+					{ texPositionU, texPositionV },
 					{ 0.5f, 0.5f, 0.5f },
-					{ 0.0f, 0.0f, 0.0f }
-				};
+					{ 0.0f, 1.0f, 0.0f }
+                });
 
+
+				if (i < subdivisionWidth && j < subdivisionHeight)
+				{
+					const uint32_t baseIndex = j + i * (subdivisionWidth + 1);
+					m_indices.push_back(baseIndex);
+					m_indices.push_back(baseIndex + 1);
+					m_indices.push_back(baseIndex + subdivisionWidth + 2);
+					m_indices.push_back(baseIndex);
+					m_indices.push_back(baseIndex + subdivisionWidth + 2);
+					m_indices.push_back(baseIndex + subdivisionWidth + 1);
+				}
 			}
 		}
+
+
+
+		//generate indices
 	}
 
 

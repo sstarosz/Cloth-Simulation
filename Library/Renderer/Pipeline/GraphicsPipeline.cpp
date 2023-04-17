@@ -23,7 +23,6 @@ namespace st::renderer
 		createUniformBuffers();
 		createDescriptorPool();
 		createDescriptorSetLayout(); // must stay in pipline creation
-		//createDescriptorSets();
 
 		auto vertShaderCode = Shader::readFile("../Assets/Shaders/vert.spv");
 		auto fragShaderCode = Shader::readFile("../Assets/Shaders/frag.spv");

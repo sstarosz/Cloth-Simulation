@@ -12,11 +12,14 @@ namespace st::viewport
 	using namespace geometry;
 
 
+
+
 	class Model
 	{
 	public:
 		Model() = default;
 		std::vector<Vertex> m_geometry;
+		std::vector<uint32_t> m_indices; /*TODO change uint32_t to alias*/
 	};
 
 
@@ -39,7 +42,7 @@ namespace st::viewport
 	{
 
 	public:
-		Plane(Vector3 position, uint32_t width, uint32_t height, uint32_t subdivisionWidth, uint32_t subdivisionHeight);
+		explicit Plane(Vector3 position, float width, float height, uint32_t subdivisionWidth, uint32_t subdivisionHeight);
 
 
 		//const Model& model;
@@ -103,6 +106,8 @@ namespace st::viewport
 		void addResource() {};
 
 		void getModelsToRender() const;
+
+		void getModelsToSimulate() const;
 
 	private:
 		// List of all models

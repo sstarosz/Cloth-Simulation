@@ -11,10 +11,14 @@
 namespace st::viewport
 {
 
-	VulkanWindow::VulkanWindow(): m_instance(std::make_unique<renderer::StInstance>()), m_surface(), m_renderer()
+	VulkanWindow::VulkanWindow(): m_instance(std::make_unique<renderer::StInstance>()),
+		m_surface(), m_renderer(),
+		m_modelMenager(),
+		m_simulationEngine(m_modelMenager)
 	{
 		setSurfaceType(QSurface::VulkanSurface);
 	}
+
 
 	void VulkanWindow::initialize()
 	{
@@ -80,7 +84,7 @@ namespace st::viewport
 
 
 
-		//Second Mesh
+		//-------------------------------------------------------------------Second Mesh-------------------------------------------------------------------------
 		io::ImporterProxy importerProxy2;
 		importerProxy2.readFile("../Assets/Models/Sphere.obj");
 

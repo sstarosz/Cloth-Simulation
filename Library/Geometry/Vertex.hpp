@@ -51,6 +51,18 @@ namespace st::geometry
 
         bool operator==(const Vertex&) const = default;
         auto operator<=>(const Vertex&) const = default;
+
+
+        friend std::ostream& operator<<(std::ostream& os, const Vertex& vertex)
+		{
+			os << "\nVertex(\n";
+            os << "\tPos    {" << vertex.m_pos.x       << ", " << vertex.m_pos.y      << ", " << vertex.m_pos.z  << ", " << vertex.m_pos.y << "}\n";
+			os << "\tUV     {" << vertex.m_texCoord.x  << ", " << vertex.m_texCoord.y << "}\n";
+			os << "\tColor  {" << vertex.m_color.x     << ", " << vertex.m_color.y    << ", " << vertex.m_color.z  << "}\n";
+			os << "\tNormal {" << vertex.m_normal.x    << ", " << vertex.m_normal.y   << ", " << vertex.m_normal.z << "}\n";
+			os << ")\n";
+			return os;
+		}
     };
 
     using Indices = uint32_t;

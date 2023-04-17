@@ -10,13 +10,16 @@ namespace st::simulation
 	using namespace geometry;
 
 
-	SimulationEngine::SimulationEngine() { }
+	SimulationEngine::SimulationEngine(const viewport::ModelsMenager& modelMenager): m_modelMenager(modelMenager)
+	{ }
 
 	void SimulationEngine::initialize()
 	{
 		//Generate sphere
 
 		//Generate Plane(Cloth)
+
+		//m_modelMenager.getModelsToSimulate();
 
 
 		m_simulationParams.particleCountX = 99;

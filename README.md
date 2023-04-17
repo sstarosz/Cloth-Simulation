@@ -53,6 +53,11 @@ Download vcpkg and put it folder above this project or put it in another folder 
 # Compilation To-Do
 * Add /LTCG	/GL /Gy /GF
 
+MSVC
+```
+/permissive- /volatile:iso /Zc:inline /Zc:preprocessor /Zc:lambda /Zc:__cplusplus /Zc:externConstexpr /Zc:throwingNew /EHsc /Zc:enumTypes /Zc:templateScope
+```
+
 
 
 # Validate format style
