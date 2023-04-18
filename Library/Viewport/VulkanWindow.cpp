@@ -51,8 +51,17 @@ namespace st::viewport
 		//Load Sphere
 		//Load Plane (cloth)
 		//First Mesh
-		io::ImporterProxy importerProxy;
-		importerProxy.readFile("../Assets/Models/Cube.obj");
+		//io::ImporterProxy importerProxy;
+		//importerProxy.readFile("../Assets/Models/Cube.obj");
+
+
+
+		Sphere sphere {
+			Vector3 {0.0f, 0.0f, 0.0f},
+			1.0f,
+			10,
+			10
+		};
 
 
 		int texWidth = 0;
@@ -75,8 +84,10 @@ namespace st::viewport
 
 
 		renderer::Mesh mesh {
-			importerProxy.getVertices(),
-			importerProxy.getIndices(),
+			//importerProxy.getVertices(),
+			//importerProxy.getIndices(),
+			sphere.m_geometry,
+			sphere.m_indices,
 			texture
 		};
 
@@ -85,9 +96,16 @@ namespace st::viewport
 
 
 		//-------------------------------------------------------------------Second Mesh-------------------------------------------------------------------------
-		io::ImporterProxy importerProxy2;
-		importerProxy2.readFile("../Assets/Models/Sphere.obj");
+		//io::ImporterProxy importerProxy2;
+		//importerProxy2.readFile("../Assets/Models/Sphere.obj");
 
+		Plane plane {
+			Vector3 {0.0f, 2.0f, 0.0f},
+			3.0f,
+			3.0f,
+			10,
+			10
+		};
 
 		stbi_uc* pixels2 = stbi_load("../Assets/Textures/texture.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
@@ -96,7 +114,7 @@ namespace st::viewport
 
 		renderer::Texture texture2 { texWidth, texHeight, texChannels, pixelsByte2 };
 
-		renderer::Mesh mesh2 { importerProxy2.getVertices(), importerProxy2.getIndices(), texture2 };
+		renderer::Mesh mesh2 { plane.m_geometry, plane.m_indices, texture2 };
 
 		m_renderer->addResources(mesh2);
 

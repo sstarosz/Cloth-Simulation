@@ -3,7 +3,7 @@
 
 #include "vulkan/vulkan.hpp"
 #include <array>
-
+#include <ostream>
 
 namespace st::geometry
 {

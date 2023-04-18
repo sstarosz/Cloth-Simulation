@@ -28,13 +28,13 @@ namespace st::viewport
 		const float heightStep = pi / static_cast<float>(heightSubdivisions - 1);
 		std::vector<Vector3> points(numPoints * 3);
 
-		 for (int i = 0; i < heightSubdivisions; i++)
+		 for (uint32_t i = 0; i <= heightSubdivisions; i++)
 		{
 			const float phi = i * heightStep;
 			const float sinPhi = std::sin(phi);
 			const float cosPhi = std::cos(phi);
 
-			for (int j = 0; j < widthSubdivisions; j++)
+			for (uint32_t j = 0; j <= widthSubdivisions; j++)
 			{
 				const float theta = j * widthStep;
 				const float sinTheta = std::sin(theta);
@@ -58,10 +58,23 @@ namespace st::viewport
 					{ 1.0f, 1.0f, 1.0f },
 					{ normalsX, normalsY, normalsZ }
                 });
+
+
+				uint32_t index = i * (widthSubdivisions + 1) + j;
+				if (i < heightSubdivisions && j < widthSubdivisions)
+				{
+					// Triangle 1: top-left, bottom-left, bottom-right
+					m_indices.push_back(index);
+					m_indices.push_back(index + widthSubdivisions + 1);
+					m_indices.push_back(index + widthSubdivisions + 2);
+
+					// Triangle 2: top-left, bottom-right, top-right
+					m_indices.push_back(index);
+					m_indices.push_back(index + widthSubdivisions + 2);
+					m_indices.push_back(index + 1);
+				}
 			}
 		}
-
-
 
 
 
@@ -114,6 +127,11 @@ namespace st::viewport
 		const float startX = center.X - (width / 2.0f);	   //-0.5
 		const float startZ = center.Z + (height / 2.0f);   //-0.5
 
+
+		const float texDx = 1.0f / static_cast<float>(subdivisionWidth);
+		const float texDy = 1.0f / static_cast<float>(subdivisionHeight);
+
+
 		const float uStartPosition{0.0f};
 		const float vStartPosition{0.0f};
 
@@ -126,8 +144,8 @@ namespace st::viewport
 				const float positionY = roundFloat(center.Y, precision);
 				const float positionZ = roundFloat((startZ - (dz * i)), precision);
 
-				const float texPositionU = roundFloat((uStartPosition + dx * j), precision);
-				const float texPositionV = roundFloat((vStartPosition + dz * i), precision);
+				const float texPositionU = roundFloat((uStartPosition + texDx * j), precision);
+				const float texPositionV = roundFloat((vStartPosition + texDy * i), precision);
 
 
 				m_geometry.emplace_back(Vertex{
