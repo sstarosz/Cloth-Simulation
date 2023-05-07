@@ -8,9 +8,10 @@
 namespace st::renderer
 {
 
-	Renderer::Renderer(const StInstance& instance, const Surface& surface):
+	Renderer::Renderer(const StInstance& instance, const Surface& surface, const viewport::ModelsMenager& modelMenager):
 		m_instance(instance),
 		m_surface(surface),
+		m_modelMenager(modelMenager),
 		m_physicalDevice(m_instance.getInstance(), surface.getSurface()),
 		m_logicalDevice(m_instance.getInstance(), m_physicalDevice.getPhysicalDevice(), m_surface.getSurface()),
 		m_swapChain(m_physicalDevice.getPhysicalDevice(), m_surface.getSurface(), m_logicalDevice.getDevice()),
@@ -91,15 +92,12 @@ namespace st::renderer
 		m_physicalDevice.releaseResources();
 	}
 
-	void Renderer::addResources(const Mesh& mesh)
+	void Renderer::updateRecourses()
 	{
-
-		//if model then
-		//create vertexBuffer
-		//if have texture
-		//create texture
-
-		addMesh(mesh);
+		for (const auto& model : m_modelMenager.getModelsToRender())
+		{
+			addModel(model);
+		}
 	}
 
 	void Renderer::renderFrame()
@@ -114,6 +112,7 @@ namespace st::renderer
 		auto [result, imageIndex] =
 			m_logicalDevice.getDevice().acquireNextImageKHR(m_swapChain.getSwapchain(), UINT64_MAX, m_imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE);
 
+		updateGeometry();
 		updateUniformBuffer(currentFrame);
 
 
@@ -275,6 +274,20 @@ namespace st::renderer
 		m_logicalDevice.getDevice().unmapMemory(m_primitivesGraphicPipeline.getUniformBufferMemory(currentImage));
 	}
 
+	void Renderer::updateGeometry()
+	{
+		auto& dynamic_mesh = m_renderableMeshes.at(1);
+
+
+		const auto updatedMesh = m_modelMenager.getModelsToRender().at(1).m_mesh;
+		const vk::DeviceSize bufferSize = sizeof(updatedMesh.m_vertices[0]) * updatedMesh.m_vertices.size();
+
+
+		std::memcpy(dynamic_mesh.mappedVertexMemory.data(),
+					updatedMesh.m_vertices.data(),
+					static_cast<size_t>(bufferSize)); //vertices should fulfill trivial object specification?
+	}
+
 	void Renderer::createSyncObjects()
 	{
 		m_imageAvailableSemaphores.reserve(MAX_FRAMES_IN_FLIGHT);
@@ -378,13 +391,13 @@ namespace st::renderer
 		m_camera.releaseMouseClick();
 	}
 
-	void Renderer::addMesh(Mesh mesh)
+	void Renderer::addModel(const viewport::Model& mesh)
 	{
 		RenderableMesh renderableMesh; //Result
 
 
 		/*Create Vertex Buffer for Mesh	*/
-		const vk::DeviceSize bufferSize = sizeof(mesh.vertices[0]) * mesh.vertices.size();
+		const vk::DeviceSize bufferSize = sizeof(mesh.m_mesh.m_vertices[0]) * mesh.m_mesh.m_vertices.size();
 
 		//TODO- check if i can add it to exisitng buffer.
 		m_memoryManager.createBuffer(bufferSize,
@@ -398,7 +411,7 @@ namespace st::renderer
 											  bufferSize };
 
 		std::memcpy(renderableMesh.mappedVertexMemory.data(),
-					mesh.vertices.data(),
+					mesh.m_mesh.m_vertices.data(),
 					static_cast<size_t>(bufferSize)); //vertices should fulfill trivial object specification?
 
 
@@ -407,8 +420,8 @@ namespace st::renderer
 
 
 		/*Create Index Buffer for Mesh*/
-		renderableMesh.indicesSize = mesh.indices.size();
-		vk::DeviceSize indexbufferSize = sizeof(mesh.indices[0]) * mesh.indices.size();
+		renderableMesh.indicesSize = mesh.m_mesh.m_indices.size();
+		vk::DeviceSize indexbufferSize = sizeof(mesh.m_mesh.m_indices[0]) * mesh.m_mesh.m_indices.size();
 
 
 		m_memoryManager.createBuffer(indexbufferSize,
@@ -421,13 +434,13 @@ namespace st::renderer
 		renderableMesh.mappedIndexMemory = { static_cast<std::byte*>(
 												 m_logicalDevice.getDevice().mapMemory(renderableMesh.indexBufferMemory, 0, indexbufferSize)),
 											 indexbufferSize };
-		std::memcpy(renderableMesh.mappedIndexMemory.data(), mesh.indices.data(), static_cast<size_t>(indexbufferSize));
+		std::memcpy(renderableMesh.mappedIndexMemory.data(), mesh.m_mesh.m_indices.data(), static_cast<size_t>(indexbufferSize));
 
 
 		//If use texture
 		//createTextureImage();
 		/*Create Texture Image per Mesh		Create Texture Image View per Mesh*/
-		createTextureImage(mesh.texture.value(), renderableMesh.textureImage, renderableMesh.textureImageMemory);
+		createTextureImage(mesh.m_texture, renderableMesh.textureImage, renderableMesh.textureImageMemory);
 		createTextureImageView(renderableMesh.textureImage, renderableMesh.textureImageView);
 
 
@@ -441,7 +454,7 @@ namespace st::renderer
 		m_renderableMeshes.emplace_back(renderableMesh);
 	}
 
-	void Renderer::createTextureImage(Texture texture, vk::Image& textureImage, vk::DeviceMemory& textureImageMemory)
+	void Renderer::createTextureImage(viewport::Texture texture, vk::Image& textureImage, vk::DeviceMemory& textureImageMemory)
 	{
 
 		vk::DeviceSize imageSize = texture.textureWidth * texture.textureHeight * 4;

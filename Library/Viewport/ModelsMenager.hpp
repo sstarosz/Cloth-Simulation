@@ -13,13 +13,43 @@ namespace st::viewport
 
 
 
+	struct Texture
+	{
+
+
+		//TODO clean buffer at the end
+		uint32_t textureWidth;
+		uint32_t textureHeight;
+		uint32_t texChannels;
+
+		std::span<std::byte> pixels;
+	};
+
+	
+	struct Mesh
+	{
+		std::vector<Vertex> m_vertices;
+		std::vector<uint32_t> m_indices;
+	};
+
 
 	class Model
 	{
 	public:
 		Model() = default;
-		std::vector<Vertex> m_geometry;
-		std::vector<uint32_t> m_indices; /*TODO change uint32_t to alias*/
+		Model(std::vector<Vertex> geometry, std::vector<uint32_t> indices) noexcept:
+			m_mesh { geometry, indices },
+			m_texture {} {};
+
+		Model(Mesh mesh, Texture texture):
+			m_mesh(mesh),
+			m_texture(texture)
+		{
+
+		}
+
+		Mesh m_mesh;
+		Texture m_texture;
 	};
 
 
@@ -27,7 +57,7 @@ namespace st::viewport
 	{ };
 
 
-	class Sphere : public Model
+	class Sphere : public Mesh
 	{
 
 	public:
@@ -38,7 +68,7 @@ namespace st::viewport
 	};
 
 
-	class Plane : public Model
+	class Plane : public Mesh
 	{
 
 	public:
@@ -98,23 +128,35 @@ namespace st::viewport
 		//get models for rendering
 
 		//High lever structure that can contain meshes, textures, etc (usually data that come's from 3d format files)
-		void addModel(Model& model);
+		void addModel(Model&& model);
 		
 		//Add Geometry that contain only mesh data
 		void addGeometry();
 
 		void addResource() {};
 
-		void getModelsToRender() const;
+		const std::vector<Model>& getModelsToRender() const
+		{
+			return m_models;
+		}
 
-		void getModelsToSimulate() const;
+		std::vector<Model>& getModelsToSimulate()
+		{
+			return m_models;
+		}
 
 	private:
 		// List of all models
 
-		std::vector<std::unique_ptr<Model>> m_models;
+		std::vector<Model> m_models;
 	};
 
+
+
+	//one class
+	//array of vertixes 
+
+	//second class reference to element in vector and meta-data
 };
 
 #endif // VIEWPORT_MODELSMENAGER_HPP

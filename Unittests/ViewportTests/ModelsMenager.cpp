@@ -64,12 +64,12 @@ namespace st::viewport::unittests
 		};
 
 
-		ASSERT_EQ(plane.m_geometry.size(), 4);
+		ASSERT_EQ(plane.m_vertices.size(), 4);
 
-		ASSERT_EQ(plane.m_geometry.at(0), referenceFirstPoint);
-		ASSERT_EQ(plane.m_geometry.at(1), referenceSecondPoint);
-		ASSERT_EQ(plane.m_geometry.at(2), referenceThirdPoint);
-		ASSERT_EQ(plane.m_geometry.at(3), referenceFourthPoint);
+		ASSERT_EQ(plane.m_vertices.at(0), referenceFirstPoint);
+		ASSERT_EQ(plane.m_vertices.at(1), referenceSecondPoint);
+		ASSERT_EQ(plane.m_vertices.at(2), referenceThirdPoint);
+		ASSERT_EQ(plane.m_vertices.at(3), referenceFourthPoint);
 
 
 
@@ -210,28 +210,30 @@ namespace st::viewport::unittests
 
 
 
-		ASSERT_EQ(plane.m_geometry.size(), 16);
+		ASSERT_EQ(plane.m_vertices.size(), 16);
 
-		ASSERT_EQ(plane.m_geometry.at(0), referenceFirstPoint);
-		ASSERT_EQ(plane.m_geometry.at(1), referenceSecondPoint);
-		ASSERT_EQ(plane.m_geometry.at(2), referenceThirdPoint);
-		ASSERT_EQ(plane.m_geometry.at(3), referenceFourthPoint);
+		ASSERT_EQ(plane.m_vertices.at(0), referenceFirstPoint);
+		ASSERT_EQ(plane.m_vertices.at(1), referenceSecondPoint);
+		ASSERT_EQ(plane.m_vertices.at(2), referenceThirdPoint);
+		ASSERT_EQ(plane.m_vertices.at(3), referenceFourthPoint);
 
 
-		ASSERT_EQ(plane.m_geometry.at(4), referenceFifthPoint);
-		ASSERT_EQ(plane.m_geometry.at(5), referenceSixthPoint);
-		ASSERT_EQ(plane.m_geometry.at(6), referenceSeventhPoint);
-		ASSERT_EQ(plane.m_geometry.at(7), referenceEightPoint);
+		ASSERT_EQ(plane.m_vertices.at(4), referenceFifthPoint);
+		ASSERT_EQ(plane.m_vertices.at(5), referenceSixthPoint);
+		ASSERT_EQ(plane.m_vertices.at(6), referenceSeventhPoint);
+		ASSERT_EQ(plane.m_vertices.at(7), referenceEightPoint);
 
-		ASSERT_EQ(plane.m_geometry.at(8), referenceNinthPoint);
-		ASSERT_EQ(plane.m_geometry.at(9), referenceTenthPoint);
-		ASSERT_EQ(plane.m_geometry.at(10), referenceEleventhPoint);
-		ASSERT_EQ(plane.m_geometry.at(11), referenceTwelfthPoint);
 
-		ASSERT_EQ(plane.m_geometry.at(12), referenceThirteenthPoint);
-		ASSERT_EQ(plane.m_geometry.at(13), referenceFourteenthPoint);
-		ASSERT_EQ(plane.m_geometry.at(14), referenceFifteenthPoint);
-		ASSERT_EQ(plane.m_geometry.at(15), referenceSixteenthPoint);
+		ASSERT_EQ(plane.m_vertices.at(8), referenceNinthPoint);
+		ASSERT_EQ(plane.m_vertices.at(9), referenceTenthPoint);
+		ASSERT_EQ(plane.m_vertices.at(10), referenceEleventhPoint);
+		ASSERT_EQ(plane.m_vertices.at(11), referenceTwelfthPoint);
+
+
+		ASSERT_EQ(plane.m_vertices.at(12), referenceThirteenthPoint);
+		ASSERT_EQ(plane.m_vertices.at(13), referenceFourteenthPoint);
+		ASSERT_EQ(plane.m_vertices.at(14), referenceFifteenthPoint);
+		ASSERT_EQ(plane.m_vertices.at(15), referenceSixteenthPoint);
 
 
 
@@ -306,11 +308,11 @@ namespace st::viewport::unittests
 		};
 
 
-		ASSERT_EQ(plane1x1.m_geometry.size(),		4);
-		ASSERT_EQ(plane2x2.m_geometry.size(),		9);
-		ASSERT_EQ(plane3x3.m_geometry.size(),		16);
-		ASSERT_EQ(plane10x10.m_geometry.size(),		121);
-		ASSERT_EQ(plane100x100.m_geometry.size(),	10201);
+		ASSERT_EQ(plane1x1.m_vertices.size(), 4);
+		ASSERT_EQ(plane2x2.m_vertices.size(), 9);
+		ASSERT_EQ(plane3x3.m_vertices.size(), 16);
+		ASSERT_EQ(plane10x10.m_vertices.size(), 121);
+		ASSERT_EQ(plane100x100.m_vertices.size(), 10201);
 
 		ASSERT_EQ(plane1x1.m_indices.size(),		6);
 		ASSERT_EQ(plane2x2.m_indices.size(),		24);

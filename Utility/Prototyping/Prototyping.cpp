@@ -1,8 +1,8 @@
-#include <type_traits>
+﻿#include <type_traits>
 #include <iostream>
 #include <string>
 #include <vector>
-
+#include <utility>
 
 
 class ResourcePool
@@ -68,30 +68,137 @@ void render()
 }
 
 
+class Object
+{
+public:
+	Object() :
+		m_name("")
+	{
+		std::cout << "Default constructor" << " " << m_name << std::endl;
+	}
+
+	Object(std::string name): m_name(name)
+	{
+		std::cout << "Default constructor" << " " << m_name << std::endl;
+	}
+
+	Object(const Object& other): m_name(other.m_name)
+	{ 
+		std::cout << "Copy constructor" << " " << m_name << std::endl;
+	}
+
+	Object(Object&& other): m_name(std::move(other.m_name))
+	{
+		std::cout << "Move constructor" << " " << m_name << std::endl;
+	}
+
+	Object& operator=(const Object& other)
+	{
+		std::cout << "Copy assignment  constructor" << " " << m_name << std::endl;
+		if (this != &other)
+			m_name = other.m_name;
+		return *this;
+	}
+
+	Object& operator=(Object&& other)
+	{
+		std::cout << "Move assignment  constructor" << " " << m_name << std::endl;
+		if (this != &other)
+		{
+			m_name = std::move(other.m_name);
+			other.m_name.clear();
+		}
+		return *this;
+	}
+
+
+private:
+	std::string m_name;
+
+};
+
+
+class ObjectList
+{
+public:
+	ObjectList()
+	{
+		m_objectlists.reserve(1000);
+	};
+
+	void addObject(Object object)
+	{
+		std::cout << "Added object that is pass by value using push back" << std::endl;
+		m_objectlists.push_back(object);
+	}
+
+	void addObjectEmplaceBack(Object object)
+	{
+		std::cout << "Added object that is pass by value using emplace back" << std::endl;
+		m_objectlists.emplace_back(object);
+	}
+
+	void addObjectByReference(const Object& object)
+	{
+		std::cout << "Added object that is pass by value using push back" << std::endl;
+		m_objectlists.push_back(object);
+	}
+
+	void addObjectByReferenceEmplaceBack(const Object& object)
+	{
+		std::cout << "Added object that is pass by value using push back" << std::endl;
+		m_objectlists.emplace_back(object);
+	}
+
+
+	void addObjectEmplaceBackMove(Object object)
+	{
+		std::cout << "Added object that is pass by value using push back" << std::endl;
+		m_objectlists.emplace_back(std::move(object));
+	}
+
+	private:
+	std::vector<Object> m_objectlists;
+};
+
 
 int main()
 {
 
-	/*[2], [5], [6], [0], [4]*/
-	const uint32_t numberOfSteps { 3 };
-	std::vector<float> m_points;
+	ObjectList objectList;
+	objectList.addObject(Object("test1"));
 
 
-	float startValue{ -0.5 };
-	float dx { 1.0 / 3.0 };
+	std::cout << std::endl;
+	Object test2("test2");
+	objectList.addObject(test2);
 
-	for (size_t i = 0; i <= numberOfSteps; i++)
-	{
-		const float value = startValue + dx * i;
-		m_points.push_back(value);
-	}
+	std::cout << std::endl;
+	objectList.addObject(Object { "test3" });
 
 
-	 for (auto const& i : m_points)
-	{
-		std::cout << std::round(i * 1000.0f) / 1000.0f << " ";
-	}
+	std::cout << std::endl;
+	objectList.addObjectEmplaceBack(Object { "test4" });
 
+
+	std::cout << std::endl;
+	objectList.addObjectByReference(Object { "test5" });
 	
+	std::cout << std::endl;
+	Object test6("test6");
+	objectList.addObjectByReference(test6);
+
+
+	std::cout << std::endl;
+	objectList.addObjectByReferenceEmplaceBack(Object { "test7" });
+
+	std::cout << std::endl;
+	Object test8("test8");
+	objectList.addObjectByReferenceEmplaceBack(test8);
+
+
+	std::cout << std::endl;
+	objectList.addObjectEmplaceBackMove(Object { "test9" });
+
 	return 0;
 }

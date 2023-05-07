@@ -15,16 +15,15 @@ namespace st::simulation
 	{
 
 	public:
-		SimulationEngine(const viewport::ModelsMenager& modelMenager);
+		SimulationEngine(viewport::ModelsMenager& modelMenager);
 
 
 		void initialize();
+		void updateRecourses();
 		void releaseResources();
 
 
-		void update(float deltaD);
-
-
+		void update(float deltaTime);
 		struct SimulationParams
 		{
 			float particleMass;
@@ -46,27 +45,25 @@ namespace st::simulation
 		{
 			Vector3 position;
 			Vector3 velocity;
-			Vector3 uv;
-			Vector3 normal;
-			float pinned;
-
+			Vector3 acceleration;
+			float radius;
+			float mass;
 		};
 
 
-		std::vector<Vector3> m_particlesPositions;
-		std::vector<Vector3> m_particlesVelocity;
-		std::vector<Vector3> m_particlesUv;
+		//std::vector<Vector3> m_particlesPositions;
+		//std::vector<Vector3> m_particlesVelocity;
+		//std::vector<Vector3> m_particlesUv;
 
-
-
-		Particle m_particle;
 
 
 		private:
-		Vector3 springForce(Vector3 firstParticle, Vector3 secondParticle, float restDist);
+		void applyForce(Particle& particle, const Vector3 force);
+		void updateMesh(Particle& particle, float deltaTime);
 
+		std::vector<Particle> m_particle;
 
-		const viewport::ModelsMenager& m_modelMenager;
+		viewport::ModelsMenager& m_modelMenager;
 	};
 
 } //!namespace st::simulation

@@ -84,7 +84,7 @@ namespace st::renderer
 
 		// Get the length of sight
 		Vector3 centerToEye { position - origin };
-		float radius = Vector3::lenght(centerToEye);
+		float radius = Vector3::length(centerToEye);
 		centerToEye = Vector3::normalize(centerToEye);
 
 
@@ -122,7 +122,7 @@ namespace st::renderer
 	{
 		using namespace geometry;
 		Vector3 z = m_center - m_eye;
-		const float lenght = Vector3::lenght(z);
+		const float lenght = Vector3::length(z);
 
 		if (lenght < 0.000001F)
 		{
@@ -149,7 +149,7 @@ namespace st::renderer
 		using namespace geometry;
 
 		Vector3 z(m_eye - m_center);
-		float length = static_cast<float>(Vector3::lenght(z)) / 0.785f; // 45 degrees
+		float length = static_cast<float>(Vector3::length(z)) / 0.785f; // 45 degrees
 		z = Vector3::normalize(z);
 		Vector3 x = Vector3::crossProduct(m_up, z);
 		x = Vector3::normalize(x);
@@ -182,7 +182,7 @@ namespace st::renderer
 
 		// Get the length of sight
 		Vector3 centerToEye { position - origin };
-		float radius = Vector3::lenght(centerToEye);
+		float radius = Vector3::length(centerToEye);
 		centerToEye = Vector3::normalize(centerToEye);
 
 

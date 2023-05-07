@@ -21,47 +21,21 @@
 #include "Framebuffer.hpp"
 #include "Camera.hpp"
 #include <optional>
+#include "Viewport/ModelsMenager.hpp"
 
 namespace st::renderer
 {
-	struct Texture
-	{
-
-
-		//TODO clean buffer at the end
-		uint32_t textureWidth;
-		uint32_t textureHeight;
-		uint32_t texChannels;
-
-		std::span<std::byte> pixels;
-	};
-
-	struct Mesh
-	{
-
-
-		const std::vector<geometry::Vertex> vertices;
-		const std::vector<uint32_t> indices;
-
-		std::optional<Texture> texture;
-
-		//TODO clean buffer at the end
-	};
-
-
-
-
 
 	class Renderer
 	{
 	public:
-		Renderer(const StInstance& instance, const Surface& surface);
+		Renderer(const StInstance& instance, const Surface& surface, const viewport::ModelsMenager& modelMenager);
 
 		void initialize();
 		void releaseResources();
 
 
-		void addResources(const Mesh& mesh);
+		void updateRecourses();
 
 
 		//beginFrame -> offset rendering
@@ -90,6 +64,7 @@ namespace st::renderer
 
 
 		void updateUniformBuffer(uint32_t currentImage);
+		void updateGeometry();
 		void recordCommandBuffer(vk::CommandBuffer& commandBuffer, uint32_t imageIndex);
 
 
@@ -101,6 +76,8 @@ namespace st::renderer
 	private:
 		const StInstance& m_instance;
 		const Surface& m_surface;
+		const viewport::ModelsMenager& m_modelMenager;
+
 		PhysicalDevice m_physicalDevice;
 		LogicalDevice m_logicalDevice;
 		SwapChain m_swapChain;
@@ -152,8 +129,8 @@ namespace st::renderer
 		std::vector<uint32_t> m_linesIndices = { 0, 1, 2, 3, 4, 5 };
 
 
-		void addMesh(Mesh mesh);
-		void createTextureImage(Texture texture, vk::Image& textureImage, vk::DeviceMemory& textureImageMemory);
+		void addModel(const viewport::Model& mesh);
+		void createTextureImage(viewport::Texture texture, vk::Image& textureImage, vk::DeviceMemory& textureImageMemory);
 		void createTextureImageView(vk::Image& textureImage, vk::ImageView& textureImageView);
 
 

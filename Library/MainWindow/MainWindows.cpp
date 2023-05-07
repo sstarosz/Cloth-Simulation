@@ -35,7 +35,7 @@ MainWindow::MainWindow()
     
     createMenuBar();
     createStatusBar();
-    createDockWindows();
+    //createDockWindows();
     createMainWindow();
 }
 

@@ -12,13 +12,13 @@ namespace st::viewport
 
 	}
 
-	void ModelsMenager::addModel(Model& model)
+	void ModelsMenager::addModel(Model&& model)
 	{ 
-		m_models.emplace_back(std::make_unique<Model>(model));
+		m_models.emplace_back(model);
 	}
 
 
-	Sphere::Sphere(geometry::Vector3 position, float radius, uint32_t widthSubdivisions, uint32_t heightSubdivisions): Model {}
+	Sphere::Sphere(geometry::Vector3 position, float radius, uint32_t widthSubdivisions, uint32_t heightSubdivisions): Mesh {}
 	{
 		using namespace std::numbers;
 		using namespace geometry;
@@ -52,7 +52,7 @@ namespace st::viewport
 				float normalsY = sinPhi * sinTheta;
 				float normalsZ = cosPhi;
 
-				m_geometry.emplace_back(Vertex {
+				m_vertices.emplace_back(Vertex {
 					{ posX, posY, posZ },
 					{ mappingU, mappingV },
 					{ 1.0f, 1.0f, 1.0f },
@@ -96,8 +96,8 @@ namespace st::viewport
 			throw std::runtime_error("Trying to generate Plane with 0 subdivision");
 		}
 
-		m_geometry.reserve(static_cast<decltype(m_geometry)::size_type>((subdivisionWidth + 1) * (subdivisionHeight + 1)));
-		m_indices.reserve(static_cast<decltype(m_geometry)::size_type>((subdivisionWidth - 1) * (subdivisionHeight - 1) * 6));
+		m_vertices.reserve(static_cast<decltype(m_vertices)::size_type>((subdivisionWidth + 1) * (subdivisionHeight + 1)));
+		m_indices.reserve(static_cast<decltype(m_indices)::size_type>((subdivisionWidth - 1) * (subdivisionHeight - 1) * 6));
 
 
 		/*UV - (0,0) - (1,1)*/
@@ -148,7 +148,7 @@ namespace st::viewport
 				const float texPositionV = roundFloat((vStartPosition + texDy * i), precision);
 
 
-				m_geometry.emplace_back(Vertex{
+				m_vertices.emplace_back(Vertex{
 					{ positionX, positionY, positionZ },
 					{ texPositionU, texPositionV },
 					{ 0.5f, 0.5f, 0.5f },

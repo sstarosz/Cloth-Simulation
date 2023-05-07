@@ -34,7 +34,7 @@ namespace st::viewport
 
 
 		m_surface = std::make_unique<renderer::Surface>(surface);
-		m_renderer = std::make_unique<renderer::Renderer>(*m_instance, *m_surface);
+		m_renderer = std::make_unique<renderer::Renderer>(*m_instance, *m_surface, m_modelMenager);
 
 
 		m_renderer->updateSwapChain(static_cast<uint64_t>(this->size().width()), static_cast<uint64_t>(this->size().height()));
@@ -73,26 +73,16 @@ namespace st::viewport
 
 		std::span<std::byte> pixelsByte { reinterpret_cast<std::byte*>(pixels), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
 
-		renderer::Texture texture { 
+		viewport::Texture texture { 
 			texWidth,
 			texHeight, 
 			texChannels, 
 			pixelsByte
 		};
 
+		viewport::Mesh mesh { sphere.m_vertices, sphere.m_indices };
 
-
-
-		renderer::Mesh mesh {
-			//importerProxy.getVertices(),
-			//importerProxy.getIndices(),
-			sphere.m_geometry,
-			sphere.m_indices,
-			texture
-		};
-
-		m_renderer->addResources(mesh);
-
+		m_modelMenager.addModel(viewport::Model { mesh, texture });
 
 
 		//-------------------------------------------------------------------Second Mesh-------------------------------------------------------------------------
@@ -103,8 +93,8 @@ namespace st::viewport
 			Vector3 {0.0f, 2.0f, 0.0f},
 			3.0f,
 			3.0f,
-			10,
-			10
+			59,
+			59
 		};
 
 		stbi_uc* pixels2 = stbi_load("../Assets/Textures/texture.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
@@ -112,11 +102,12 @@ namespace st::viewport
 
 		std::span<std::byte> pixelsByte2 { reinterpret_cast<std::byte*>(pixels2), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
 
-		renderer::Texture texture2 { texWidth, texHeight, texChannels, pixelsByte2 };
+		viewport::Texture texture2 { texWidth, texHeight, texChannels, pixelsByte2 };
 
-		renderer::Mesh mesh2 { plane.m_geometry, plane.m_indices, texture2 };
-
-		m_renderer->addResources(mesh2);
+		viewport::Mesh mesh2 { plane.m_vertices, plane.m_indices};
+		m_modelMenager.addModel(viewport::Model { mesh2, texture2 });
+		m_renderer->updateRecourses();
+		
 
 	}
 

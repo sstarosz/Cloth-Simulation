@@ -4,6 +4,7 @@
 #include "vulkan/vulkan.hpp"
 #include <array>
 #include <ostream>
+#include "Vector3.hpp"
 
 namespace st::geometry
 {
@@ -39,10 +40,10 @@ namespace st::geometry
 
     struct Vertex
     {
-        vec3 m_pos;
+		Vector3 m_pos;
 		vec2 m_texCoord;
-        vec3 m_color;
-		vec3 m_normal;
+		Vector3 m_color;
+		Vector3 m_normal;
 
 
         static vk::VertexInputBindingDescription getBindingDescription();
@@ -56,10 +57,10 @@ namespace st::geometry
         friend std::ostream& operator<<(std::ostream& os, const Vertex& vertex)
 		{
 			os << "\nVertex(\n";
-            os << "\tPos    {" << vertex.m_pos.x       << ", " << vertex.m_pos.y      << ", " << vertex.m_pos.z  << ", " << vertex.m_pos.y << "}\n";
+            os << "\tPos    {" << vertex.m_pos.X       << ", " << vertex.m_pos.Y      << ", " << vertex.m_pos.Z  << "}\n";
 			os << "\tUV     {" << vertex.m_texCoord.x  << ", " << vertex.m_texCoord.y << "}\n";
-			os << "\tColor  {" << vertex.m_color.x     << ", " << vertex.m_color.y    << ", " << vertex.m_color.z  << "}\n";
-			os << "\tNormal {" << vertex.m_normal.x    << ", " << vertex.m_normal.y   << ", " << vertex.m_normal.z << "}\n";
+			os << "\tColor  {" << vertex.m_color.X     << ", " << vertex.m_color.Y    << ", " << vertex.m_color.Z  << "}\n";
+			os << "\tNormal {" << vertex.m_normal.X    << ", " << vertex.m_normal.Y   << ", " << vertex.m_normal.Z << "}\n";
 			os << ")\n";
 			return os;
 		}
