@@ -63,10 +63,9 @@ namespace st::renderer
 
 		for (auto& imageView : m_swapChainImageViews)
 		{
-			m_device.destroy(imageView);
+			m_device.destroyImageView(imageView);
 		}
 		m_swapChainImageViews.clear();
-
 
 		m_device.destroySwapchainKHR(m_swapChain);
 	}

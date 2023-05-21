@@ -6,13 +6,38 @@
 
 namespace st::geometry
 {
+	/*
 
-class Object3D
-{
-  std::vector<Vertex> m_vertices;
-  std::vector<uint64_t> m_indices;
-};
+	struct Vertex
+	{
+		float x;
+		float y;
+		float z;
+	};
 
+	struct HalfEdge
+	{
+		Vertex* vertex;
+		HalfEdge* next;
+		HalfEdge* prev;
+		HalfEdge* opposite;
+	};
+
+	struct Face
+	{
+		HalfEdge* edge;
+	};
+
+
+	class Mesh
+	{
+	public:
+		Mesh(const std::vector<Vertex>& vertices, const std::vector<std::vector<int>>& faces);
+		std::vector<Vertex> vertices;
+		std::vector<Face> faces;
+	};
+
+	*/
 
 }
 

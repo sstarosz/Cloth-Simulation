@@ -10,6 +10,8 @@
 
 namespace st::io
 {
+  
+//TODO - Clean content of previously readed files before read new one
 class ImporterProxy
 {
 

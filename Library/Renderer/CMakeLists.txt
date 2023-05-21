@@ -49,7 +49,8 @@ set(HEADERS
 	"Memory/MemoryManager.hpp"
 	"Framebuffer.hpp"
 	"Camera.hpp"
-	"Pipeline/PrimitivesGraphicsPipeline.hpp")
+	"Pipeline/PrimitivesGraphicsPipeline.hpp"
+	"UniformBuffers.hpp")
 
 
 
@@ -68,4 +69,3 @@ target_link_libraries(${PROJECT_NAME}
 							Vulkan::Vulkan
 					)
 
-target_include_directories(${PROJECT_NAME}  PRIVATE ${Stb_INCLUDE_DIR})

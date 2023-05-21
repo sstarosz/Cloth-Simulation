@@ -2,21 +2,28 @@
 
 #include "Renderer/Shaders/Shader.hpp"
 #include "Geometry/Line.hpp"
+#include "Renderer/UniformBuffers.hpp"
 
 namespace st::renderer
 {
 
 	PrimitivesGraphicsPipeline::PrimitivesGraphicsPipeline(const vk::PhysicalDevice& physicalDevice,
 														   const vk::Device& device,
-														   const vk::RenderPass& renderPass):
+														   const vk::RenderPass& renderPass,
+														   const MemoryManager& memoryMenager):
 		m_physicalDevice(physicalDevice),
 		m_device(device),
-		m_renderPass(renderPass)
+		m_renderPass(renderPass),
+		m_memoryMenager(memoryMenager)
 	{ }
 
 	void PrimitivesGraphicsPipeline::initialize()
 	{
+		createUniformBuffers();
+		createDescriptorPool();
 		createDescriptorSetLayout();
+		createDescriptorSets();
+
 
 		auto vertShaderCode = Shader::readFile("../Assets/Shaders/line_vert.spv");
 		auto fragShaderCode = Shader::readFile("../Assets/Shaders/line_frag.spv");
@@ -114,6 +121,15 @@ namespace st::renderer
 
 	void PrimitivesGraphicsPipeline::releaseResources()
 	{
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+		{
+			m_device.destroyBuffer(m_uniformBuffers[i]);
+			m_device.freeMemory(m_uniformBuffersMemory[i]);
+		}
+
+
+		m_device.destroyDescriptorPool(m_primitiveDescriptorPool);
+
 		m_device.destroyDescriptorSetLayout(m_descriptorSetLayout);
 
 		m_device.destroyPipelineCache(m_pipelineCache);
@@ -131,9 +147,32 @@ namespace st::renderer
 		return m_pipelineLayout;
 	}
 
-	const vk::DescriptorSetLayout& PrimitivesGraphicsPipeline::getDescriptorSetLayout() const
+
+	const vk::DescriptorSet& PrimitivesGraphicsPipeline::getDescriptorSet(uint32_t currentFrame) const
 	{
-		return m_descriptorSetLayout;
+		return m_primitiveDescriptorSets.at(currentFrame);
+	}
+
+	const vk::DeviceMemory& PrimitivesGraphicsPipeline::getUniformBufferMemory(uint32_t currentFrame) const
+	{
+		return m_uniformBuffersMemory.at(currentFrame);
+	}
+
+	void PrimitivesGraphicsPipeline::createUniformBuffers()
+	{
+		const VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+
+		m_uniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+		m_uniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
+
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+		{
+			m_memoryMenager.createBuffer(bufferSize,
+										 vk::BufferUsageFlagBits::eUniformBuffer,
+										 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+										 m_uniformBuffers[i],
+										 m_uniformBuffersMemory[i]);
+		}
 	}
 
 	void PrimitivesGraphicsPipeline::createDescriptorSetLayout()
@@ -145,6 +184,37 @@ namespace st::renderer
 		vk::DescriptorSetLayoutCreateInfo layoutInfo { {}, bindings };
 
 		m_descriptorSetLayout = m_device.createDescriptorSetLayout(layoutInfo);
+	}
+
+	void PrimitivesGraphicsPipeline::createDescriptorPool() 
+	{
+		vk::DescriptorPoolSize poolsSize { vk::DescriptorType::eUniformBuffer, MAX_FRAMES_IN_FLIGHT };
+
+		vk::DescriptorPoolCreateInfo poolInfo { {}, MAX_FRAMES_IN_FLIGHT, poolsSize };
+
+		m_primitiveDescriptorPool = m_device.createDescriptorPool(poolInfo);
+	}
+
+	void PrimitivesGraphicsPipeline::createDescriptorSets()
+	{
+		std::vector<vk::DescriptorSetLayout> primitiveLayouts(MAX_FRAMES_IN_FLIGHT, m_descriptorSetLayout);
+
+		vk::DescriptorSetAllocateInfo graphicAllocInfo { m_primitiveDescriptorPool, primitiveLayouts };
+
+
+		m_primitiveDescriptorSets = m_device.allocateDescriptorSets(graphicAllocInfo);
+
+
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+		{
+			vk::DescriptorBufferInfo bufferInfo { m_uniformBuffers.at(i), 0, sizeof(UniformBufferObject) };
+
+			std::array<vk::WriteDescriptorSet, 1> primitivesDescriptorWrites {
+				vk::WriteDescriptorSet {m_primitiveDescriptorSets.at(i), 0, 0, vk::DescriptorType::eUniformBuffer, {}, bufferInfo, {}}
+			};
+
+			m_device.updateDescriptorSets(primitivesDescriptorWrites, {});
+		}
 	}
 
 }

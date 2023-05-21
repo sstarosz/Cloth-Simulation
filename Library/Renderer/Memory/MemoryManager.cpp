@@ -29,8 +29,11 @@ namespace st::renderer
 	}
 
 
-	void MemoryManager::createBuffer(
-		vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& buffer, vk::DeviceMemory& bufferMemory)
+	void MemoryManager::createBuffer(vk::DeviceSize size,
+									 vk::BufferUsageFlags usage,
+									 vk::MemoryPropertyFlags properties,
+									 vk::Buffer& buffer,
+									 vk::DeviceMemory& bufferMemory) const
 	{
 
 		vk::BufferCreateInfo bufferInfo { {}, size, usage, vk::SharingMode::eExclusive };

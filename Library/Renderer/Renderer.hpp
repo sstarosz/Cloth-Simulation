@@ -21,6 +21,7 @@
 #include "Framebuffer.hpp"
 #include "Camera.hpp"
 #include <optional>
+#include "Viewport/ModelsMenager.hpp"
 
 namespace st::renderer
 {
@@ -28,10 +29,13 @@ namespace st::renderer
 	class Renderer
 	{
 	public:
-		Renderer(const StInstance& instance, const Surface& surface);
+		Renderer(const StInstance& instance, const Surface& surface, const viewport::ModelsMenager& modelMenager);
 
 		void initialize();
 		void releaseResources();
+
+
+		void updateRecourses();
 
 
 		//beginFrame -> offset rendering
@@ -55,16 +59,8 @@ namespace st::renderer
 		//TODO - What to do it with this?
 		void createVertexBuffer();
 		void createIndexBuffer();
-		void createUniformBuffers();
 		void createCommandBuffers();
 		void createSyncObjects();
-		void createDescriptorPool();
-		void createDescriptorSets();
-		void createTextureImage();
-		void createTextureImageView();
-		void createTextureSampler();
-
-		void loadModel();
 
 
 		void updateUniformBuffer(uint32_t currentImage);
@@ -80,50 +76,30 @@ namespace st::renderer
 	private:
 		const StInstance& m_instance;
 		const Surface& m_surface;
+		const viewport::ModelsMenager& m_modelMenager;
+
 		PhysicalDevice m_physicalDevice;
 		LogicalDevice m_logicalDevice;
 		SwapChain m_swapChain;
 		RenderPass m_renderPass;
+		MemoryManager m_memoryManager;
+		ImageManager m_imageManager;
 		GraphicsPipeline m_graphicPipeline;
 		PrimitivesGraphicsPipeline m_primitivesGraphicPipeline;
 		CommandPool m_commandPool;
 
-		MemoryManager m_memoryManager;
-		ImageManager m_imageManager;
+
 		Framebuffer m_framebuffer;
 
 
 		uint32_t currentFrame = 0;
 		bool m_framebufferResized = false;
-		const static uint32_t MAX_FRAMES_IN_FLIGHT = 2;
+		const static uint32_t MAX_FRAMES_IN_FLIGHT = 2; //TODO this should be define by swapchain
 
 		//Synchronization
 		std::vector<vk::Semaphore> m_imageAvailableSemaphores;
 		std::vector<vk::Semaphore> m_renderFinishedSemaphores;
 		std::vector<vk::Fence> m_inFlightFences;
-
-
-		//Geometry
-		//TO-DO class to hold geometry?
-		std::vector<geometry::Vertex> m_vertices;
-		std::vector<uint32_t> m_indices;
-
-		vk::Buffer m_vertexBuffer;
-		vk::DeviceMemory m_vertexBufferMemory;
-		vk::Buffer m_indexBuffer;
-		vk::DeviceMemory m_indexBufferMemory;
-
-
-		//Uniform buffers
-		struct UniformBufferObject
-		{
-			geometry::Matrix4x4 model;
-			geometry::Matrix4x4 view;
-			geometry::Matrix4x4 proj;
-		};
-
-		std::vector<vk::Buffer> m_uniformBuffers;
-		std::vector<vk::DeviceMemory> m_uniformBuffersMemory;
 
 
 		//Camera in Renderer or viewport?
@@ -133,25 +109,12 @@ namespace st::renderer
 		//Command buffers
 		std::vector<vk::CommandBuffer> m_commandBuffers;
 
-		//Descriptors Sets
-		vk::DescriptorPool m_descriptorPool;
-		std::vector<vk::DescriptorSet> m_descriptorSets;
-
-
-		//Images
-		vk::Image m_textureImage;
-		vk::DeviceMemory m_textureImageMemory;
-		vk::ImageView m_textureImageView;
-		vk::Sampler m_textureSampler;
-
-
 		//Line
 		vk::Buffer m_lineVertexBuffer;
 		vk::DeviceMemory m_lineVertexBufferMemory;
 		vk::Buffer m_lineIndexBuffer;
 		vk::DeviceMemory m_lineIndexBufferMemory;
 
-		vk::DescriptorPool m_lineDescriptorPool;
 		std::vector<vk::DescriptorSet> m_lineDescriptorSets;
 
 		const std::vector<geometry::Line> m_lines = {
@@ -164,6 +127,34 @@ namespace st::renderer
 		};
 
 		std::vector<uint32_t> m_linesIndices = { 0, 1, 2, 3, 4, 5 };
+
+
+		void addModel(const viewport::Model& mesh);
+		void createTextureImage(viewport::Texture texture, vk::Image& textureImage, vk::DeviceMemory& textureImageMemory);
+		void createTextureImageView(vk::Image& textureImage, vk::ImageView& textureImageView);
+
+
+		struct RenderableMesh
+		{
+				vk::Buffer vertexBuffer;
+				vk::DeviceMemory vertexBufferMemory;
+
+				uint32_t indicesSize;
+				vk::Buffer indexBuffer;
+				vk::DeviceMemory indexBufferMemory;
+
+				vk::Image textureImage;
+				vk::DeviceMemory textureImageMemory;
+				vk::ImageView textureImageView;
+
+				std::span<std::byte> mappedVertexMemory;
+				std::span<std::byte> mappedIndexMemory;
+
+				std::vector<vk::DescriptorSet> descriptorSets;
+		};		
+
+		std::vector<RenderableMesh> m_renderableMeshes;
+
 	};
 
 }

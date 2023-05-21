@@ -5,7 +5,7 @@
 
 #include <Geometry/Vector4.hpp>
 #include <Geometry/Vector3.hpp>
-
+#include <Viewport/ModelsMenager.hpp>
 
 namespace st::simulation
 {
@@ -15,16 +15,15 @@ namespace st::simulation
 	{
 
 	public:
-		SimulationEngine();
+		SimulationEngine(viewport::ModelsMenager& modelMenager);
 
 
 		void initialize();
+		void updateRecourses();
 		void releaseResources();
 
 
-		void update(float deltaD);
-
-
+		void update(float deltaTime);
 		struct SimulationParams
 		{
 			float particleMass;
@@ -46,17 +45,25 @@ namespace st::simulation
 		{
 			Vector3 position;
 			Vector3 velocity;
-			Vector3 uv;
-			Vector3 normal;
-			float pinned;
-
+			Vector3 acceleration;
+			float radius;
+			float mass;
 		};
 
-		Particle m_particle;
+
+		//std::vector<Vector3> m_particlesPositions;
+		//std::vector<Vector3> m_particlesVelocity;
+		//std::vector<Vector3> m_particlesUv;
+
 
 
 		private:
-		Vector3 springForce(Vector3 firstParticle, Vector3 secondParticle, float restDist);
+		void applyForce(Particle& particle, const Vector3 force);
+		void updateMesh(Particle& particle, float deltaTime);
+
+		std::vector<Particle> m_particle;
+
+		viewport::ModelsMenager& m_modelMenager;
 	};
 
 } //!namespace st::simulation

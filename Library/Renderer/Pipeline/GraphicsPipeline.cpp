@@ -2,19 +2,27 @@
 
 #include "Renderer/Shaders/Shader.hpp"
 #include "Geometry/Vertex.hpp"
+#include "Renderer/UniformBuffers.hpp"
 
 namespace st::renderer
 {
 
-	GraphicsPipeline::GraphicsPipeline(const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const vk::RenderPass& renderPass):
+	GraphicsPipeline::GraphicsPipeline(const vk::PhysicalDevice& physicalDevice,
+									   const vk::Device& device,
+									   const vk::RenderPass& renderPass,
+									   const MemoryManager& memoryMenager):
 		m_physicalDevice(physicalDevice),
 		m_device(device),
-		m_renderPass(renderPass)
+		m_renderPass(renderPass),
+		m_memoryMenager(memoryMenager)
 	{ }
 
 	void GraphicsPipeline::initialize()
 	{
-		createDescriptorSetLayout();
+		createTextureSampler();
+		createUniformBuffers();
+		createDescriptorPool();
+		createDescriptorSetLayout(); // must stay in pipline creation
 
 		auto vertShaderCode = Shader::readFile("../Assets/Shaders/vert.spv");
 		auto fragShaderCode = Shader::readFile("../Assets/Shaders/frag.spv");
@@ -112,6 +120,16 @@ namespace st::renderer
 
 	void GraphicsPipeline::releaseResources()
 	{
+		m_device.destroySampler(m_textureSampler);
+
+
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+		{
+			m_device.destroyBuffer(m_uniformBuffers[i]);
+			m_device.freeMemory(m_uniformBuffersMemory[i]);
+		}
+
+		m_device.destroyDescriptorPool(m_primitiveDescriptorPool);
 		m_device.destroyDescriptorSetLayout(m_descriptorSetLayout);
 
 		m_device.destroyPipelineCache(m_pipelineCache);
@@ -129,9 +147,69 @@ namespace st::renderer
 		return m_pipelineLayout;
 	}
 
-	const vk::DescriptorSetLayout& GraphicsPipeline::getDescriptorSetLayout() const
+	const vk::DeviceMemory& GraphicsPipeline::getUniformBufferMemory(uint32_t currentFrame) const
 	{
-		return m_descriptorSetLayout;
+		return m_uniformBuffersMemory.at(currentFrame);
+	}
+
+	const void GraphicsPipeline::updateDescriptorSet(const std::vector<vk::DescriptorSet>& m_descriptorSets, const vk::ImageView& imageView)
+	{
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+		{
+			vk::DescriptorBufferInfo bufferInfo { m_uniformBuffers.at(i), 0, sizeof(UniformBufferObject) };
+			vk::DescriptorImageInfo imageInfo { m_textureSampler, imageView, vk::ImageLayout::eShaderReadOnlyOptimal };
+
+
+			std::array<vk::WriteDescriptorSet, 2> graphicDescriptorWrites {
+				vk::WriteDescriptorSet { m_descriptorSets.at(i),           0, 0, vk::DescriptorType::eUniformBuffer,        {},        bufferInfo, {}},
+				vk::WriteDescriptorSet { m_descriptorSets.at(i), 1, 0, vk::DescriptorType::eCombinedImageSampler, imageInfo, {},         {}}
+			};
+
+			m_device.updateDescriptorSets(graphicDescriptorWrites, {});
+		}
+	}
+
+	void GraphicsPipeline::createTextureSampler()
+	{
+		vk::PhysicalDeviceProperties properties = m_physicalDevice.getProperties();
+
+		vk::SamplerCreateInfo sampleInfo {
+			{},
+			vk::Filter::eLinear,
+			vk::Filter::eLinear,
+			vk::SamplerMipmapMode::eLinear,
+			vk::SamplerAddressMode::eRepeat,
+			vk::SamplerAddressMode::eRepeat,
+			vk::SamplerAddressMode::eRepeat,
+			0.0f,
+			false,
+			properties.limits.maxSamplerAnisotropy,
+			false,
+			vk::CompareOp::eAlways,
+			0.0f,
+			0.0f,
+			vk::BorderColor::eIntOpaqueBlack,
+			false,
+		};
+
+		m_textureSampler = m_device.createSampler(sampleInfo);
+	}
+
+	void GraphicsPipeline::createUniformBuffers()
+	{
+		const VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+
+		m_uniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+		m_uniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
+
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+		{
+			m_memoryMenager.createBuffer(bufferSize,
+										 vk::BufferUsageFlagBits::eUniformBuffer,
+										 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
+										 m_uniformBuffers[i],
+										 m_uniformBuffersMemory[i]);
+		}
 	}
 
 	void GraphicsPipeline::createDescriptorSetLayout()
@@ -145,5 +223,26 @@ namespace st::renderer
 
 		m_descriptorSetLayout = m_device.createDescriptorSetLayout(layoutInfo);
 	}
+
+	void GraphicsPipeline::createDescriptorPool()
+	{
+
+		std::array<vk::DescriptorPoolSize, 2> poolsSize {
+			vk::DescriptorPoolSize { vk::DescriptorType::eUniformBuffer,        MAX_FRAMES_IN_FLIGHT * 2},
+			vk::DescriptorPoolSize { vk::DescriptorType::eCombinedImageSampler, MAX_FRAMES_IN_FLIGHT * 2}
+		};
+
+
+		const vk::DescriptorPoolCreateInfo poolInfo { {}, MAX_FRAMES_IN_FLIGHT * 2, poolsSize };
+		m_primitiveDescriptorPool = m_device.createDescriptorPool(poolInfo);
+	}
+
+	const std::vector<vk::DescriptorSet> GraphicsPipeline::createDescriptorSetPerMesh()
+	{
+		std::vector<vk::DescriptorSetLayout> graphicLayouts(MAX_FRAMES_IN_FLIGHT, m_descriptorSetLayout);
+		const vk::DescriptorSetAllocateInfo graphicAllocInfo { m_primitiveDescriptorPool, graphicLayouts };
+		return m_device.allocateDescriptorSets(graphicAllocInfo);
+	}
+
 
 }

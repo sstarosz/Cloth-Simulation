@@ -3,14 +3,22 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <chrono>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+#include <span>
+
 
 namespace st::viewport
 {
 
-	VulkanWindow::VulkanWindow(): m_instance(std::make_unique<renderer::StInstance>()), m_surface(), m_renderer()
+	VulkanWindow::VulkanWindow(): m_instance(std::make_unique<renderer::StInstance>()),
+		m_surface(), m_renderer(),
+		m_modelMenager(),
+		m_simulationEngine(m_modelMenager)
 	{
 		setSurfaceType(QSurface::VulkanSurface);
 	}
+
 
 	void VulkanWindow::initialize()
 	{
@@ -26,7 +34,7 @@ namespace st::viewport
 
 
 		m_surface = std::make_unique<renderer::Surface>(surface);
-		m_renderer = std::make_unique<renderer::Renderer>(*m_instance, *m_surface);
+		m_renderer = std::make_unique<renderer::Renderer>(*m_instance, *m_surface, m_modelMenager);
 
 
 		m_renderer->updateSwapChain(static_cast<uint64_t>(this->size().width()), static_cast<uint64_t>(this->size().height()));
@@ -42,15 +50,67 @@ namespace st::viewport
 		//// add spehere, static
 		//Load Sphere
 		//Load Plane (cloth)
+		//First Mesh
+		//io::ImporterProxy importerProxy;
+		//importerProxy.readFile("../Assets/Models/Cube.obj");
 
-		//
+
+
+		Sphere sphere {
+			Vector3 {0.0f, 0.0f, 0.0f},
+			1.0f,
+			10,
+			10
+		};
+
+
+		int texWidth = 0;
+		int texHeight = 0;
+		int texChannels = 0;
+
+		stbi_uc* pixels = stbi_load("../Assets/Textures/texture2.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+
+		std::span<std::byte> pixelsByte { reinterpret_cast<std::byte*>(pixels), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
+
+		viewport::Texture texture { 
+			texWidth,
+			texHeight, 
+			texChannels, 
+			pixelsByte
+		};
+
+		viewport::Mesh mesh { sphere.m_vertices, sphere.m_indices };
+
+		m_modelMenager.addModel(viewport::Model { mesh, texture });
+
+
+		//-------------------------------------------------------------------Second Mesh-------------------------------------------------------------------------
+		//io::ImporterProxy importerProxy2;
+		//importerProxy2.readFile("../Assets/Models/Sphere.obj");
+
+		Plane plane {
+			Vector3 {0.0f, 2.0f, 0.0f},
+			3.0f,
+			3.0f,
+			59,
+			59
+		};
+
+		stbi_uc* pixels2 = stbi_load("../Assets/Textures/texture.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+
+		std::span<std::byte> pixelsByte2 { reinterpret_cast<std::byte*>(pixels2), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
+
+		viewport::Texture texture2 { texWidth, texHeight, texChannels, pixelsByte2 };
+
+		viewport::Mesh mesh2 { plane.m_vertices, plane.m_indices};
+		m_modelMenager.addModel(viewport::Model { mesh2, texture2 });
+		m_renderer->updateRecourses();
+		
 
 	}
 
-	void VulkanWindow::releaseResources()
-	{
-		m_renderer->releaseResources();
-	}
 
 	void VulkanWindow::createQtInstance(vk::Instance instance)
 	{
@@ -82,9 +142,10 @@ namespace st::viewport
 			break;
 
 		case QEvent::PlatformSurface:
-			// When windows is created or deleted
-			// d->releaseSwapChain();
-			//d->reset();
+			if (static_cast<QPlatformSurfaceEvent*>(event)->surfaceEventType() == QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed)
+			{
+				m_renderer->releaseResources();
+			}
 			break;
 
 		default:

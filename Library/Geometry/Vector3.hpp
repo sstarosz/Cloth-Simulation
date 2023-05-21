@@ -110,8 +110,10 @@ namespace st::geometry
 			return { -X, -Y, -Z };
         }
 
-        static float lenght(const Vector3& Vec);
+        static float length(const Vector3& Vec);
 		static Vector3 normalize(const Vector3& Vec);
+		static Vector3 reflect(const Vector3& incident, const Vector3& normal);
+		static float dotProduct(const Vector3& v1, const Vector3& v2);
 		static constexpr Vector3 crossProduct(const Vector3& Vec1, const Vector3& Vec2)
 		{
 			Vector3 u;

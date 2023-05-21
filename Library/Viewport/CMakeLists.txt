@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.24)
 
 
-project(ViewPort3D
+project(ViewPort
 		VERSION 0.0.1
-		DESCRIPTION "3D Viewport of aplication"
+		DESCRIPTION "Viewport of aplication"
 		LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
@@ -45,3 +45,5 @@ target_link_libraries(${PROJECT_NAME}
 						Qt6::Gui
 						Qt6::Widgets
 					)
+
+target_include_directories(${PROJECT_NAME}  PRIVATE ${Stb_INCLUDE_DIR})
