@@ -15,7 +15,11 @@ set(SOURCES
 	"Matrix4x4.cpp"
 	"Vector3.cpp"
 	"Vector4.cpp"
-	"Line.cpp")
+	"Line.cpp"
+	"Primitives/ShapeBase.cpp"
+	"Primitives/Sphere.cpp"
+	"Body/BodyBase.cpp"
+	"Body/SimulatedBody.cpp")
 
 set(HEADERS
 	"Math.hpp"
@@ -25,7 +29,11 @@ set(HEADERS
 	"Matrix4x4.hpp"
 	"Vector3.hpp"
 	"Vector4.hpp"
-	"Line.hpp")
+	"Line.hpp"
+	"Primitives/ShapeBase.hpp"
+	"Primitives/Sphere.hpp"
+	"Body/BodyBase.cpp"
+	"Body/SimulatedBody.cpp")
 
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
