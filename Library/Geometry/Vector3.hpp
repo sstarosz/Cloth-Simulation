@@ -28,15 +28,15 @@ namespace st::geometry
 		{}
 
 
-        constexpr float& operator[](const size_t index)
+        constexpr float& operator[](const uint32_t index)
         {
-            assert(index >= 0 && index < 4);
+            assert(index < 4);
             return ((&X)[index]);   //TODO More safe version?
         }
          
-        const float& operator[](const size_t index) const
+        const float& operator[](const uint32_t index) const
         {
-            assert(index >= 0 && index < 4);
+            assert(index < 4);
             return ((&X)[index]); //TODO More safe version?
         }
 
@@ -110,10 +110,10 @@ namespace st::geometry
 			return { -X, -Y, -Z };
         }
 
-        static float length(const Vector3& Vec);
+        static float length(const Vector3& Vec) noexcept;
 		static Vector3 normalize(const Vector3& Vec);
-		static Vector3 reflect(const Vector3& incident, const Vector3& normal);
-		static float dotProduct(const Vector3& v1, const Vector3& v2);
+		static Vector3 reflect(const Vector3& incident, const Vector3& normal) noexcept;
+		static float dotProduct(const Vector3& v1, const Vector3& v2) noexcept;
 		static constexpr Vector3 crossProduct(const Vector3& Vec1, const Vector3& Vec2)
 		{
 			Vector3 u;

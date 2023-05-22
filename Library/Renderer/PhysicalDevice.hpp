@@ -10,13 +10,13 @@ namespace st::renderer
 	class PhysicalDevice
 	{
 	public:
-		PhysicalDevice(const vk::Instance& instance, const vk::SurfaceKHR& surface);
+		PhysicalDevice(const vk::Instance& instance, const vk::SurfaceKHR& surface) noexcept;
 
 		void initialize();
-		void releaseResources();
+		void releaseResources() noexcept;
 
 
-		const vk::PhysicalDevice& getPhysicalDevice() const;
+		const vk::PhysicalDevice& getPhysicalDevice() const noexcept;
 
 	private:
 		void pickPhysicalDevice();

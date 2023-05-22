@@ -90,10 +90,10 @@ namespace st::renderer
 
 
 		Framebuffer m_framebuffer;
+		bool m_framebufferResized = false;
 
 
 		uint32_t currentFrame = 0;
-		bool m_framebufferResized = false;
 		const static uint32_t MAX_FRAMES_IN_FLIGHT = 2; //TODO this should be define by swapchain
 
 		//Synchronization

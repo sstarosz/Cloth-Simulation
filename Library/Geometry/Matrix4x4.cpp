@@ -36,45 +36,24 @@ namespace st::geometry
 						 0.0, 0.0, 0.0, 1.0);
 	}
 
-	void Matrix4x4::translate(const Vector3& vector)
+	void Matrix4x4::translate(const Vector3& vector) noexcept
 	{
 		m_value[3]  += vector.X;
 		m_value[7]  += vector.Y;
 		m_value[11] += vector.Z;
 	}
 
-	Matrix4x4 Matrix4x4::projectionMatrix(float fieldOfView, float framebufferAspectRatio, float nearPlane, float farPlane)
-	{
-		//User se word in x right y up, z into screen
-		Matrix4x4 result = Matrix4x4::indentityMatrix();
-
-		result[5] = -1;
-		result[10] = -1;
-
-		Matrix4x4 projection{};
-		projection[0] = std::pow(fieldOfView, -1) / std::tan(fieldOfView / 2.0F);
-		projection[5] = 1 * std::tan(fieldOfView / 2.0F);
-		projection[10] = farPlane / (farPlane - nearPlane);
-		projection[11] = -nearPlane * (farPlane - nearPlane);
-		projection[14] = 1;
-
-
-		projection *= result;
-
-		return projection;
-	}
-
-	Matrix4x4 Matrix4x4::rotationX(const float& theta)
+	Matrix4x4 Matrix4x4::rotationX(const float& theta) noexcept
 	{
 		return Matrix4x4();
 	}
 
-	Matrix4x4 Matrix4x4::rotationY(const float& theta)
+	Matrix4x4 Matrix4x4::rotationY(const float& theta) noexcept
 	{
 		return Matrix4x4();
 	}
 
-	Matrix4x4 Matrix4x4::rotationZ(const float& theta)
+	Matrix4x4 Matrix4x4::rotationZ(const float& theta) noexcept
 	{
 		return Matrix4x4();
 	}

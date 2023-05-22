@@ -16,9 +16,9 @@ namespace st::renderer
 	{
 		SwapChainSupportDetails swapChainSupport = SwapChainSupportDetails::querySwapChainSupport(m_physicalDevice, m_surface);
 
-		vk::SurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
-		vk::PresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
-		vk::Extent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
+		const vk::SurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
+		const vk::PresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
+		const vk::Extent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
 
 		//TODO - Image count == 2?
 		uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
@@ -31,10 +31,10 @@ namespace st::renderer
 
 		std::array<uint32_t, 2> queueFamilyIndices { indices.graphicsFamily.value(), indices.presentFamily.value() };
 
-		vk::SharingMode imageSharingMode = (indices.graphicsFamily != indices.presentFamily) ? vk::SharingMode::eConcurrent : vk::SharingMode::eExclusive;
+		const vk::SharingMode imageSharingMode = (indices.graphicsFamily != indices.presentFamily) ? vk::SharingMode::eConcurrent : vk::SharingMode::eExclusive;
 
 
-		vk::SwapchainCreateInfoKHR createInfo { vk::SwapchainCreateFlagsKHR(),
+		const vk::SwapchainCreateInfoKHR createInfo { vk::SwapchainCreateFlagsKHR(),
 												m_surface,
 												imageCount,
 												surfaceFormat.format,
@@ -70,40 +70,40 @@ namespace st::renderer
 		m_device.destroySwapchainKHR(m_swapChain);
 	}
 
-	void SwapChain::updateSwapChain(uint64_t width, uint64_t height)
+	void SwapChain::updateSwapChain(uint32_t width, uint32_t height)
 	{
 		m_width = width;
 		m_height = height;
 	}
 
-	void SwapChain::recreateSwapChain(uint64_t width, uint64_t height)
+	void SwapChain::recreateSwapChain(uint32_t width, uint32_t height)
 	{
 		updateSwapChain(width, height);
 		releaseResources();
 		initialize();
 	}
 
-	const vk::SwapchainKHR& SwapChain::getSwapchain() const
+	const vk::SwapchainKHR& SwapChain::getSwapchain() const noexcept
 	{
 		return m_swapChain;
 	}
 
-	const vk::Extent2D& SwapChain::getSwapchainExtend2D() const
+	const vk::Extent2D& SwapChain::getSwapchainExtend2D() const noexcept
 	{
 		return m_swapChainExtent;
 	}
 
-	const vk::Format& SwapChain::getSwapChainImageFormat() const
+	const vk::Format& SwapChain::getSwapChainImageFormat() const noexcept
 	{
 		return m_swapChainImageFormat;
 	}
 
-	const std::vector<vk::Image>& SwapChain::getSwapChainImages() const
+	const std::vector<vk::Image>& SwapChain::getSwapChainImages() const noexcept
 	{
 		return m_swapChainImages;
 	}
 
-	const std::vector<vk::ImageView>& SwapChain::getSwapChainImagesViews() const
+	const std::vector<vk::ImageView>& SwapChain::getSwapChainImagesViews() const noexcept
 	{
 		return m_swapChainImageViews;
 	}
@@ -131,7 +131,7 @@ namespace st::renderer
 			}
 		}
 
-		return vk::PresentModeKHR(VK_PRESENT_MODE_FIFO_KHR);
+		return vk::PresentModeKHR { VK_PRESENT_MODE_FIFO_KHR };
 	}
 
 	vk::Extent2D SwapChain::chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities) const
@@ -142,10 +142,7 @@ namespace st::renderer
 		}
 		else
 		{
-			int width = m_width;
-			int height = m_height;
-
-			VkExtent2D actualExtent { static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
+			VkExtent2D actualExtent { m_width, m_width };
 
 			actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
 			actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
@@ -158,7 +155,7 @@ namespace st::renderer
 	{
 		for (const auto& swapChainImage : m_swapChainImages)
 		{
-			vk::ImageViewCreateInfo createInfo {
+			const vk::ImageViewCreateInfo createInfo {
 				vk::ImageViewCreateFlags {},
 				swapChainImage,
 				vk::ImageViewType::e2D,

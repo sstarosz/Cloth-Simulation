@@ -50,15 +50,15 @@ namespace st::geometry
             return *this;
         }
 
-        constexpr float& operator[](const size_t index)
+        constexpr float& operator[](const uint32_t index)
         {
-            assert(index >= 0 && index <= 15);
+            assert(index <= 15);
             return m_value[index];
         }
 
-        const float& operator[](const size_t index) const
+        const float& operator[](const uint32_t index) const
         {
-            assert(index >= 0 && index <= 15);
+            assert(index <= 15);
             return m_value[index];
         }
 
@@ -67,15 +67,12 @@ namespace st::geometry
 
 
         static Matrix4x4 indentityMatrix();
-        void translate(const Vector3& vector);
-
-        static Matrix4x4 projectionMatrix(float fieldOfView, float framebufferAspectRatio, float nearPlane, float farPlane);
+		void translate(const Vector3& vector) noexcept;
 
 
-
-        static Matrix4x4 rotationX(const float& theta);
-        static Matrix4x4 rotationY(const float& theta);
-        static Matrix4x4 rotationZ(const float& theta);
+        static Matrix4x4 rotationX(const float& theta) noexcept;
+        static Matrix4x4 rotationY(const float& theta) noexcept;
+        static Matrix4x4 rotationZ(const float& theta) noexcept;
         static Matrix4x4 rotationAroundAxis(const float& theta, const Vector3& v);
 
 

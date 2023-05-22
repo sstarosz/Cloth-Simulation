@@ -39,15 +39,15 @@ namespace st::geometry
 		{}
 
 
-        constexpr float& operator[](const size_t index)
+        constexpr float& operator[](const uint32_t index)
         {
-			assert(index >= 0 && index < 5);
+			assert(index < 5);
 			return ((&X)[index]); //TODO More safe version?
         }
 
-        const float& operator[](const size_t index) const
+        const float& operator[](const uint32_t index) const
         {
-			assert(index >= 0 && index < 5);
+			assert(index < 5);
 			return ((&X)[index]); //TODO More safe version?
         }
 

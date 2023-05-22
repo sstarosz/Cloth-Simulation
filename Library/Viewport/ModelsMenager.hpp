@@ -135,12 +135,12 @@ namespace st::viewport
 
 		void addResource() {};
 
-		const std::vector<Model>& getModelsToRender() const
+		const std::vector<Model>& getModelsToRender() const noexcept
 		{
 			return m_models;
 		}
 
-		std::vector<Model>& getModelsToSimulate()
+		std::vector<Model>& getModelsToSimulate() noexcept
 		{
 			return m_models;
 		}

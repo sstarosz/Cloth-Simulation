@@ -5,7 +5,7 @@
 namespace st::geometry
 {
 	//Also know as magnitude
-	float Vector3::length(const Vector3& Vec) //TODO make it constexpr
+	float Vector3::length(const Vector3& Vec) noexcept
 	{
 		return std::sqrt(Vec.X * Vec.X + 
 						  Vec.Y * Vec.Y +
@@ -29,16 +29,16 @@ namespace st::geometry
 		return { Vec * norm };
 	}
 
-	float Vector3::dotProduct(const Vector3& v1, const Vector3& v2)
+	float Vector3::dotProduct(const Vector3& v1, const Vector3& v2) noexcept
 	{
-		float dotProduct = v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
+		const float dotProduct = v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
 		return dotProduct;
 	}
 
 
-	Vector3 Vector3::reflect(const Vector3& incident, const Vector3& normal)
+	Vector3 Vector3::reflect(const Vector3& incident, const Vector3& normal) noexcept
 	{
-		float dotProduct = Vector3::dotProduct(incident, normal);
+		const float dotProduct = Vector3::dotProduct(incident, normal);
 		Vector3 reflection = incident - 2.0f * dotProduct * normal;
 		return reflection;
 	}

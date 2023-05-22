@@ -40,6 +40,8 @@ namespace st::renderer
 
 
 		geometry::Matrix4x4 getViewMatrix() const;
+
+		//fov in degress
 		geometry::Matrix4x4 getProjectionMatrix(float fovy, float aspect, float nearPlane, float farPlane) const;
 
 

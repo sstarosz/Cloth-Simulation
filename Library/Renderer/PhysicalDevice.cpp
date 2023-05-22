@@ -8,20 +8,20 @@
 namespace st::renderer
 {
 
-	PhysicalDevice::PhysicalDevice(const vk::Instance& instance, const vk::SurfaceKHR& surface): m_instance(instance), m_surface(surface) { }
+	PhysicalDevice::PhysicalDevice(const vk::Instance& instance, const vk::SurfaceKHR& surface) noexcept: m_instance(instance), m_surface(surface) { }
 
 	void PhysicalDevice::initialize()
 	{
 		pickPhysicalDevice();
 	}
 
-	void PhysicalDevice::releaseResources()
+	void PhysicalDevice::releaseResources() noexcept
 	{
 		//TODO- nothing??
 	}
 
 	//Return copy of pointer
-	const vk::PhysicalDevice& PhysicalDevice::getPhysicalDevice() const
+	const vk::PhysicalDevice& PhysicalDevice::getPhysicalDevice() const noexcept
 	{
 		return m_physicalDevice;
 	}
@@ -38,7 +38,7 @@ namespace st::renderer
 		for (const auto& device : devices)
 		{
 			// Check if devices contain all required functionality
-			//Pick first that fullfil condtion
+			//Pick first that fulfill condition
 			if (isDeviceSuitable(device))
 			{
 				m_physicalDevice = device;
@@ -51,9 +51,9 @@ namespace st::renderer
 	{
 		//TODO - Check if this function prefere real GPU than gpu inside cpu
 
-		QueueFamilyIndices indices = QueueFamilyIndices::findQueueFamilies(device, m_surface);
+		const QueueFamilyIndices indices = QueueFamilyIndices::findQueueFamilies(device, m_surface);
 
-		bool extensionsSupported = checkDeviceExtensionSupport(device);
+		const bool extensionsSupported = checkDeviceExtensionSupport(device);
 
 		bool swapChainAdequate = false;
 		if (extensionsSupported)

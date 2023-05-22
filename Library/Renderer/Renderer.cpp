@@ -358,8 +358,8 @@ namespace st::renderer
 		commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, m_primitivesGraphicPipeline.getGraphicsPipeline());
 		//
 		//Bind Vertex Buffer from line
-		std::array<vk::Buffer, 1> lineVertexBuffers { m_lineVertexBuffer };
-		std::array<vk::DeviceSize, 1> lineVertexBuffersoffsets { 0 };
+		const std::array<vk::Buffer, 1> lineVertexBuffers { m_lineVertexBuffer };
+		const std::array<vk::DeviceSize, 1> lineVertexBuffersoffsets { 0 };
 
 		commandBuffer.bindVertexBuffers(0, lineVertexBuffers, lineVertexBuffersoffsets);
 		commandBuffer.bindIndexBuffer(m_lineIndexBuffer, 0, vk::IndexType::eUint32);
@@ -421,7 +421,7 @@ namespace st::renderer
 
 		/*Create Index Buffer for Mesh*/
 		renderableMesh.indicesSize = mesh.m_mesh.m_indices.size();
-		vk::DeviceSize indexbufferSize = sizeof(mesh.m_mesh.m_indices[0]) * mesh.m_mesh.m_indices.size();
+		const vk::DeviceSize indexbufferSize = sizeof(mesh.m_mesh.m_indices[0]) * mesh.m_mesh.m_indices.size();
 
 
 		m_memoryManager.createBuffer(indexbufferSize,

@@ -17,16 +17,16 @@ namespace st::renderer
 		void initialize();
 		void releaseResources();
 
-		void updateSwapChain(uint64_t width, uint64_t height);
-		void recreateSwapChain(uint64_t width, uint64_t height);
+		void updateSwapChain(uint32_t width, uint32_t height);
+		void recreateSwapChain(uint32_t width, uint32_t height);
 
 
-		const vk::SwapchainKHR& getSwapchain() const;
-		const vk::Extent2D& getSwapchainExtend2D() const;
-		const vk::Format& getSwapChainImageFormat() const;
-		const std::vector<vk::Image>& getSwapChainImages() const;
+		const vk::SwapchainKHR& getSwapchain() const noexcept;
+		const vk::Extent2D& getSwapchainExtend2D() const noexcept;
+		const vk::Format& getSwapChainImageFormat() const noexcept;
+		const std::vector<vk::Image>& getSwapChainImages() const noexcept;
 
-		const std::vector<vk::ImageView>& getSwapChainImagesViews() const;
+		const std::vector<vk::ImageView>& getSwapChainImagesViews() const noexcept;
 
 	private:
 		vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats) const;
@@ -36,8 +36,8 @@ namespace st::renderer
 		void createImageViews();
 
 
-		uint64_t m_width;
-		uint64_t m_height;
+		uint32_t m_width;
+		uint32_t m_height;
 
 		const vk::PhysicalDevice& m_physicalDevice;
 		const vk::SurfaceKHR& m_surface;
