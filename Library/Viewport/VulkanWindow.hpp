@@ -9,6 +9,7 @@
 #include <QVulkanInstance>
 #include <memory>
 
+#include "Core/Scene.hpp"
 
 #include "Renderer/Instance.hpp"
 #include "Renderer/Surface.hpp"
@@ -52,6 +53,7 @@ namespace st::viewport
 		std::unique_ptr<renderer::Renderer> m_renderer;
 
 
+		core::Scene m_scene;
 		ModelsMenager m_modelMenager;
 		simulation::SimulationEngine m_simulationEngine;
 

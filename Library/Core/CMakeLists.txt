@@ -9,10 +9,12 @@ project(Core
 
 
 set(SOURCES
-	"SceneStatus.cpp")
+	"Scene.cpp"
+	"ModelsMenager.cpp")
 
 set(HEADERS
-	"SceneStatus.hpp")
+	"Scene.hpp"
+	"ModelsMenager.hpp")
 
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
@@ -23,7 +25,7 @@ target_include_directories(${PROJECT_NAME} INTERFACE ${PARENT_DIR})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 target_compile_options(${PROJECT_NAME} PRIVATE ${Compiler_Flags})
 
-target_link_libraries(${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} Geometry)
 
 
 #generate_documentation(TargetName)

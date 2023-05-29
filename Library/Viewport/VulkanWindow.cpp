@@ -11,8 +11,11 @@
 namespace st::viewport
 {
 
-	VulkanWindow::VulkanWindow(): m_instance(std::make_unique<renderer::StInstance>()),
-		m_surface(), m_renderer(),
+	VulkanWindow::VulkanWindow():
+		m_instance(std::make_unique<renderer::StInstance>()),
+		m_surface(),
+		m_renderer(),
+		m_scene(),
 		m_modelMenager(),
 		m_simulationEngine(m_modelMenager)
 	{
@@ -22,6 +25,8 @@ namespace st::viewport
 
 	void VulkanWindow::initialize()
 	{
+
+		m_scene.initialize();
 		m_simulationEngine.initialize();
 
 		m_instance->create();
@@ -44,7 +49,6 @@ namespace st::viewport
 		isInitialised = true;
 
 
-
 		//Model Menager
 		// Model Menager addModel (GenerateSphere)
 		//// add spehere, static
@@ -53,7 +57,6 @@ namespace st::viewport
 		//First Mesh
 		//io::ImporterProxy importerProxy;
 		//importerProxy.readFile("../Assets/Models/Cube.obj");
-
 
 
 		Sphere sphere {
@@ -73,12 +76,7 @@ namespace st::viewport
 
 		std::span<std::byte> pixelsByte { reinterpret_cast<std::byte*>(pixels), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
 
-		viewport::Texture texture { 
-			texWidth,
-			texHeight, 
-			texChannels, 
-			pixelsByte
-		};
+		viewport::Texture texture { texWidth, texHeight, texChannels, pixelsByte };
 
 		viewport::Mesh mesh { sphere.m_vertices, sphere.m_indices };
 
@@ -104,11 +102,9 @@ namespace st::viewport
 
 		viewport::Texture texture2 { texWidth, texHeight, texChannels, pixelsByte2 };
 
-		viewport::Mesh mesh2 { plane.m_vertices, plane.m_indices};
+		viewport::Mesh mesh2 { plane.m_vertices, plane.m_indices };
 		m_modelMenager.addModel(viewport::Model { mesh2, texture2 });
 		m_renderer->updateRecourses();
-		
-
 	}
 
 
