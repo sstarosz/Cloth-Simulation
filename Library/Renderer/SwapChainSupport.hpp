@@ -10,9 +10,9 @@ namespace st::renderer
 {
 	struct SwapChainSupportDetails
 	{
+		vk::SurfaceCapabilitiesKHR capabilities;
 		std::vector<vk::SurfaceFormatKHR> formats;
 		std::vector<vk::PresentModeKHR> presentModes;
-		vk::SurfaceCapabilitiesKHR capabilities;
 
 		static SwapChainSupportDetails querySwapChainSupport(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface);
 	};

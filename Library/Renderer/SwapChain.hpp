@@ -11,7 +11,7 @@ namespace st::renderer
 	class SwapChain
 	{
 	public:
-		SwapChain(const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface, const vk::Device& device);
+		SwapChain(const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface, const vk::Device& device) noexcept;
 
 
 		void initialize();
@@ -29,15 +29,13 @@ namespace st::renderer
 		const std::vector<vk::ImageView>& getSwapChainImagesViews() const noexcept;
 
 	private:
-		vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats) const;
-		vk::PresentModeKHR chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes) const;
-		vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities) const;
+		vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats) const noexcept;
+		vk::PresentModeKHR chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes) const noexcept;
+		vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities) const noexcept;
 
 		void createImageViews();
 
 
-		uint32_t m_width;
-		uint32_t m_height;
 
 		const vk::PhysicalDevice& m_physicalDevice;
 		const vk::SurfaceKHR& m_surface;
@@ -49,6 +47,9 @@ namespace st::renderer
 		vk::Format m_swapChainImageFormat;
 		vk::Extent2D m_swapChainExtent;
 		std::vector<vk::ImageView> m_swapChainImageViews;
+	
+		uint32_t m_width;
+		uint32_t m_height;
 	};
 
 

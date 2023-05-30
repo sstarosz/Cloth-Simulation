@@ -6,10 +6,15 @@
 namespace st::renderer
 {
 
-	SwapChain::SwapChain(const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface, const vk::Device& device):
-		m_physicalDevice(physicalDevice),
-		m_surface(surface),
-		m_device(device)
+	SwapChain::SwapChain(const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface, const vk::Device& device) noexcept: 
+		m_physicalDevice { physicalDevice },
+		m_surface { surface },
+		m_device { device },
+		m_swapChain{},
+		m_swapChainImageFormat {},
+		m_swapChainExtent{ },
+		m_width { 800 },
+		m_height { 600 }
 	{ }
 
 	void SwapChain::initialize()
@@ -108,7 +113,7 @@ namespace st::renderer
 		return m_swapChainImageViews;
 	}
 
-	vk::SurfaceFormatKHR SwapChain::chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats) const
+	vk::SurfaceFormatKHR SwapChain::chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats) const noexcept
 	{
 		for (const auto& availableFormat : availableFormats)
 		{
@@ -118,10 +123,10 @@ namespace st::renderer
 			}
 		}
 
-		return availableFormats[0];
+		return availableFormats.at(0);
 	}
 
-	vk::PresentModeKHR SwapChain::chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes) const
+	vk::PresentModeKHR SwapChain::chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes) const noexcept
 	{
 		for (const auto& availablePresentMode : availablePresentModes)
 		{
@@ -134,7 +139,7 @@ namespace st::renderer
 		return vk::PresentModeKHR { VK_PRESENT_MODE_FIFO_KHR };
 	}
 
-	vk::Extent2D SwapChain::chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities) const
+	vk::Extent2D SwapChain::chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities) const noexcept
 	{
 		if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
 		{
