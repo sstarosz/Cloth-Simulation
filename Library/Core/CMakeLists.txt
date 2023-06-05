@@ -10,11 +10,11 @@ project(Core
 
 set(SOURCES
 	"Scene.cpp"
-	"ModelsMenager.cpp")
+	"ModelsManager.cpp")
 
 set(HEADERS
 	"Scene.hpp"
-	"ModelsMenager.hpp")
+	"ModelsManager.hpp")
 
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})

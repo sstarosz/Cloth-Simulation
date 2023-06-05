@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "Core/Scene.hpp"
+#include "Core/ModelsManager.hpp"
 
 #include "Renderer/Instance.hpp"
 #include "Renderer/Surface.hpp"
@@ -54,7 +55,7 @@ namespace st::viewport
 
 
 		core::Scene m_scene;
-		ModelsMenager m_modelMenager;
+		core::ModelsManager m_modelMenager;
 		simulation::SimulationEngine m_simulationEngine;
 
 

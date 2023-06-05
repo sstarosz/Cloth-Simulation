@@ -10,7 +10,7 @@ namespace st::simulation
 	using namespace geometry;
 
 
-	SimulationEngine::SimulationEngine(viewport::ModelsMenager& modelMenager): m_modelMenager(modelMenager)
+	SimulationEngine::SimulationEngine(core::ModelsManager& modelMenager): m_modelMenager(modelMenager)
 	{ }
 
 	void SimulationEngine::initialize()
@@ -24,6 +24,9 @@ namespace st::simulation
 
 	void SimulationEngine::update(float deltaTime)
 	{
+		//detect colision
+
+		/*
 		auto& modelToRender = m_modelMenager.getModelsToSimulate().at(1);
 
 
@@ -66,7 +69,7 @@ namespace st::simulation
 		}
 
 
-
+		*/
 	}
 
 	void SimulationEngine::applyForce(Particle& particle, const Vector3 force)

@@ -1,4 +1,4 @@
-#include "ModelsMenager.hpp"
+#include "ModelsManager.hpp"
 
 #include <vector>
 #include <numbers>
@@ -7,12 +7,12 @@
 namespace st::core
 {
 
-	ModelsMenager::ModelsMenager()
+	ModelsManager::ModelsManager()
 	{
 
 	}
 
-	void ModelsMenager::addModel(BodyBase&& model)
+	void ModelsManager::addModel(BodyBase&& model)
 	{ 
 		//m_models.emplace_back(model);
 	}

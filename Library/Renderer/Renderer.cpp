@@ -8,10 +8,10 @@
 namespace st::renderer
 {
 
-	Renderer::Renderer(const StInstance& instance, const Surface& surface, const viewport::ModelsMenager& modelMenager):
+	Renderer::Renderer(const StInstance& instance, const Surface& surface, const core::ModelsManager& modelManager):
 		m_instance(instance),
 		m_surface(surface),
-		m_modelMenager(modelMenager),
+		m_modelManager(modelManager),
 		m_physicalDevice(m_instance.getInstance(), surface.getSurface()),
 		m_logicalDevice(m_instance.getInstance(), m_physicalDevice.getPhysicalDevice(), m_surface.getSurface()),
 		m_swapChain(m_physicalDevice.getPhysicalDevice(), m_surface.getSurface(), m_logicalDevice.getDevice()),
@@ -94,9 +94,10 @@ namespace st::renderer
 
 	void Renderer::updateRecourses()
 	{
-		for (const auto& model : m_modelMenager.getModelsToRender())
+		for (const auto& model : m_modelManager.getModelsToRender())
 		{
-			addModel(model);
+			//addModel(model);
+			//TO-DO
 		}
 	}
 
@@ -276,16 +277,16 @@ namespace st::renderer
 
 	void Renderer::updateGeometry()
 	{
-		auto& dynamic_mesh = m_renderableMeshes.at(1);
-
-
-		const auto updatedMesh = m_modelMenager.getModelsToRender().at(1).m_mesh;
-		const vk::DeviceSize bufferSize = sizeof(updatedMesh.m_vertices[0]) * updatedMesh.m_vertices.size();
-
-
-		std::memcpy(dynamic_mesh.mappedVertexMemory.data(),
-					updatedMesh.m_vertices.data(),
-					static_cast<size_t>(bufferSize)); //vertices should fulfill trivial object specification?
+		//auto& dynamic_mesh = m_renderableMeshes.at(1);
+		//
+		//
+		//const auto updatedMesh = m_modelMenager.getModelsToRender().at(1).m_mesh;
+		//const vk::DeviceSize bufferSize = sizeof(updatedMesh.m_vertices[0]) * updatedMesh.m_vertices.size();
+		//
+		//
+		//std::memcpy(dynamic_mesh.mappedVertexMemory.data(),
+		//			updatedMesh.m_vertices.data(),
+		//			static_cast<size_t>(bufferSize)); //vertices should fulfill trivial object specification?
 	}
 
 	void Renderer::createSyncObjects()
@@ -391,12 +392,13 @@ namespace st::renderer
 		m_camera.releaseMouseClick();
 	}
 
+	/*
 	void Renderer::addModel(const viewport::Model& mesh)
 	{
 		RenderableMesh renderableMesh; //Result
 
 
-		/*Create Vertex Buffer for Mesh	*/
+		//Create Vertex Buffer for Mesh	
 		const vk::DeviceSize bufferSize = sizeof(mesh.m_mesh.m_vertices[0]) * mesh.m_mesh.m_vertices.size();
 
 		//TODO- check if i can add it to exisitng buffer.
@@ -419,7 +421,7 @@ namespace st::renderer
 		//m_logicalDevice.getDevice().unmapMemory(renderableMesh.vertexBufferMemory);
 
 
-		/*Create Index Buffer for Mesh*/
+		//Create Index Buffer for Mesh
 		renderableMesh.indicesSize = mesh.m_mesh.m_indices.size();
 		vk::DeviceSize indexbufferSize = sizeof(mesh.m_mesh.m_indices[0]) * mesh.m_mesh.m_indices.size();
 
@@ -439,12 +441,12 @@ namespace st::renderer
 
 		//If use texture
 		//createTextureImage();
-		/*Create Texture Image per Mesh		Create Texture Image View per Mesh*/
+		//Create Texture Image per Mesh		Create Texture Image View per Mesh
 		createTextureImage(mesh.m_texture, renderableMesh.textureImage, renderableMesh.textureImageMemory);
 		createTextureImageView(renderableMesh.textureImage, renderableMesh.textureImageView);
 
 
-		/*Create Descriptor Pool*/
+		//Create Descriptor Pool
 		// Should be one for all object?
 		renderableMesh.descriptorSets = m_graphicPipeline.createDescriptorSetPerMesh();
 		//m_graphicPipeline.getDescriptorSet();
@@ -501,5 +503,5 @@ namespace st::renderer
 		textureImageView = m_imageManager.createImageView(textureImage, vk::Format::eR8G8B8A8Srgb, vk::ImageAspectFlagBits::eColor);
 	}
 
-
+	*/
 }

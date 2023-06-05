@@ -11,7 +11,8 @@ namespace st::geometry
 	protected:
 		enum class ShapeType
 		{
-			eSphereShape
+			eSphereShape,
+			eMesh
 		};
 
 	public:

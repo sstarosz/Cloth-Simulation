@@ -13,6 +13,7 @@ namespace st::geometry
 	protected:
 		enum class BodyType
 		{
+			eStaticBody,
 			eSimulatedBody
 		};
 
@@ -24,9 +25,6 @@ namespace st::geometry
 	protected:
 		Vector3 m_position;
 		Vector3 m_orientation;
-
-		ShapeBase* m_shapeBase;
-
 	};
 
 

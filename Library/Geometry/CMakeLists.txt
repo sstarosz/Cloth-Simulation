@@ -19,7 +19,9 @@ set(SOURCES
 	"Primitives/ShapeBase.cpp"
 	"Primitives/Sphere.cpp"
 	"Body/BodyBase.cpp"
-	"Body/SimulatedBody.cpp")
+	"Body/SimulatedBody.cpp"
+	"Primitives/Mesh.cpp"
+	"Model.cpp")
 
 set(HEADERS
 	"Math.hpp"
@@ -32,8 +34,10 @@ set(HEADERS
 	"Line.hpp"
 	"Primitives/ShapeBase.hpp"
 	"Primitives/Sphere.hpp"
-	"Body/BodyBase.cpp"
-	"Body/SimulatedBody.cpp")
+	"Body/BodyBase.hpp"
+	"Body/SimulatedBody.hpp"
+	"Primitives/Mesh.hpp"
+	"Model.hpp")
 
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})

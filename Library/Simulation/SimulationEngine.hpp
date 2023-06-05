@@ -5,7 +5,7 @@
 
 #include <Geometry/Vector4.hpp>
 #include <Geometry/Vector3.hpp>
-#include <Viewport/ModelsMenager.hpp>
+#include <Core/ModelsManager.hpp>
 
 namespace st::simulation
 {
@@ -15,7 +15,7 @@ namespace st::simulation
 	{
 
 	public:
-		SimulationEngine(viewport::ModelsMenager& modelMenager);
+		SimulationEngine(core::ModelsManager& modelMenager);
 
 
 		void initialize();
@@ -63,7 +63,7 @@ namespace st::simulation
 
 		std::vector<Particle> m_particle;
 
-		viewport::ModelsMenager& m_modelMenager;
+		core::ModelsManager& m_modelMenager;
 	};
 
 } //!namespace st::simulation

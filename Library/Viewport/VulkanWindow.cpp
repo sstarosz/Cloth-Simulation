@@ -7,6 +7,8 @@
 #include <stb_image.h>
 #include <span>
 
+#include <Geometry/Primitives/SphereMesh.hpp>
+#include <Geometry/Vector3.hpp>
 
 namespace st::viewport
 {
@@ -59,51 +61,53 @@ namespace st::viewport
 		//importerProxy.readFile("../Assets/Models/Cube.obj");
 
 
-		Sphere sphere {
-			Vector3 {0.0f, 0.0f, 0.0f},
+		geometry::SphereMesh sphere
+		{
 			1.0f,
 			10,
 			10
 		};
+		
+		geometry::Vector3 { 0.0f, 0.0f, 0.0f },
+		
+		//int texWidth = 0;
+		//int texHeight = 0;
+		//int texChannels = 0;
+		//
+		//stbi_uc* pixels = stbi_load("../Assets/Textures/texture2.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
 
-		int texWidth = 0;
-		int texHeight = 0;
-		int texChannels = 0;
+		//std::span<std::byte> pixelsByte { reinterpret_cast<std::byte*>(pixels), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
+		//
+		//viewport::Texture texture { texWidth, texHeight, texChannels, pixelsByte };
+		//
+		//viewport::Mesh mesh { sphere.m_vertices, sphere.m_indices };
 
-		stbi_uc* pixels = stbi_load("../Assets/Textures/texture2.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
-
-		std::span<std::byte> pixelsByte { reinterpret_cast<std::byte*>(pixels), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
-
-		viewport::Texture texture { texWidth, texHeight, texChannels, pixelsByte };
-
-		viewport::Mesh mesh { sphere.m_vertices, sphere.m_indices };
-
-		m_modelMenager.addModel(viewport::Model { mesh, texture });
+		//m_modelMenager.addModel(core::Model { mesh, texture });
 
 
 		//-------------------------------------------------------------------Second Mesh-------------------------------------------------------------------------
 		//io::ImporterProxy importerProxy2;
 		//importerProxy2.readFile("../Assets/Models/Sphere.obj");
 
-		Plane plane {
-			Vector3 {0.0f, 2.0f, 0.0f},
-			3.0f,
-			3.0f,
-			59,
-			59
-		};
-
-		stbi_uc* pixels2 = stbi_load("../Assets/Textures/texture.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-
-
-		std::span<std::byte> pixelsByte2 { reinterpret_cast<std::byte*>(pixels2), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
-
-		viewport::Texture texture2 { texWidth, texHeight, texChannels, pixelsByte2 };
-
-		viewport::Mesh mesh2 { plane.m_vertices, plane.m_indices };
-		m_modelMenager.addModel(viewport::Model { mesh2, texture2 });
+		//Plane plane {
+		//	Vector3 {0.0f, 2.0f, 0.0f},
+		//	3.0f,
+		//	3.0f,
+		//	59,
+		//	59
+		//};
+		//
+		//stbi_uc* pixels2 = stbi_load("../Assets/Textures/texture.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+		//
+		//
+		//std::span<std::byte> pixelsByte2 { reinterpret_cast<std::byte*>(pixels2), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
+		//
+		//viewport::Texture texture2 { texWidth, texHeight, texChannels, pixelsByte2 };
+		//
+		//viewport::Mesh mesh2 { plane.m_vertices, plane.m_indices };
+		//m_modelMenager.addModel(viewport::Model { mesh2, texture2 });
 		m_renderer->updateRecourses();
 	}
 

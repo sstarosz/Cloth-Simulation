@@ -1,5 +1,5 @@
-#ifndef CORE_MODELSMENAGER_HPP
-#define CORE_MODELSMENAGER_HPP
+#ifndef CORE_MODELSMANAGER_HPP
+#define CORE_MODELSMANAGER_HPP
 
 #include <Geometry/Vector3.hpp>
 #include <Geometry/Vertex.hpp>
@@ -15,11 +15,11 @@ namespace st::core
 
 
 
-	class ModelsMenager
+	class ModelsManager
 	{
 
 	public:
-		ModelsMenager();
+		ModelsManager();
 
 
 		//add model

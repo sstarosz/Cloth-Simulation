@@ -21,7 +21,7 @@
 #include "Framebuffer.hpp"
 #include "Camera.hpp"
 #include <optional>
-#include "Viewport/ModelsMenager.hpp"
+#include "Core/ModelsManager.hpp"
 
 namespace st::renderer
 {
@@ -29,7 +29,7 @@ namespace st::renderer
 	class Renderer
 	{
 	public:
-		Renderer(const StInstance& instance, const Surface& surface, const viewport::ModelsMenager& modelMenager);
+		Renderer(const StInstance& instance, const Surface& surface, const core::ModelsManager& modelMenager);
 
 		void initialize();
 		void releaseResources();
@@ -76,7 +76,7 @@ namespace st::renderer
 	private:
 		const StInstance& m_instance;
 		const Surface& m_surface;
-		const viewport::ModelsMenager& m_modelMenager;
+		const core::ModelsManager& m_modelManager;
 
 		PhysicalDevice m_physicalDevice;
 		LogicalDevice m_logicalDevice;
@@ -129,9 +129,9 @@ namespace st::renderer
 		std::vector<uint32_t> m_linesIndices = { 0, 1, 2, 3, 4, 5 };
 
 
-		void addModel(const viewport::Model& mesh);
-		void createTextureImage(viewport::Texture texture, vk::Image& textureImage, vk::DeviceMemory& textureImageMemory);
-		void createTextureImageView(vk::Image& textureImage, vk::ImageView& textureImageView);
+		//void addModel(const viewport::Model& mesh);
+		//void createTextureImage(viewport::Texture texture, vk::Image& textureImage, vk::DeviceMemory& textureImageMemory);
+		//void createTextureImageView(vk::Image& textureImage, vk::ImageView& textureImageView);
 
 
 		struct RenderableMesh
