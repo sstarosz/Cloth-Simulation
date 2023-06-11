@@ -18,7 +18,7 @@ namespace st::geometry
 
 		ShapeBase::ShapeType getType() const override;
 
-	private:
+	protected:
 		std::vector<Vertex> m_vertices;
 		std::vector<uint32_t> m_indices;
 	};

@@ -96,7 +96,7 @@ namespace st::renderer
 	{
 		for (const auto& model : m_modelManager.getModelsToRender())
 		{
-			//addModel(model);
+			addModel(model);
 			//TO-DO
 		}
 	}
@@ -392,8 +392,8 @@ namespace st::renderer
 		m_camera.releaseMouseClick();
 	}
 
-	/*
-	void Renderer::addModel(const viewport::Model& mesh)
+	
+	void Renderer::addModel(const geometry::Model& mesh)
 	{
 		RenderableMesh renderableMesh; //Result
 
@@ -456,6 +456,7 @@ namespace st::renderer
 		m_renderableMeshes.emplace_back(renderableMesh);
 	}
 
+	/*
 	void Renderer::createTextureImage(viewport::Texture texture, vk::Image& textureImage, vk::DeviceMemory& textureImageMemory)
 	{
 

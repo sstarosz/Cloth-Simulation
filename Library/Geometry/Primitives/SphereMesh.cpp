@@ -1,11 +1,16 @@
-#include "Sphere.hpp"
 #include "SphereMesh.hpp"
 #include "../Vector3.hpp"
+
+#include <vector>
+#include <numbers>
 
 namespace st::geometry
 {
 
-	SphereMesh::SphereMesh(float radius) { }
+	SphereMesh::SphereMesh(float radius)
+	{
+
+	}
 
 
 	// Code to generate shpere
@@ -32,9 +37,9 @@ namespace st::geometry
 				const float sinTheta = std::sin(theta);
 				const float cosTheta = std::cos(theta);
 
-				float posX = radius * sinPhi * cosTheta + position.X;
-				float posY = radius * sinPhi * sinTheta + position.Y;
-				float posZ = radius * cosPhi + position.Z;
+				float posX = radius * sinPhi * cosTheta;
+				float posY = radius * sinPhi * sinTheta;
+				float posZ = radius * cosPhi;
 
 				float mappingU = static_cast<float>(j) / static_cast<float>(widthSubdivisions - 1);
 				float mappingV = static_cast<float>(i) / static_cast<float>(heightSubdivisions - 1);
@@ -73,9 +78,9 @@ namespace st::geometry
 	//return points;
 	}
 
-	ShapeBase::ShapeType Sphere::getType() const
+	ShapeBase::ShapeType SphereMesh::getType() const
 	{
-		return ShapeType::eSphereShape;
+		return ShapeType::eMesh;
 	}
 
 

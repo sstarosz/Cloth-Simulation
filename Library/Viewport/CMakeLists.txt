@@ -41,6 +41,7 @@ target_link_libraries(${PROJECT_NAME}
 						Core
 						Renderer
 						Simulation
+						Geometry
 						Vulkan::Vulkan
 						Qt6::Core
 						Qt6::Gui

@@ -18,6 +18,8 @@ namespace st::geometry
 		};
 
 	public:
+		BodyBase(Vector3 position, Vector3 orientation): m_position(position), m_orientation(orientation) {};
+
 		virtual ~BodyBase() = default;
 		virtual BodyType getBodyType() const = 0;
 

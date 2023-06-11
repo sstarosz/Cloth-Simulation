@@ -3,7 +3,7 @@
 
 #include <Geometry/Vector3.hpp>
 #include <Geometry/Vertex.hpp>
-#include <Geometry/Body/BodyBase.hpp>
+#include <Geometry/Model.hpp>
 
 #include <vector>
 #include <memory>
@@ -29,19 +29,19 @@ namespace st::core
 		//get models for rendering
 
 		//High lever structure that can contain meshes, textures, etc (usually data that come's from 3d format files)
-		void addModel(BodyBase&& model);
+		void addModel(Model&& model);
 		
 		//Add Geometry that contain only mesh data
 		void addGeometry();
 
 		void addResource() {};
 
-		const std::vector<std::unique_ptr<BodyBase>>& getModelsToRender() const
+		const std::vector<std::unique_ptr<Model>>& getModelsToRender() const
 		{
 			return m_models;
 		}
 
-		std::vector<std::unique_ptr<BodyBase>>& getModelsToSimulate()
+		std::vector<std::unique_ptr<Model>>& getModelsToSimulate()
 		{
 			return m_models;
 		}
@@ -49,10 +49,10 @@ namespace st::core
 	private:
 		// List of all models
 
-		std::vector<std::unique_ptr<BodyBase>> m_models;
+		std::vector<std::unique_ptr<Model>> m_models;
 
-		std::vector<std::unique_ptr<BodyBase>> m_modelsToRender;
-		std::vector<std::unique_ptr<BodyBase>> m_modelsToSimulate;
+		std::vector<std::unique_ptr<Model>> m_modelsToRender;
+		std::vector<std::unique_ptr<Model>> m_modelsToSimulate;
 
 
 	};

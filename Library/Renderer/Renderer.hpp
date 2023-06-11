@@ -22,6 +22,7 @@
 #include "Camera.hpp"
 #include <optional>
 #include "Core/ModelsManager.hpp"
+#include <Geometry/Model.hpp>
 
 namespace st::renderer
 {
@@ -129,7 +130,7 @@ namespace st::renderer
 		std::vector<uint32_t> m_linesIndices = { 0, 1, 2, 3, 4, 5 };
 
 
-		//void addModel(const viewport::Model& mesh);
+		void addModel(const geometry::Model& mesh);
 		//void createTextureImage(viewport::Texture texture, vk::Image& textureImage, vk::DeviceMemory& textureImageMemory);
 		//void createTextureImageView(vk::Image& textureImage, vk::ImageView& textureImageView);
 

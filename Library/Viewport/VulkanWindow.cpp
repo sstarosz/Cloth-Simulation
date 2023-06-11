@@ -8,6 +8,8 @@
 #include <span>
 
 #include <Geometry/Primitives/SphereMesh.hpp>
+#include <Geometry/Body/StaticBody.hpp>
+#include <Geometry/Model.hpp>
 #include <Geometry/Vector3.hpp>
 
 namespace st::viewport
@@ -61,30 +63,31 @@ namespace st::viewport
 		//importerProxy.readFile("../Assets/Models/Cube.obj");
 
 
-		geometry::SphereMesh sphere
-		{
-			1.0f,
-			10,
-			10
-		};
+		//geometry::SphereMesh sphere { 1.0f, 10u, 10u };
+
+		std::unique_ptr<geometry::ShapeBase> sphere = std::make_unique<geometry::SphereMesh>(1.0f, 10u, 10u);
+		std::unique_ptr<geometry::BodyBase> sphereBody =
+			std::make_unique<geometry::StaticBody>(geometry::Vector3 { 0.0F, 0.0F, 0.0F }, geometry::Vector3 { 0.0f, 0.0f, 0.0 });
+
+
 		
-		geometry::Vector3 { 0.0f, 0.0f, 0.0f },
+		geometry::Vector3 { 0.0f, 0.0f, 0.0f };
 		
-		//int texWidth = 0;
-		//int texHeight = 0;
-		//int texChannels = 0;
-		//
-		//stbi_uc* pixels = stbi_load("../Assets/Textures/texture2.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+		int texWidth = 0;
+		int texHeight = 0;
+		int texChannels = 0;
+		
+		stbi_uc* pixels = stbi_load("../Assets/Textures/texture2.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
 
-		//std::span<std::byte> pixelsByte { reinterpret_cast<std::byte*>(pixels), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
-		//
-		//viewport::Texture texture { texWidth, texHeight, texChannels, pixelsByte };
-		//
-		//viewport::Mesh mesh { sphere.m_vertices, sphere.m_indices };
+		std::span<std::byte> pixelsByte { reinterpret_cast<std::byte*>(pixels), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
+		
+		geometry::Texture texture { texWidth, texHeight, texChannels, pixelsByte };
+		
+		std::unique_ptr<geometry::Material> material = std::make_unique<geometry::Material>(texture);
 
-
-		//m_modelMenager.addModel(core::Model { mesh, texture });
+		geometry::Model firstModel(std::move(sphere), std::move(sphereBody), std::move(material));
+		m_modelMenager.addModel(std::move(firstModel));
 
 
 		//-------------------------------------------------------------------Second Mesh-------------------------------------------------------------------------

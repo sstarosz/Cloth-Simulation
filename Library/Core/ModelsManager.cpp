@@ -12,9 +12,9 @@ namespace st::core
 
 	}
 
-	void ModelsManager::addModel(BodyBase&& model)
+	void ModelsManager::addModel(Model&& model)
 	{ 
-		//m_models.emplace_back(model);
+		m_models.emplace_back(std::make_unique <Model>(std::move(model)));
 	}
 
 
