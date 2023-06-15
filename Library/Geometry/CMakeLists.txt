@@ -23,7 +23,8 @@ set(SOURCES
 	"Body/SimulatedBody.cpp"
 	"Primitives/Mesh.cpp"
 	"Model.cpp"
-	"Body/StaticBody.cpp")
+	"Body/StaticBody.cpp"
+	"Primitives/PlaneMesh.cpp")
 
 set(HEADERS
 	"Math.hpp"
@@ -41,7 +42,8 @@ set(HEADERS
 	"Body/SimulatedBody.hpp"
 	"Primitives/Mesh.hpp"
 	"Model.hpp"
-	"Body/StaticBody.hpp")
+	"Body/StaticBody.hpp"
+	"Primitives/PlaneMesh.hpp")
 
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})

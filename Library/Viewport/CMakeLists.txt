@@ -17,13 +17,12 @@ configure_file(Config.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/Config.hpp @ONLY)
 set(SOURCES
 	"ViewportWidget.cpp"
 	"VulkanWindow.cpp"
-	"ModelsMenager.cpp"
+	
 	)
 
 set(HEADERS
 	"ViewportWidget.hpp"
 	"VulkanWindow.hpp"
-	"ModelsMenager.hpp"
 	"Config.hpp"
 	)
 

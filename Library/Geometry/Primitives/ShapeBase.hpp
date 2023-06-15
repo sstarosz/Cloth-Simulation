@@ -8,14 +8,13 @@ namespace st::geometry
 	class ShapeBase
 	{
 
-	protected:
+	public:
 		enum class ShapeType
 		{
 			eSphereShape,
 			eMesh
 		};
 
-	public:
 
 		virtual ~ShapeBase() = default;
 

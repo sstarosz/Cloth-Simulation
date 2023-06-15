@@ -1,6 +1,7 @@
 #include "SimulationEngine.hpp"
 
 #include "Geometry/Vector3.hpp"
+#include <Geometry/Primitives/Mesh.hpp>
 
 #include <vector>
 
@@ -26,14 +27,22 @@ namespace st::simulation
 	{
 		//detect colision
 
-		/*
+		
 		auto& modelToRender = m_modelMenager.getModelsToSimulate().at(1);
+
+		if (modelToRender->m_bodyBase->getBodyType() != geometry::BodyBase::BodyType::eSimulatedBody)
+		{
+			return;
+		}
+
+
+		geometry::Mesh* mesh = dynamic_cast<geometry::Mesh*>(modelToRender->m_shape.get());
 
 
 		//Update particles
-		if (m_particle.size() != modelToRender.m_mesh.m_vertices.size())
+		if (m_particle.size() != mesh->m_vertices.size())
 		{
-			for (const auto& vertex : modelToRender.m_mesh.m_vertices)
+			for (const auto& vertex : mesh->m_vertices)
 			{ 
 				m_particle.emplace_back( Particle{
 					vertex.m_pos,
@@ -46,9 +55,9 @@ namespace st::simulation
 		}
 		else
 		{
-			for (size_t i = 0; i < modelToRender.m_mesh.m_vertices.size(); i++)
+			for (size_t i = 0; i < mesh->m_vertices.size(); i++)
 			{
-				m_particle.at(i).position = modelToRender.m_mesh.m_vertices[i].m_pos;
+				m_particle.at(i).position = mesh->m_vertices[i].m_pos;
 			}	
 		}
 
@@ -62,14 +71,14 @@ namespace st::simulation
 		}
 
 
-		for (size_t i = 0; i < modelToRender.m_mesh.m_vertices.size(); i++)
+		for (size_t i = 0; i < mesh->m_vertices.size(); i++)
 		{
-			modelToRender.m_mesh.m_vertices[i].m_pos = m_particle.at(i).position;
+			mesh->m_vertices[i].m_pos = m_particle.at(i).position;
 			//modelToRender.m_mesh.m_vertices[i].m_normal = m_particle.at(i).normal;
 		}
 
 
-		*/
+		
 	}
 
 	void SimulationEngine::applyForce(Particle& particle, const Vector3 force)

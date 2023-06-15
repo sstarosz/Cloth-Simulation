@@ -8,7 +8,10 @@
 #include <span>
 
 #include <Geometry/Primitives/SphereMesh.hpp>
+#include <Geometry/Primitives/PlaneMesh.hpp>
+
 #include <Geometry/Body/StaticBody.hpp>
+#include <Geometry/Body/SimulatedBody.hpp>
 #include <Geometry/Model.hpp>
 #include <Geometry/Vector3.hpp>
 
@@ -102,15 +105,29 @@ namespace st::viewport
 		//	59
 		//};
 		//
-		//stbi_uc* pixels2 = stbi_load("../Assets/Textures/texture.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-		//
-		//
-		//std::span<std::byte> pixelsByte2 { reinterpret_cast<std::byte*>(pixels2), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
-		//
-		//viewport::Texture texture2 { texWidth, texHeight, texChannels, pixelsByte2 };
-		//
-		//viewport::Mesh mesh2 { plane.m_vertices, plane.m_indices };
-		//m_modelMenager.addModel(viewport::Model { mesh2, texture2 });
+		stbi_uc* pixels2 = stbi_load("../Assets/Textures/texture.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+		std::span<std::byte> pixelsByte2 { reinterpret_cast<std::byte*>(pixels2), static_cast<std::span<std::byte>::size_type>(texWidth * texHeight * 4) };
+		
+		geometry::Texture texture2 { texWidth, texHeight, texChannels, pixelsByte2 };
+		std::unique_ptr<geometry::Material> material2 = std::make_unique<geometry::Material>(texture2);
+
+
+		std::unique_ptr<geometry::PlaneMesh> plane = std::make_unique<geometry::PlaneMesh>(3.0f,3.0F,  59u, 59u);
+		
+		for (auto& vertex : plane->m_vertices)
+		{
+			vertex.m_pos = vertex.m_pos + geometry::Vector3 { 0.0F, 2.0F, 0.0F };
+		}
+
+
+		std::unique_ptr<geometry::BodyBase> sphereBody2 =
+			std::make_unique<geometry::SimulatedBody>(geometry::Vector3 { 0.0F, 0.0F, 0.0F }, geometry::Vector3 { 0.0f, 0.0f, 0.0 });
+
+
+
+		geometry::Model secondModel(std::move(plane), std::move(sphereBody2), std::move(material2));
+		m_modelMenager.addModel(std::move(secondModel));
 		m_renderer->updateRecourses();
 	}
 

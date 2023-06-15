@@ -11,11 +11,11 @@ namespace st::geometry
 
 	public:
 		SimulatedBody() = default;
+		SimulatedBody(Vector3 position, Vector3 orientation): BodyBase(position, orientation) {};
 		virtual ~SimulatedBody() = default;
 
 
 		virtual BodyType getBodyType() const override;
-
 
 
 	};

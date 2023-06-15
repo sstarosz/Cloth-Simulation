@@ -4,6 +4,8 @@
 #include "UniformBuffers.hpp"
 #include <iostream>
 #include <chrono>
+#include <Geometry/Primitives/Mesh.hpp>
+
 
 namespace st::renderer
 {
@@ -277,16 +279,24 @@ namespace st::renderer
 
 	void Renderer::updateGeometry()
 	{
-		//auto& dynamic_mesh = m_renderableMeshes.at(1);
-		//
-		//
-		//const auto updatedMesh = m_modelMenager.getModelsToRender().at(1).m_mesh;
-		//const vk::DeviceSize bufferSize = sizeof(updatedMesh.m_vertices[0]) * updatedMesh.m_vertices.size();
-		//
-		//
-		//std::memcpy(dynamic_mesh.mappedVertexMemory.data(),
-		//			updatedMesh.m_vertices.data(),
-		//			static_cast<size_t>(bufferSize)); //vertices should fulfill trivial object specification?
+		auto& dynamic_mesh = m_renderableMeshes.at(1);
+		
+		
+		const auto* updatedMesh = m_modelManager.getModelsToRender().at(1)->m_shape.get();
+
+		if (updatedMesh->getType() != geometry::ShapeBase::ShapeType::eMesh)
+		{
+			return;
+		}
+
+		const geometry::Mesh* mesh = dynamic_cast<const geometry::Mesh*>(updatedMesh);
+
+		const vk::DeviceSize bufferSize = sizeof(mesh->m_vertices[0]) * mesh->m_vertices.size();
+		
+		
+		std::memcpy(dynamic_mesh.mappedVertexMemory.data(),
+					mesh->m_vertices.data(),
+					static_cast<size_t>(bufferSize)); //vertices should fulfill trivial object specification?
 	}
 
 	void Renderer::createSyncObjects()
@@ -393,13 +403,20 @@ namespace st::renderer
 	}
 
 	
-	void Renderer::addModel(const geometry::Model& mesh)
+	void Renderer::addModel(const std::unique_ptr<geometry::Model>& mesh)
 	{
 		RenderableMesh renderableMesh; //Result
 
+		if (mesh->m_shape->getType() != geometry::ShapeBase::ShapeType::eMesh)
+		{
+			return;
+		}
+
+		geometry::Mesh* meshToRender = dynamic_cast<geometry::Mesh*>(mesh->m_shape.get());
+
 
 		//Create Vertex Buffer for Mesh	
-		const vk::DeviceSize bufferSize = sizeof(mesh.m_mesh.m_vertices[0]) * mesh.m_mesh.m_vertices.size();
+		const vk::DeviceSize bufferSize = sizeof(meshToRender->m_vertices[0]) * meshToRender->m_vertices.size();
 
 		//TODO- check if i can add it to exisitng buffer.
 		m_memoryManager.createBuffer(bufferSize,
@@ -413,7 +430,7 @@ namespace st::renderer
 											  bufferSize };
 
 		std::memcpy(renderableMesh.mappedVertexMemory.data(),
-					mesh.m_mesh.m_vertices.data(),
+					meshToRender->m_vertices.data(),
 					static_cast<size_t>(bufferSize)); //vertices should fulfill trivial object specification?
 
 
@@ -422,8 +439,8 @@ namespace st::renderer
 
 
 		//Create Index Buffer for Mesh
-		renderableMesh.indicesSize = mesh.m_mesh.m_indices.size();
-		vk::DeviceSize indexbufferSize = sizeof(mesh.m_mesh.m_indices[0]) * mesh.m_mesh.m_indices.size();
+		renderableMesh.indicesSize = meshToRender->m_indices.size();
+		vk::DeviceSize indexbufferSize = sizeof(meshToRender->m_indices[0]) * meshToRender->m_indices.size();
 
 
 		m_memoryManager.createBuffer(indexbufferSize,
@@ -436,13 +453,13 @@ namespace st::renderer
 		renderableMesh.mappedIndexMemory = { static_cast<std::byte*>(
 												 m_logicalDevice.getDevice().mapMemory(renderableMesh.indexBufferMemory, 0, indexbufferSize)),
 											 indexbufferSize };
-		std::memcpy(renderableMesh.mappedIndexMemory.data(), mesh.m_mesh.m_indices.data(), static_cast<size_t>(indexbufferSize));
+		std::memcpy(renderableMesh.mappedIndexMemory.data(), meshToRender->m_indices.data(), static_cast<size_t>(indexbufferSize));
 
 
 		//If use texture
 		//createTextureImage();
 		//Create Texture Image per Mesh		Create Texture Image View per Mesh
-		createTextureImage(mesh.m_texture, renderableMesh.textureImage, renderableMesh.textureImageMemory);
+		createTextureImage(mesh->m_material->m_texture, renderableMesh.textureImage, renderableMesh.textureImageMemory);
 		createTextureImageView(renderableMesh.textureImage, renderableMesh.textureImageView);
 
 
@@ -456,8 +473,8 @@ namespace st::renderer
 		m_renderableMeshes.emplace_back(renderableMesh);
 	}
 
-	/*
-	void Renderer::createTextureImage(viewport::Texture texture, vk::Image& textureImage, vk::DeviceMemory& textureImageMemory)
+	
+	void Renderer::createTextureImage(geometry::Texture texture, vk::Image& textureImage, vk::DeviceMemory& textureImageMemory)
 	{
 
 		vk::DeviceSize imageSize = texture.textureWidth * texture.textureHeight * 4;
@@ -504,5 +521,5 @@ namespace st::renderer
 		textureImageView = m_imageManager.createImageView(textureImage, vk::Format::eR8G8B8A8Srgb, vk::ImageAspectFlagBits::eColor);
 	}
 
-	*/
+	
 }

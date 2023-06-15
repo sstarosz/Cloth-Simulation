@@ -10,21 +10,20 @@ namespace st::geometry
 	class BodyBase
 	{
 
-	protected:
+	public:
 		enum class BodyType
 		{
 			eStaticBody,
 			eSimulatedBody
 		};
 
-	public:
+
 		BodyBase(Vector3 position, Vector3 orientation): m_position(position), m_orientation(orientation) {};
 
 		virtual ~BodyBase() = default;
 		virtual BodyType getBodyType() const = 0;
 
 
-	protected:
 		Vector3 m_position;
 		Vector3 m_orientation;
 	};

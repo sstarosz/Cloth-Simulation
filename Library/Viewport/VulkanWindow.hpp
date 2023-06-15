@@ -1,4 +1,3 @@
-
 #ifndef VULKANWINDOW_HPP
 #define VULKANWINDOW_HPP
 

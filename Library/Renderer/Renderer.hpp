@@ -130,9 +130,9 @@ namespace st::renderer
 		std::vector<uint32_t> m_linesIndices = { 0, 1, 2, 3, 4, 5 };
 
 
-		void addModel(const geometry::Model& mesh);
-		//void createTextureImage(viewport::Texture texture, vk::Image& textureImage, vk::DeviceMemory& textureImageMemory);
-		//void createTextureImageView(vk::Image& textureImage, vk::ImageView& textureImageView);
+		void addModel(const std::unique_ptr<geometry::Model>& mesh);
+		void createTextureImage(geometry::Texture texture, vk::Image& textureImage, vk::DeviceMemory& textureImageMemory);
+		void createTextureImageView(vk::Image& textureImage, vk::ImageView& textureImageView);
 
 
 		struct RenderableMesh

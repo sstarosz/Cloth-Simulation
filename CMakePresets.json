@@ -7,21 +7,20 @@
   },
   "configurePresets": [
     {
-      "name": "base",
+      "name": "Base-Configure",
       "description": "Sets generator, build and install directory",
       "hidden": true,
       "generator": "Ninja",
+      "toolchainFile": "${sourceDir}/../vcpkg/scripts/buildsystems/vcpkg.cmake",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "installDir": "${sourceDir}/out/install/${presetName}"
     },
     {
-      "name": "Windowx-x64-MSVC",
-      "displayName": "Windows x64 MSVC",
-      "description": "Sets Ninja generator, build and install directory",
-      "toolchainFile": "${sourceDir}/../vcpkg/scripts/buildsystems/vcpkg.cmake",
-      "inherits": [
-        "base"
-      ],
+      "name": "Windows-Base",
+      "displayName": "Windows Base",
+      "description": "Base configuration presets for windows targets, setting default values for all build presets",
+      "inherits": "Base-Configure",
+      "generator": "Visual Studio 17 2022",
       "architecture": {
         "value": "x64",
         "strategy": "external"
@@ -44,11 +43,29 @@
       }
     },
     {
-      "name": "Linux-x64-Debug",
+      "name": "Windowx-MSVC-x64-Debug",
+      "displayName": "Windows x64 MSVC",
+      "description": "Sets Ninja generator, build and install directory",
+      "inherits": "Windows-Base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "Windowx-MSVC-x64-Release",
+      "displayName": "Windows MSVC x64 Release",
+      "description": "Sets Ninja generator, build and install directory",
+      "inherits": "Windows-Base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "Linux-Base",
       "displayName": "Linux x64 Debug",
       "description": "Linux Gcc Makefiles",
       "inherits": [
-        "base"
+        "Base-Configure"
       ],
       "generator": "Unix Makefiles",
       "cacheVariables": {
@@ -76,44 +93,38 @@
   ],
   "buildPresets": [
     {
-      "name": "Core-Build",
-      "description": "Inherits environment from base confiugre Preset",
-      "configurePreset": "base",
-      "inheritConfigureEnvironment": true
+      "name": "Base-Build",
+      "description": "Base build presets, setting default values for all build presets",
+      "hidden": true,
+      "verbose": true,
+      "jobs": 8
     },
     {
-      "name": "Windows-Debug-Build",
+      "name": "MSVC-2022-x64-Debug-Build",
       "description": "Windows x64 Debug Build",
-      "configurePreset": "Windowx-x64-MSVC",
+      "configurePreset": "Windowx-MSVC-x64-Debug",
       "configuration": "Debug",
-      "inherits": "Core-Build",
-      "jobs": 8,
-      "verbose": true
+      "inherits": "Base-Build"
     },
     {
-      "name": "Windows-Release-Build",
+      "name": "MSVC-2022-x64-Release-Build",
       "description": "Windows x64 Release Build",
-      "configurePreset": "Windowx-x64-MSVC",
-      "configuration": "Debug",
-      "inherits": "Core-Build",
-      "jobs": 8,
-      "verbose": true
+      "configurePreset": "Windowx-MSVC-x64-Release",
+      "configuration": "Release",
+      "inherits": "Base-Build"
     },
     {
-      "name": "Linux-Verbose-Debug-Build",
+      "name": "Linux-Build",
       "displayName": "Linux x64 Verbose Debug Build ",
       "description": "Linux x64 Debug Build with Unix Makefile generator",
-      "configurePreset": "Linux-x64-Debug",
-      "inherits": "Core-Build",
-      "jobs": 8,
-      "verbose": true
+      "configurePreset": "Linux-Base",
+      "inherits": "Base-Build"
     }
   ],
   "testPresets": [
     {
       "name": "Core-Test",
       "description": "Enable output on failure",
-      "configurePreset": "base",
       "hidden": true,
       "output": {
         "outputOnFailure": true,
@@ -123,13 +134,13 @@
     {
       "name": "Windows-Unittests",
       "displayName": "Windows Unit Tests",
-      "configurePreset": "Windowx-x64-MSVC",
+      "configurePreset": "Windowx-MSVC-x64-Debug",
       "inherits": "Core-Test"
     },
     {
       "name": "Linux-Unittest",
       "displayName": "Linux Unittest",
-      "configurePreset": "Linux-x64-Debug",
+      "configurePreset": "Linux-Base",
       "inherits": "Core-Test"
     }
   ]
