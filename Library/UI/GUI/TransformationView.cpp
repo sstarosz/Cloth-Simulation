@@ -6,6 +6,9 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QFrame>
+#include <QMenu>
+#include <QMenuBar>
+#include <QAction>
 
 namespace st::ui::gui {
 
@@ -16,7 +19,18 @@ namespace st::ui::gui {
 
 		mainLayout->addWidget(new QLabel("Translate"));
 
+		QMenuBar* menubar = new QMenuBar(this);
 
+		QMenu *menu = new QMenu("Menu 1", menubar);
+    	menu->setTearOffEnabled(true);
+		QAction *action1 = new QAction("Action 1", menu);
+        QAction *action2 = new QAction("Action 2", menu);	
+		menu->addAction(action1);
+        menu->addAction(action2);
+
+		menubar->addMenu(menu);
+		mainLayout->setMenuBar(menubar);
+		//setMenu	
 		//Transformation
 		// 
 

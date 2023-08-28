@@ -15,11 +15,11 @@ QT_END_NAMESPACE
 namespace st::ui::gui
 {
 
-	class Slider : public QWidget
+	class StBaseSlider : public QWidget
 	{
         Q_OBJECT
 	public:
-        explicit Slider(QString name, QWidget* parent = nullptr);
+        explicit StBaseSlider(QString name, QWidget* parent = nullptr);
 
     //virtual void setLimit(type minValue, type maxValue) = 0;
 
@@ -43,12 +43,12 @@ namespace st::ui::gui
 
 
 
-    class IntSlider : public Slider
+    class IntStSlider : public StBaseSlider
     {
         Q_OBJECT
     public:
-        explicit IntSlider(QWidget* parent); //Maybe private?
-        explicit IntSlider(QString name, int64_t minValue,
+        explicit IntStSlider(QWidget* parent = nullptr); //Maybe private?
+        explicit IntStSlider(QString name, int64_t minValue,
                            int64_t maxValue, QWidget* parent);
 
 

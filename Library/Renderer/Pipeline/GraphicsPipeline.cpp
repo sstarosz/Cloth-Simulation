@@ -161,7 +161,7 @@ namespace st::renderer
 
 
 			std::array<vk::WriteDescriptorSet, 2> graphicDescriptorWrites {
-				vk::WriteDescriptorSet { m_descriptorSets.at(i),           0, 0, vk::DescriptorType::eUniformBuffer,        {},        bufferInfo, {}},
+				vk::WriteDescriptorSet { m_descriptorSets.at(i), 0, 0, vk::DescriptorType::eUniformBuffer,        {},        bufferInfo, {}},
 				vk::WriteDescriptorSet { m_descriptorSets.at(i), 1, 0, vk::DescriptorType::eCombinedImageSampler, imageInfo, {},         {}}
 			};
 

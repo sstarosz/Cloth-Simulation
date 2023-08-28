@@ -11,7 +11,7 @@
 
 namespace st::ui::gui
 {
-	Slider::Slider(QString name, QWidget* parent):
+	StBaseSlider::StBaseSlider(QString name, QWidget* parent):
 		QWidget(parent),
 		m_pName(new QLabel(name)),
 		m_pInputValue(new QLineEdit("Empty Line Edit")),
@@ -76,7 +76,7 @@ namespace st::ui::gui
 	//}
 
 
-	void Slider::setValidator(QValidator* validator)
+	void StBaseSlider::setValidator(QValidator* validator)
 	{
 		m_pInputValue->setValidator(validator);
 	}
@@ -88,36 +88,36 @@ namespace st::ui::gui
 	------------------------------------------------------*/
 
 
-    void IntSlider::setLimit(int64_t minValue, int64_t maxValue)
+    void IntStSlider::setLimit(int64_t minValue, int64_t maxValue)
     {
 		m_minLimit = minValue;
 		m_maxLimit = maxValue;
     }
 
-	int64_t IntSlider::getMinLimit() const
+	int64_t IntStSlider::getMinLimit() const
 	{
 		return m_minLimit;
 	}
 
-	int64_t IntSlider::getMaxLimit() const
+	int64_t IntStSlider::getMaxLimit() const
 	{
 		return m_maxLimit;
 	}
 
 
-    IntSlider::IntSlider(QWidget* parent):
-		IntSlider(("None name"),
+    IntStSlider::IntStSlider(QWidget* parent):
+		IntStSlider(("None name"),
 					std::numeric_limits<int64_t>::min(),
 					std::numeric_limits<int64_t>::max(),
 					parent)
     {
 	}
 
-	IntSlider::IntSlider(QString name,
+	IntStSlider::IntStSlider(QString name,
 						 int64_t minValue,
 						 int64_t maxValue,
 						 QWidget* parent):
-		Slider(name, parent),
+		StBaseSlider(name, parent),
 		m_minLimit(minValue),
 		m_maxLimit(maxValue)
 	{

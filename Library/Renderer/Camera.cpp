@@ -67,7 +67,7 @@ namespace st::renderer
 
 	void Camera::orbit(float dx, float dy)
 	{
-		using namespace geometry;
+		using namespace math;
 
 		if (dx == 0 && dy == 0)
 		{
@@ -120,7 +120,7 @@ namespace st::renderer
 
 	void Camera::dolly(float dx, float dy)
 	{
-		using namespace geometry;
+		using namespace math;
 		Vector3 z = m_center - m_eye;
 		const float lenght = Vector3::length(z);
 
@@ -146,7 +146,7 @@ namespace st::renderer
 
 	void Camera::pan(float dx, float dy)
 	{
-		using namespace geometry;
+		using namespace math;
 
 		Vector3 z(m_eye - m_center);
 		float length = static_cast<float>(Vector3::length(z)) / 0.785f; // 45 degrees
@@ -163,9 +163,9 @@ namespace st::renderer
 	}
 
 
-	geometry::Vector3 Camera::orbitTest(float dx, float dy)
+	math::Vector3 Camera::orbitTest(float dx, float dy)
 	{
-		using namespace geometry;
+		using namespace math;
 
 		if (dx == 0 && dy == 0)
 		{
@@ -222,14 +222,14 @@ namespace st::renderer
 		m_matrix = lookAt(m_eye, m_center, m_up);
 	}
 
-	geometry::Matrix4x4 Camera::getViewMatrix() const
+	math::Matrix4x4 Camera::getViewMatrix() const
 	{
 		return m_matrix;
 	}
 
-	geometry::Matrix4x4 Camera::lookAt(const geometry::Vector3& eye, const geometry::Vector3& center, const geometry::Vector3& up)
+	math::Matrix4x4 Camera::lookAt(const math::Vector3& eye, const math::Vector3& center, const math::Vector3& up)
 	{
-		using namespace geometry;
+		using namespace math;
 
 		Matrix4x4 result;
 		Vector3 x;
@@ -282,9 +282,9 @@ namespace st::renderer
 		return result;
 	}
 
-	geometry::Matrix4x4 Camera::getProjectionMatrix(float fovy, float aspect, float nearPlane, float farPlane) const
+	math::Matrix4x4 Camera::getProjectionMatrix(float fovy, float aspect, float nearPlane, float farPlane) const
 	{
-		geometry::Matrix4x4 result;
+		math::Matrix4x4 result;
 
 		float f = farPlane;
 		float n = nearPlane;

@@ -10,7 +10,7 @@ namespace st::geometry
 	{
 
 	public:
-		StaticBody(Vector3 position, Vector3 orientation): BodyBase(position, orientation) {};
+		StaticBody(math::Vector3 position, math::Vector3 orientation): BodyBase(position, orientation) {};
 		virtual ~StaticBody() = default;
 
 

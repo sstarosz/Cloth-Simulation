@@ -1,7 +1,7 @@
 #include "Matrix4x4.hpp"
 #include <cmath>
 
-namespace st::geometry
+namespace st::math
 {
 	Matrix4x4::Matrix4x4() noexcept : m_value() { }
 

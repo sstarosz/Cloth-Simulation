@@ -5,9 +5,7 @@
 #include <vector>
 #include <numbers>
 #include <vulkan/vulkan.hpp>
-#include <Geometry/Matrix4x4.hpp>
-#include <Geometry/Vector3.hpp>
-#include <Geometry/Vector4.hpp>
+#include "Math/Math.hpp"
 
 namespace st::renderer
 {
@@ -32,25 +30,25 @@ namespace st::renderer
 
 		void update();
 
-		geometry::Matrix4x4 lookAt(const geometry::Vector3& eye, const geometry::Vector3& center, const geometry::Vector3& up);
+		math::Matrix4x4 lookAt(const math::Vector3& eye, const math::Vector3& center, const math::Vector3& up);
 		void orbit(float dx, float dy);
 		void pan(float dx, float dy);
 		void dolly(float dx, float dy);
-		geometry::Vector3 orbitTest(float dx, float dy);
+		math::Vector3 orbitTest(float dx, float dy);
 
 
-		geometry::Matrix4x4 getViewMatrix() const;
-		geometry::Matrix4x4 getProjectionMatrix(float fovy, float aspect, float nearPlane, float farPlane) const;
+		math::Matrix4x4 getViewMatrix() const;
+		math::Matrix4x4 getProjectionMatrix(float fovy, float aspect, float nearPlane, float farPlane) const;
 
 
 	private:
 		Actions m_currentState;
 
-		geometry::Vector3 m_eye;
-		geometry::Vector3 m_center;
-		geometry::Vector3 m_up;
+		math::Vector3 m_eye;
+		math::Vector3 m_center;
+		math::Vector3 m_up;
 
-		geometry::Matrix4x4 m_matrix;
+		math::Matrix4x4 m_matrix;
 
 		float m_fov = 60.0f;
 

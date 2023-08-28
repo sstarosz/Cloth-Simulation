@@ -4,7 +4,7 @@
 #include <compare>
 #include "Vector3.hpp"
 
-namespace st::geometry
+namespace st::math
 {
 
     /*! \brief Point in 3d space

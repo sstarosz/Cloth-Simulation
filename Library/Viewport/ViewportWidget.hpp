@@ -17,6 +17,11 @@ namespace st::viewport
 
 		void init();
 
+	public slots:
+		void receiveCommandSlot();
+
+	signals:
+		void sendCommandToViewport();
 
 	private:
 		VulkanWindow* vulkan_window;

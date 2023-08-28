@@ -15,7 +15,8 @@ set(SOURCES
 	"GuiElements/Slider.cpp"
 	"GuiElements/WidgetBox.cpp"
 	"GuiElements/Slider.cpp"
-	"TransformationView.cpp")
+	"TransformationView.cpp"
+	"ToolBar.cpp")
 
 set(HEADERS
 	"SettingsView.hpp"
@@ -23,7 +24,8 @@ set(HEADERS
 	"GuiElements/Slider.hpp"
 	"GuiElements/WidgetBox.hpp"
 	"GuiElements/Slider.hpp"
-	"TransformationView.hpp")
+	"TransformationView.hpp"
+	"ToolBar.hpp")
 
 
 #TODO

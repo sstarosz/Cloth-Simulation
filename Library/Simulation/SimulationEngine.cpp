@@ -1,6 +1,6 @@
 #include "SimulationEngine.hpp"
 
-#include "Geometry/Vector3.hpp"
+#include "Math/Math.hpp"
 #include <Geometry/Primitives/Mesh.hpp>
 
 #include <vector>
@@ -8,7 +8,7 @@
 namespace st::simulation
 {
 
-	using namespace geometry;
+	using namespace math;
 
 
 	SimulationEngine::SimulationEngine(core::ModelsManager& modelMenager): m_modelMenager(modelMenager)
@@ -27,6 +27,7 @@ namespace st::simulation
 	{
 		//detect colision
 
+		geometry::Mesh* sphere = dynamic_cast<geometry::Mesh*>(m_modelMenager.getModelsToSimulate().at(0)->m_shape.get());
 		
 		auto& modelToRender = m_modelMenager.getModelsToSimulate().at(1);
 
@@ -67,7 +68,7 @@ namespace st::simulation
 
 		for ( auto& particle : m_particle)
 		{
-			updateMesh(particle, deltaTime);
+			updateMesh(particle, deltaTime, Vector3{0.0f, 0.0f, 0.0}, 2.0f);
 		}
 
 
@@ -87,7 +88,7 @@ namespace st::simulation
 	}
 
 
-	void SimulationEngine::updateMesh(Particle& particle, float deltaTime)
+	void SimulationEngine::updateMesh(Particle& particle, float deltaTime, const Vector3& spherePosition, float sphereRadius)
 	{
 		const float Gravity = 0.1f;
 		const float Ground_Level = 0.0f;
@@ -123,6 +124,27 @@ namespace st::simulation
 			// Move the ball out of the ground
 			particle.position.Y = Ground_Level + particle.radius;
 		}
+
+
+	Vector3 sphereCenter = spherePosition;
+    float distance = Vector3::length(particle.position - sphereCenter);
+    if (distance <= particle.radius + sphereRadius)
+    {
+        // Calculate the collision normal and relative velocity
+        Vector3 collisionNormal = Vector3::normalize(particle.position - sphereCenter);
+        Vector3 relativeVelocity = particle.velocity;
+
+        // Calculate the collision response
+        const double sphereCoefficientOfRestitution = 0.8; // The "bounciness" of the ball
+
+        // Apply the collision response with the sphere
+        const Vector3 sphereImpulse = -2.0f * Vector3::dotProduct(relativeVelocity, collisionNormal) * collisionNormal;
+        particle.velocity = relativeVelocity + sphereImpulse;
+        particle.velocity *= sphereCoefficientOfRestitution;
+
+        // Move the ball out of the sphere
+        particle.position = sphereCenter + collisionNormal * (particle.radius + sphereRadius);
+    }
 	}
 
 

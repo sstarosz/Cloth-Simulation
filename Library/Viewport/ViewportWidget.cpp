@@ -24,6 +24,8 @@ namespace st::viewport
 		setLayout(viewportLayout);
 
 		QTimer::singleShot(2, this, &ViewportWidget::init);
+		connect(this, &ViewportWidget::sendCommandToViewport,
+		vulkan_window, &VulkanWindow::resetPlanePosition);
 	}
 
 	void ViewportWidget::init()
@@ -31,5 +33,9 @@ namespace st::viewport
 		vulkan_window->initialize();
 	}
 
+	void ViewportWidget::receiveCommandSlot()
+	{
+		emit sendCommandToViewport();
+	}
 
 } // namespace st::viewport

@@ -6,7 +6,7 @@
 #include "Vector3.hpp"
 #include "Matrix4x4.hpp"
 
-namespace st::geometry
+namespace st::math
 {
 
     /*! \brief Point in 3d space

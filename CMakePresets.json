@@ -20,7 +20,7 @@
       "displayName": "Windows Base",
       "description": "Base configuration presets for windows targets, setting default values for all build presets",
       "inherits": "Base-Configure",
-      "generator": "Visual Studio 17 2022",
+      "hidden": true,
       "architecture": {
         "value": "x64",
         "strategy": "external"
@@ -44,7 +44,7 @@
     },
     {
       "name": "Windowx-MSVC-x64-Debug",
-      "displayName": "Windows x64 MSVC",
+      "displayName": "Windows x64 MSVC Debug",
       "description": "Sets Ninja generator, build and install directory",
       "inherits": "Windows-Base",
       "cacheVariables": {
@@ -53,7 +53,7 @@
     },
     {
       "name": "Windowx-MSVC-x64-Release",
-      "displayName": "Windows MSVC x64 Release",
+      "displayName": "Windows x64 MSVC Release",
       "description": "Sets Ninja generator, build and install directory",
       "inherits": "Windows-Base",
       "cacheVariables": {

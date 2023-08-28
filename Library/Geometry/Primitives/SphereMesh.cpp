@@ -1,5 +1,5 @@
 #include "SphereMesh.hpp"
-#include "../Vector3.hpp"
+#include "Math/Math.hpp"
 
 #include <vector>
 #include <numbers>
@@ -23,7 +23,7 @@ namespace st::geometry
 		const int numPoints = widthSubdivisions * heightSubdivisions;
 		const float widthStep = 2.0f * pi / static_cast<float>(widthSubdivisions - 1);
 		const float heightStep = pi / static_cast<float>(heightSubdivisions - 1);
-		std::vector<Vector3> points(numPoints * 3);
+		std::vector<math::Vector3> points(numPoints * 3);
 
 		for (uint32_t i = 0; i <= heightSubdivisions; i++)
 		{

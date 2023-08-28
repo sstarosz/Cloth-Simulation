@@ -1,7 +1,7 @@
 #ifndef CORE_MODELSMANAGER_HPP
 #define CORE_MODELSMANAGER_HPP
 
-#include <Geometry/Vector3.hpp>
+#include "Math/Math.hpp"
 #include <Geometry/Vertex.hpp>
 #include <Geometry/Model.hpp>
 

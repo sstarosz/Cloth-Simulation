@@ -254,7 +254,7 @@ namespace st::renderer
 	void Renderer::updateUniformBuffer(uint32_t currentImage)
 	{
 		UniformBufferObject ubo {};
-		ubo.model = geometry::Matrix4x4::indentityMatrix();
+		ubo.model = math::Matrix4x4::indentityMatrix();
 		ubo.model.convertToColumnMajor();
 
 		ubo.view = m_camera.getViewMatrix();

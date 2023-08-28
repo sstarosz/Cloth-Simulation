@@ -4,46 +4,17 @@
 #include "vulkan/vulkan.hpp"
 #include <array>
 #include <ostream>
-#include "Vector3.hpp"
+#include "Math/Math.hpp"
 
 namespace st::geometry
 {
-    struct vec2
-    {
-        float x;
-        float y;
-
-		bool operator==(const vec2&) const = default;
-		auto operator<=>(const vec2&) const = default;
-    };
-
-    struct vec3
-    {
-        float x;
-        float y;
-        float z;
-
-        bool operator==(const vec3&) const = default;
-		auto operator<=>(const vec3&) const = default;
-    };
-
-    struct vec4
-    {
-        float x;
-        float y;
-        float z;
-        float w;
-
-        bool operator==(const vec4&) const = default;
-		auto operator<=>(const vec4&) const = default;
-    };
 
     struct Vertex
     {
-		Vector3 m_pos;
-		vec2 m_texCoord;
-		Vector3 m_color;
-		Vector3 m_normal;
+		math::Vector3 m_pos;
+		math::Vector2 m_texCoord;
+		math::Vector3 m_color;
+		math::Vector3 m_normal;
 
 
         static vk::VertexInputBindingDescription getBindingDescription();
@@ -58,7 +29,7 @@ namespace st::geometry
 		{
 			os << "\nVertex(\n";
             os << "\tPos    {" << vertex.m_pos.X       << ", " << vertex.m_pos.Y      << ", " << vertex.m_pos.Z  << "}\n";
-			os << "\tUV     {" << vertex.m_texCoord.x  << ", " << vertex.m_texCoord.y << "}\n";
+			os << "\tUV     {" << vertex.m_texCoord.X  << ", " << vertex.m_texCoord.Y << "}\n";
 			os << "\tColor  {" << vertex.m_color.X     << ", " << vertex.m_color.Y    << ", " << vertex.m_color.Z  << "}\n";
 			os << "\tNormal {" << vertex.m_normal.X    << ", " << vertex.m_normal.Y   << ", " << vertex.m_normal.Z << "}\n";
 			os << ")\n";

@@ -11,7 +11,7 @@ namespace st::geometry
 
 	public:
 		SimulatedBody() = default;
-		SimulatedBody(Vector3 position, Vector3 orientation): BodyBase(position, orientation) {};
+		SimulatedBody(math::Vector3 position, math::Vector3 orientation): BodyBase(position, orientation) {};
 		virtual ~SimulatedBody() = default;
 
 

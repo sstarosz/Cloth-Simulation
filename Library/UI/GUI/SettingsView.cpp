@@ -20,7 +20,7 @@ SettingsView::SettingsView()
 
 	/*StSliderBase example*/
 	mainLayout->addWidget(createHorizontalLine());
-	mainLayout->addWidget(new IntSlider("Color", 0, 255, this));
+	mainLayout->addWidget(new IntStSlider("Color", 0, 255, this));
 
 
 	/*WidgetBox example*/

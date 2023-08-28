@@ -13,7 +13,7 @@
 #include <Geometry/Body/StaticBody.hpp>
 #include <Geometry/Body/SimulatedBody.hpp>
 #include <Geometry/Model.hpp>
-#include <Geometry/Vector3.hpp>
+#include "Math/Math.hpp"
 
 namespace st::viewport
 {
@@ -70,11 +70,11 @@ namespace st::viewport
 
 		std::unique_ptr<geometry::ShapeBase> sphere = std::make_unique<geometry::SphereMesh>(1.0f, 10u, 10u);
 		std::unique_ptr<geometry::BodyBase> sphereBody =
-			std::make_unique<geometry::StaticBody>(geometry::Vector3 { 0.0F, 0.0F, 0.0F }, geometry::Vector3 { 0.0f, 0.0f, 0.0 });
+		std::make_unique<geometry::StaticBody>(math::Vector3 { 0.0F, 0.0F, 0.0F }, math::Vector3 { 0.0f, 0.0f, 0.0 });
 
 
 		
-		geometry::Vector3 { 0.0f, 0.0f, 0.0f };
+		math::Vector3 { 0.0f, 0.0f, 0.0f };
 		
 		int texWidth = 0;
 		int texHeight = 0;
@@ -117,12 +117,12 @@ namespace st::viewport
 		
 		for (auto& vertex : plane->m_vertices)
 		{
-			vertex.m_pos = vertex.m_pos + geometry::Vector3 { 0.0F, 2.0F, 0.0F };
+			vertex.m_pos = vertex.m_pos + math::Vector3 { 0.0F, 2.0F, 0.0F };
 		}
 
 
 		std::unique_ptr<geometry::BodyBase> sphereBody2 =
-			std::make_unique<geometry::SimulatedBody>(geometry::Vector3 { 0.0F, 0.0F, 0.0F }, geometry::Vector3 { 0.0f, 0.0f, 0.0 });
+			std::make_unique<geometry::SimulatedBody>(math::Vector3 { 0.0F, 0.0F, 0.0F }, math::Vector3 { 0.0f, 0.0f, 0.0 });
 
 
 
@@ -257,5 +257,14 @@ namespace st::viewport
 		requestUpdate();
 	}
 
+	void VulkanWindow::resetPlanePosition()
+	{
+		geometry::Mesh* mesh = dynamic_cast<geometry::Mesh*>(m_modelMenager.getModelsToSimulate().at(1)->m_shape.get());
+
+		for (auto& vertex : mesh->m_vertices)
+		{
+			vertex.m_pos = vertex.m_pos + math::Vector3 { 0.0F, 2.0F, 0.0F };
+		}
+	}
 
 } // namespace st::viewport

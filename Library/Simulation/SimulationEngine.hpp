@@ -3,13 +3,12 @@
 #define SIMULATION_SIMULATIONENGINE_HPP
 
 
-#include <Geometry/Vector4.hpp>
-#include <Geometry/Vector3.hpp>
+#include "Math/Math.hpp"
 #include <Core/ModelsManager.hpp>
 
 namespace st::simulation
 {
-	using namespace geometry;
+	using namespace math;
 
 	class SimulationEngine 
 	{
@@ -59,7 +58,7 @@ namespace st::simulation
 
 		private:
 		void applyForce(Particle& particle, const Vector3 force);
-		void updateMesh(Particle& particle, float deltaTime);
+		void updateMesh(Particle& particle, float deltaTime, const Vector3& spherePosition, float sphereRadius);
 
 		std::vector<Particle> m_particle;
 

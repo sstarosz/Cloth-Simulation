@@ -30,6 +30,12 @@ namespace st::viewport
 		void initialize();
 		void releaseResources();
 
+	public slots:
+		void resetPlanePosition();
+
+	signals:
+		void updateViewPort();
+
 	protected:
 		//TO-DO - Change expose event as vulkan init
 		void exposeEvent(QExposeEvent*) override;

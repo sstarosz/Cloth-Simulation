@@ -8,13 +8,9 @@ project(Geometry
 
 
 set(SOURCES
-	"Math.cpp"
 	"Vertex.cpp"
 	"Point3D.cpp"
 	"Object3D.cpp"
-	"Matrix4x4.cpp"
-	"Vector3.cpp"
-	"Vector4.cpp"
 	"Line.cpp"
 	"Primitives/ShapeBase.cpp"
 	"Primitives/Sphere.cpp"
@@ -27,13 +23,9 @@ set(SOURCES
 	"Primitives/PlaneMesh.cpp")
 
 set(HEADERS
-	"Math.hpp"
 	"Vertex.hpp"
 	"Point3D.hpp"
 	"Object3D.hpp"
-	"Matrix4x4.hpp"
-	"Vector3.hpp"
-	"Vector4.hpp"
 	"Line.hpp"
 	"Primitives/ShapeBase.hpp"
 	"Primitives/Sphere.hpp"
@@ -55,7 +47,7 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 target_compile_options(${PROJECT_NAME} PRIVATE ${Compiler_Flags})
 
 
-target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan)
+target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan Math)
 
 
 #generate_documentation(TargetName)

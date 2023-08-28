@@ -16,7 +16,7 @@
 #include "VulkanImages/ImageManager.hpp"
 #include "Memory/MemoryManager.hpp"
 #include <Geometry/Vertex.hpp>
-#include <Geometry/Matrix4x4.hpp>
+#include "Math/Math.hpp"
 #include <Geometry/Line.hpp>
 #include "Framebuffer.hpp"
 #include "Camera.hpp"

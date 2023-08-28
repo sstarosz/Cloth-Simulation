@@ -1,5 +1,5 @@
 #include "PlaneMesh.hpp"
-#include "../Vector3.hpp"
+#include "Math/Math.hpp"
 
 #include <vector>
 #include <numbers>
@@ -48,7 +48,7 @@ namespace st::geometry
 		const float dz = height / static_cast<float>(subdivisionHeight);
 
 		//Center
-		Vector3 center { 0.0F, 0.0F, 0.0F };
+		math::Vector3 center { 0.0F, 0.0F, 0.0F };
 
 
 		const float startX = center.X - (width / 2.0f); //-0.5

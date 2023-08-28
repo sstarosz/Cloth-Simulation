@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace st::geometry
+namespace st::math
 {
 	//Also know as magnitude
 	float Vector3::length(const Vector3& Vec) //TODO make it constexpr
